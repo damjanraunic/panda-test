@@ -69,7 +69,8 @@ self.addEventListener('fetch', e => {
     }
     if (p.endsWith('/audio/index.json')) return e.respondWith(fresh(u.origin + p, p, 3000));
     if (/\/audio\/[^/]+\.mp3$/.test(p)) return e.respondWith(caches.open(AUDIO).then(c => c.match(u.origin + p).then(r => r || fetch(req).then(n => { if (n.ok) c.put(u.origin + p, n.clone()); return n; }))));
-    if (SHELL.some(s => s !== './' && p === scope + s)) return e.respondWith(caches.match(req).then(r => r || fetch(req).then(n => keep(CORE, req, n))));
+    // the manifest and the icons: online first too, so a new name or icon reaches everyone (saved copy without internet)
+    if (SHELL.some(s => s !== './' && p === scope + s)) return e.respondWith(fresh(u.origin + p, u.origin + p, 3000));
     return;
   }
   // fonts and the stroke-order library: the saved copy at once, refreshed in the background
