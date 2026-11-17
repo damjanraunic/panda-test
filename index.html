@@ -7267,20 +7267,44 @@ function tutPlace() {
   // the speech bubble goes next to all of them together
   let r = boxes.length ? boxes.reduce((u, b) => ({ l: Math.min(u.l, b.x), t: Math.min(u.t, b.y), rr: Math.max(u.rr, b.x + b.w), bb: Math.max(u.bb, b.y + b.h) }), { l: 1e9, t: 1e9, rr: -1e9, bb: -1e9 }) : null;
   if (r) r = { left: r.l + pad, top: r.t + pad, width: r.rr - r.l - pad * 2, height: r.bb - r.t - pad * 2 };
-  const bw = bub.offsetWidth, bh = bub.offsetHeight;
+  // the bubble's normal width; beside a big part it may get narrower (down to 280 px)
+  const W0 = Math.min(360, vw - 24);
+  let bw = W0; bub.style.width = bw + 'px'; let bh = bub.offsetHeight;
   let hx, hy, hw, hh, bx, by, ax = null, side = 'none', gapY = null;
   if (r) {
     hx = r.left - pad; hy = r.top - pad; hw = r.width + pad * 2; hh = r.height + pad * 2;
     const below = vh - (hy + hh), above = hy;
     const right = vw - (hx + hw), left = hx, tall = hh > hw * 1.5 && right >= bw + 24;
-    if (tall) { by = Math.max(12, Math.min(vh - bh - 12, hy + hh / 2 - bh / 2)); bx = hx + hw + 16; }
+    const midY = () => Math.max(12, Math.min(vh - bh - 12, hy + hh / 2 - bh / 2));
+    // a tall, narrow part (the tabs on the left of a computer screen): the bubble goes beside it
+    if (tall) { by = midY(); bx = hx + hw + 16; }
     else if (below >= bh + 20) { side = 'top'; by = hy + hh + 14; }
     else if (above >= bh + 20) { side = 'bottom'; by = hy - bh - 14; }
     // several parts with room between them: the bubble goes in the gap
     else if ((gapY = tutGap(boxes, bh)) !== null) { side = 'top'; by = gapY; }
-    // a tall, narrow part (the tabs on the left of a computer screen): the bubble goes beside it
-    else if (right >= bw + 24 || left >= bw + 24) { side = 'none'; by = Math.max(12, Math.min(vh - bh - 12, hy + hh / 2 - bh / 2)); bx = right >= bw + 24 ? hx + hw + 16 : hx - bw - 16; }
-    else { side = 'none'; by = vh - bh - 12; }
+    // room on the left or right (a wide screen): beside the parts, a little narrower if needed
+    else if ((() => {
+      // next to the big parts (a small one, like the unit button, may sit elsewhere as long as the bubble doesn't cover it)
+      const big = boxes.filter(b => b.h > 100); if (!big.length) return false;
+      const R = Math.max(...big.map(b => b.x + b.w)), L = Math.min(...big.map(b => b.x));
+      const hits = (x, y, w, h) => boxes.some(b => x < b.x + b.w && b.x < x + w && y < b.y + b.h && b.y < y + h);
+      for (const sideR of [true, false]) {
+        const room = sideR ? vw - R - 28 : L - 28; if (room < 280) continue;
+        bw = Math.min(W0, room); bub.style.width = bw + 'px'; bh = bub.offsetHeight;
+        const y = midY(), x = sideR ? R + 16 : L - bw - 16;
+        if (!hits(x, y, bw, bh)) { bx = x; by = y; return true; }
+      }
+      bw = W0; bub.style.width = bw + 'px'; bh = bub.offsetHeight; return false;
+    })()) { side = 'none'; }
+    else {
+      // no room anywhere: light up only the top of the big parts (the first rows of levels) and put the bubble below
+      const limit = vh - bh - 34;
+      if (boxes.every(b => b.y + b.h <= limit || limit - b.y >= 90)) {
+        boxes.forEach(b => { if (b.y + b.h > limit) b.h = limit - b.y; });
+        hh = Math.max(...boxes.map(b => b.y + b.h)) - hy; r.height = hh - pad * 2;
+        side = 'top'; by = hy + hh + 14;
+      } else { side = 'none'; by = vh - bh - 12; }
+    }
     if (bx === undefined) bx = Math.max(12, Math.min(vw - bw - 12, r.left + r.width / 2 - bw / 2));
     if (side !== 'none') ax = Math.max(18, Math.min(bw - 18, r.left + r.width / 2 - bx));
   } else {
