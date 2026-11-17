@@ -1,6 +1,6 @@
 // Panda Chinese: keeps the app, the fonts and the voice on the device, so it works without internet.
-// The page is always asked for online first (new versions arrive as before); the saved copy is used
-// only when there is no answer within 3 seconds.
+// Opening the app: the saved copy opens at once, and the newest version is checked for at the same time.
+// If there is a new one, the page is told ("downloading", then "ready"), so it can show it and switch.
 // Emergency: replace this file with sw-off.js (renamed to sw.js) to switch all of this off for everyone.
 const CORE = 'pc-core-1', AUDIO = 'pc-audio-1', KEEP = [CORE, AUDIO];
 const SHELL = ['./', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
@@ -29,12 +29,39 @@ function fresh(url, key, ms) {
   });
 }
 
+// the newest version of the page: what happened last time (for a page that asks after it has loaded)
+let UPD = { st: 'none', t: 0 };
+async function tell(msg) { UPD = { ...msg, t: Date.now() }; for (const c of await self.clients.matchAll({ type: 'window' })) c.postMessage({ pc: 'upd', ...msg }); }
+const sig = r => r && (r.headers.get('etag') || r.headers.get('last-modified') || r.headers.get('content-length') || '');
+async function checkNew(url, key) {
+  try {
+    const c = await caches.open(CORE), old = await c.match(key);
+    const r = await fetch(url, { cache: 'no-cache' });
+    if (!r.ok) return tell({ st: 'none' });
+    if (old && sig(old) && sig(old) === sig(r)) return tell({ st: 'none' });
+    await tell({ st: 'downloading' });
+    const body = await r.arrayBuffer();
+    await c.put(key, new Response(body, { status: 200, headers: r.headers }));
+    await tell({ st: 'ready' });
+  } catch (e) { tell({ st: 'offline' }); }
+}
+self.addEventListener('message', e => { if (e.data && e.data.pc === 'status' && e.source) e.source.postMessage({ pc: 'upd', ...UPD }); });
+
 self.addEventListener('fetch', e => {
   const req = e.request; if (req.method !== 'GET') return;
   const u = new URL(req.url);
   if (u.origin === location.origin) {
     const p = u.pathname, scope = new URL(self.registration.scope).pathname;
-    if (req.mode === 'navigate' || p === scope || p === scope + 'index.html') return e.respondWith(fresh(u.origin + p, scope, 3000));
+    if (req.mode === 'navigate' || p === scope || p === scope + 'index.html') {
+      // the saved copy at once, and a check for a newer one; the very first time straight from the internet
+      e.respondWith(caches.match(scope).then(r => {
+        if (!r) return fresh(u.origin + p, scope, 10000);
+        UPD = { st: 'checking', t: Date.now() };
+        e.waitUntil(checkNew(u.origin + p, scope));
+        return r;
+      }));
+      return;
+    }
     if (p.endsWith('/audio/index.json')) return e.respondWith(fresh(u.origin + p, p, 3000));
     if (/\/audio\/[^/]+\.mp3$/.test(p)) return e.respondWith(caches.open(AUDIO).then(c => c.match(u.origin + p).then(r => r || fetch(req).then(n => { if (n.ok) c.put(u.origin + p, n.clone()); return n; }))));
     if (SHELL.some(s => s !== './' && p === scope + s)) return e.respondWith(caches.match(req).then(r => r || fetch(req).then(n => keep(CORE, req, n))));

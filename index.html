@@ -850,6 +850,21 @@ details.howto>summary,details.more>summary,.ln-ctx>summary,.msg-more summary,.pa
 /* while audio plays, its button says Stop (a tap stops it) */
 .btn.playing>span{display:none}.btn.playing::after{content:'Stop';margin-left:6px}
 [data-say].playing:not(.btn){outline:2px solid var(--red);outline-offset:2px;border-radius:var(--r)}
+/* updating / loading */
+.upd-ov,#boot{position:fixed;inset:0;z-index:2000;background:var(--paper);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px;font-family:var(--ui);transition:opacity .3s}
+.upd-ov.out,#boot.out{opacity:0}
+.upd-ov .upd-panda{width:120px;height:120px}.upd-ov b{font-size:19px}.upd-ov small{color:var(--muted);max-width:30ch}
+.upd-spin,#boot i{width:28px;height:28px;border-radius:50%;border:3px solid var(--line-2);border-top-color:var(--red);animation:updSpin .9s linear infinite}
+@keyframes updSpin{to{transform:rotate(360deg)}}
+#boot{animation:bootIn .2s .35s both}#boot b{font-size:17px}
+@keyframes bootIn{from{opacity:0}to{opacity:1}}
+.go-row{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:12px 0 18px}.go-sub{color:var(--muted);font-size:14px}
+.mcard .go-row{margin:10px 0 14px}
+.pr-dseg{display:flex;width:100%;max-width:560px}.pr-dseg button{flex:1;padding-left:4px;padding-right:4px;white-space:nowrap}
+@media (max-width:420px){.pr-dseg button{font-size:12.5px}}
+.pr-ddesc{display:flex;align-items:center;gap:10px;color:var(--muted);margin:8px 0 16px;min-height:28px}.pr-ddesc .monk{width:36px;height:36px;flex:none}
+/* Classic, dark: the panda keeps its ink-and-paper colours on a light round card */
+:root[data-theme="dark"]:not([data-style="cute"]) svg.panda{--ink:#1B1A17;--paper:#F3EEE3;--red:#A8281C;background:radial-gradient(circle closest-side,#ECE5D6 0 97%,transparent 100%)}
 .qs-card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;margin:0 0 6px;background:var(--surface);color:var(--ink);border:1.5px solid var(--line-2);border-radius:var(--r);cursor:pointer;font:inherit}
 .qs-card:hover{border-color:var(--ink)}.qs-card .qs-pd{width:40px;height:40px;flex:none}.qs-card .qs-l{flex:1;display:flex;flex-direction:column;gap:2px}.qs-card small{color:var(--muted);font-size:13px}.qs-card .qs-go{font-size:24px;color:var(--muted);line-height:1}
 [data-style="cute"] .qs-card{border-width:2px;background:var(--card)}
@@ -1512,6 +1527,7 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 </style>
 </head>
 <body>
+<div id="boot" role="status"><i aria-hidden="true"></i><b>Loading Panda Chinese…</b></div>
 <div class="app">
   <nav class="side" id="side" aria-label="Sections"></nav>
   <div class="col">
@@ -4296,6 +4312,7 @@ function buildPool() {
 function renderTest() {
   if (T.phase === 'setup') {
     main.innerHTML = `${pageHead('Practice test', { cap: 'Check yourself', how: 'h3' })}
+      <div class="go-row"><button type="button" class="btn primary big" data-t="start">Start test</button><span class="go-sub">${T.n} questions · ${esc(unitsText(T.units, [0, 1, 2, 3, 4, 5]))}</span></div>
       ${howto('h3', `<p>A random mix of questions in the style of the exercise book, a little harder than the book: trap sentences, mistakes to correct, word banks with five blanks, questions to rewrite, sentences to translate, reading and listening. Answer in characters with your Chinese keyboard.</p><p>Choose the units and how many questions you want. “Harder exam-style questions” are written for this app; “Questions from the books” mixes in items from the Book exercises tab. With feedback “after each question” you press Check and see the answer straight away; “at the end” works like a real exam and shows everything once you finish. The bar at the top shows how far you are, and “End test” stops at any time.</p>`)}
       <div class="setup">
         <div class="frow"><span class="flabel">Units</span>${unitMenu('t', unitsText(T.units, [0, 1, 2, 3, 4, 5]), unitOpts([0, 1, 2, 3, 4, 5], u => T.units.has(u), 'tunit'), { multi: true })}</div>
@@ -4303,7 +4320,6 @@ function renderTest() {
         <div class="frow"><span class="flabel">Use</span>${chip('Harder exam-style questions', T.extra, 'data-tsrc="extra"')}${chip('Questions from the books', T.book, 'data-tsrc="book"')}${chip('★ Only favourites', !!T.fav, 'data-tsrc="fav"')}</div>
         <div class="frow"><span class="flabel">Feedback</span><div class="seg"><button type="button" aria-pressed="${T.mode === 'each'}" data-tmode="each">After each question</button><button type="button" aria-pressed="${T.mode === 'exam'}" data-tmode="exam">At the end, like the exam</button></div></div>
         ${T.units.has(0) && !T.book ? '<p class="note">Unit 0 questions come from the books, so turn on “Questions from the books” to include them.</p>' : ''}
-        <div class="actions plain"><button type="button" class="btn primary" data-t="start">Start test</button></div>
       </div>`;
     return;
   }
@@ -4643,9 +4659,9 @@ function mkMenu() {
       <p><b>Answering:</b> pinyin with tone marks or numbers (lao3), the neutral tone without a number or with 0; characters with your Chinese keyboard; in part 6 the letters A–E. The numbered boxes at the top show which questions you’ve answered; tap one to jump to it.</p>
       <p><b>After submitting:</b> your score per part, every question marked green or red with the correct answer, and the text and translation of every listening item. The five sentences in part 9 are graded by hand in the real exam, so here you compare them with model answers and give yourself 3, 1.5 or 0 points.</p>`)}
     <div class="menu-grid"><div class="mcard"><h2>New mock exam</h2><p>50 questions, 100 points. Takes about 45–60 minutes.</p>
+      <div class="go-row"><button type="button" class="btn primary big" data-mkstart>Start</button><span class="go-sub">${MK.timerMin ? `Timer: ${MK.timerMin} min` : 'No timer'}</span></div>
       <div class="frow"><span class="flabel">Timer</span><div class="seg">${[0, 45, 60, 90].map(m => `<button type="button" aria-pressed="${MK.timerMin === m}" data-mktmin="${m}">${m ? m + ' min' : 'No timer'}</button>`).join('')}</div></div>
-      <p class="onscreen">With a timer, the test is submitted automatically when the time runs out.</p>
-      <button type="button" class="btn primary" data-mkstart>Start</button></div></div>
+      <p class="onscreen">With a timer, the test is submitted automatically when the time runs out.</p></div></div>
     ${Object.keys(S.favs || {}).some(k => k.startsWith('m:')) ? `<p><button type="button" class="btn" data-mkfavs>Practise your saved mock questions (${Object.keys(S.favs).filter(k => k.startsWith('m:')).length})</button></p>` : ''}
     ${MK.hist.length ? `<div class="mk-hist"><h2>Your mock exams on this device</h2><table>${MK.hist.slice(0, 10).map(h => `<tr><td>${esc(h.when)}</td><td>${h.got} / ${h.max || 100}${h.pending ? ` <span class="muted small">(${h.pending} pts not graded)</span>` : ''}</td></tr>`).join('')}</table></div>` : ''}`;
 }
@@ -5135,6 +5151,7 @@ function renderQC() {
   if (!QC.preview) QC.preview = qcBuild();
   const P = QC.preview, valid = parseInt(QC.custom, 10) >= 1;
   main.innerHTML = `<div class="qc-hero">${pandaSvg('idle', 'qc-big bob')}<div class="hero-tx"><div class="cap">Mix what you have learned</div><h1 class="view-title">Quick challenge ${howBtn('qc')}</h1><p class="lead">A short round that mixes everything you’ve learned. Pick the lessons and your time, and the panda will keep you company.</p><p class="pr-note">Word quizzes, your characters and writing are in the <button type="button" class="link" data-sec="words">Words</button> tab.</p></div></div>
+    <div class="go-row"><button type="button" class="btn primary big" data-qcstart ${P.tasks.length ? '' : 'disabled'}>Start</button><span class="go-sub qc-est" id="qc-est">${esc(qcEstText())}</span></div>
     ${howto('qc', `
       <p>Pick the lessons, what to practise and how long you have. You get a random mix of tasks that fits that time, one at a time: answer, press Check, and the panda reacts. At the end you see your score in percent.</p>
       <p><b>Not included here: the harder exam-style questions from the Practice test and the Mock exam.</b> Included are the exercises from your books (the same ones the Practice test offers as “Questions from the books”), word quizzes from Words (pinyin, meaning, writing in characters, listening), the drills from Grammar and, if you switch it on, writing characters from memory.</p>
@@ -5145,9 +5162,7 @@ function renderQC() {
       <div class="frow"><span class="flabel">From</span><div class="seg"><button type="button" aria-pressed="${!QC.fav}" data-qcfav="0">Everything</button><button type="button" aria-pressed="${QC.fav}" data-qcfav="1">★ Only favourites</button></div></div>
       <div class="frow"><span class="flabel">Include</span>${chip('Book exercises', QC.src.book, 'data-qcsrc="book"')}${chip('Words', QC.src.words, 'data-qcsrc="words"')}${chip('Grammar drills', QC.src.gram, 'data-qcsrc="gram"')}${chip('Writing characters', QC.src.write, 'data-qcsrc="write"')}</div>
       <div class="frow"><span class="flabel">Time</span><div class="seg">${[5, 10, 15, 20].map(m => `<button type="button" aria-pressed="${!valid && QC.min === m}" data-qcmin="${m}">${m} min</button>`).join('')}</div><label class="qc-custom">or <input class="in" id="qc-custom" type="number" min="1" max="60" inputmode="numeric" value="${esc(QC.custom)}" placeholder="custom" aria-label="Custom time in minutes"> min</label></div>
-    </div>
-    <p class="qc-est" id="qc-est">${esc(qcEstText())}</p>
-    <button type="button" class="btn primary big" data-qcstart ${P.tasks.length ? '' : 'disabled'}>Start</button>`;
+    </div>`;
 }
 const qcIsOpen = t => t.kind === 'set' && t.set.items.every(it => (it.type || t.set.type) === 'open');
 function qcTaskHtml(task, n) {
@@ -8351,16 +8366,17 @@ function runSetup() {
   main.innerHTML = `<div class="sess-head"><button type="button" class="link" data-gm="menu">← Games</button><b>Panda Run</b>${howBtn('run', 'How to play')}</div>
     <div class="pr-setup">
       <div class="pr-intro">${runCardArt()}<p>Walls come towards the panda, each with an answer. Move to the lane with the right one and the panda runs straight through it. A wrong wall costs a life. Five right in a row bring a life back.</p></div>
+      <div class="go-row"><button type="button" class="btn primary big" data-gm="start">Start running</button><span class="go-sub">${esc(runDiff(GM.diff).label)} · ${esc((sels.find(x => x[0] === GM.sel) || sels[0])[1])}${b[GM.diff] ? ` · best <b>${b[GM.diff]}</b>` : ''}</span></div>
+      <h2 class="mg-h">Difficulty</h2>
+      <div class="seg pr-dseg" role="group" aria-label="Difficulty">${RUN_DIFFS.map(d => `<button type="button" class="pr-d-${d.id}" data-gmdiff="${d.id}" aria-pressed="${GM.diff === d.id}">${esc(d.label)}</button>`).join('')}</div>
+      <p class="pr-ddesc">${GM.diff === 'shaolin' ? MONK_SVG.replace('class="monk"', 'class="monk pr-monk"') : ''}<span>${esc(runDiff(GM.diff).desc)}</span></p>
       <h2 class="mg-h">Characters</h2>
       <div class="pr-sel">${sels.map(([id, l, sub]) => `<button type="button" class="pr-opt" data-gmsel="${id}" aria-pressed="${GM.sel === id}"${id === 'weak' && seen.length < 6 ? ' disabled' : ''}><b>${esc(l)}</b><span>${esc(sub)}</span></button>`).join('')}</div>
-      <h2 class="mg-h">Difficulty</h2>
-      <div class="pr-diffs">${RUN_DIFFS.map(d => `<button type="button" class="pr-opt pr-d-${d.id}" data-gmdiff="${d.id}" aria-pressed="${GM.diff === d.id}">${d.id === 'shaolin' ? MONK_SVG.replace('class="monk"', 'class="monk pr-monk"') : ''}<b>${esc(d.label)}</b><span>${esc(d.desc)}</span>${b[d.id] ? `<small>Best: ${b[d.id]}</small>` : ''}</button>`).join('')}</div>
       ${gmRecordsHtml()}
       ${howto('run', `
         <p><b>On a computer:</b> click a lane to jump there. Click higher up, on the road or a wall, to give your <b>final answer</b> straight away: the panda speeds up and you get bonus points for speed. Or use the arrow keys or A and D, and ↑ or W for the final answer. <b>Esc</b> or <b>P</b> pauses, <b>R</b> plays the sound again.</p>
         <p><b>On a phone:</b> swipe left or right, or tap a lane. Tap a wall or swipe up for your final answer.</p>
         <p>If you don’t give a final answer, the panda takes the lane it’s in when it reaches the wall. Points: 100 for each right wall, a speed bonus for early answers, and more for every right answer in a row. ${canHear() ? '' : '<b>Sound is off</b>, so there are no listening walls.'}</p>`, 'How to play')}
-      <div class="card-actions"><button type="button" class="btn primary big" data-gm="start">Start running</button></div>
     </div>`;
 }
 
@@ -9111,6 +9127,57 @@ function qsInstallHtml() {
   return `<div class="qs-grp"><h3>${app ? 'Offline' : 'Install'}</h3><button type="button" class="qs-card" data-install>${pandaSvg('yay', 'qs-pd', '', true)}<span class="qs-l"><b>${t}</b><small>${s}</small></span><span class="qs-go" aria-hidden="true">›</span></button></div>`;
 }
 
+/* ----- a new version while opening: the panda shows it is downloading (up to 10 s), then the app opens
+   anyway and the download goes on; when it is ready the app restarts by itself, or offers to. ----- */
+const T0 = Date.now(), UPD_WAIT = 10000;
+function updOverlay(on) {
+  let o = $('#upd-ov');
+  if (!on) { if (o) { o.classList.add('out'); setTimeout(() => o.remove(), 300); } return; }
+  if (o) return;
+  o = document.createElement('div'); o.id = 'upd-ov'; o.className = 'upd-ov'; o.setAttribute('role', 'status');
+  o.innerHTML = `${pandaSvg('happy', 'upd-panda bob', '', true)}<b>Updating Panda Chinese…</b><span class="upd-spin" aria-hidden="true"></span><small>A new version is downloading. This takes a few seconds.</small>`;
+  document.body.appendChild(o);
+}
+function updMsg(m) {
+  if (!m || m.pc !== 'upd') return;
+  if (m.st === 'downloading') {
+    if (Date.now() - T0 < UPD_WAIT) {
+      updOverlay(true);
+      clearTimeout(PWA.updT);
+      PWA.updT = setTimeout(() => { if (!$('#upd-ov')) return; updOverlay(false); vwBar('<p><b>Downloading the new version…</b> You can keep learning; it will be ready soon.</p><div class="vw-act"><button type="button" class="btn sm primary" data-vwok>OK</button></div>'); }, UPD_WAIT - (Date.now() - T0));
+    } else vwBar('<p><b>Downloading the new version…</b> You can keep learning; it will be ready soon.</p><div class="vw-act"><button type="button" class="btn sm primary" data-vwok>OK</button></div>');
+  }
+  if (m.st === 'ready') {
+    clearTimeout(PWA.updT);
+    if ($('#upd-ov') && !document.body.classList.contains('lesson') && !document.body.classList.contains('sess')) { location.reload(); return; }
+    updOverlay(false);
+    vwBar('<p><b>The new version is ready.</b> Restart to use it (your progress stays).</p><div class="vw-act"><button type="button" class="btn sm" data-vwok>Later</button><button type="button" class="btn sm primary" data-updgo>Restart</button></div>');
+  }
+  if ((m.st === 'none' || m.st === 'offline') && $('#upd-ov')) { clearTimeout(PWA.updT); updOverlay(false); }
+}
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message', e => updMsg(e.data));
+  navigator.serviceWorker.ready.then(() => { const c = navigator.serviceWorker.controller; if (c) c.postMessage({ pc: 'status' }); }).catch(() => {});
+}
+document.addEventListener('click', e => { if (e.target.closest('[data-updgo]')) location.reload(); });
+
+/* ----- the bars at the top can be swiped up to hide them; what they show goes on (a download keeps going) ----- */
+document.addEventListener('touchstart', e => {
+  const b = e.target.closest && e.target.closest('#vwarn'); if (!b || e.target.closest('button,summary,a')) return;
+  const y0 = e.touches[0].clientY; let dy = 0;
+  const mv = ev => { dy = Math.min(0, ev.touches[0].clientY - y0); b.style.transition = 'none'; b.style.transform = `translate(-50%, ${dy}px)`; b.style.opacity = String(1 + dy / 120); if (dy < -4) ev.preventDefault(); };
+  const end = () => {
+    document.removeEventListener('touchmove', mv); document.removeEventListener('touchend', end);
+    b.style.transition = '';
+    if (dy < -30) { b.style.transform = 'translate(-50%, -140%)'; b.style.opacity = '0'; setTimeout(() => b.remove(), 250); }
+    else { b.style.transform = ''; b.style.opacity = ''; }
+  };
+  document.addEventListener('touchmove', mv, { passive: false }); document.addEventListener('touchend', end);
+}, { passive: true });
+
+// the "Loading…" panda in the page (for a slow first start) goes away once the app is ready
+setTimeout(() => { const b = document.getElementById('boot'); if (b) { b.classList.add('out'); setTimeout(() => b.remove(), 300); } }, 0);
+
 renderVoice();
 let rT; window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { if (view === 'writing') { const b = $('#w-box'); if (b && Math.abs(b.clientWidth - W.size) > 8 && W.mode !== 'free') mountWriter(); } }, 200); });
 try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { applyTheme(); if (view === 'writing') renderWriting(); }); } catch (e) { /* old browser */ }
@@ -9120,7 +9187,10 @@ try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () =
 // Every step carries the id of this visit (lid), so steps left over from an earlier visit (after a reload) are passed over.
 const NB = { lid: Math.random().toString(36).slice(2, 10), skip: 0, exiting: false, armT: 0 };
 const nbMine = st => !!(st && st.lid === NB.lid);
-const nbLayers = () => { const b = document.body.classList; return (b.contains('lesson') || b.contains('sess') ? 1 : 0) + ((!$('#modal').hidden || !$('#msg-panel').hidden) ? 1 : 0); };
+// a sub-page inside a tab (Games → Panda Run setup, a challenge, the result) is a step too: back returns to the tab's start page
+const NB_BACK = '[data-cmenu], [data-back-book], [data-back-gram], [data-wmenu], [data-favback], [data-t="quit"], [data-mkact="quit"], [data-qc="end"], [data-qc="menu"], [data-gm="menu"]';
+const nbSub = () => !document.body.classList.contains('lesson') && !!main.querySelector(NB_BACK);
+const nbLayers = () => { const b = document.body.classList; return (b.contains('lesson') || b.contains('sess') || nbSub() ? 1 : 0) + ((!$('#modal').hidden || !$('#msg-panel').hidden) ? 1 : 0); };
 const nbLevel = () => (nbMine(history.state) && history.state.ov) || 0;
 function nbPush(from, to) { for (let k = from + 1; k <= to; k++) history.pushState({ lid: NB.lid, ov: k }, ''); }
 let nbT = 0;
@@ -9135,7 +9205,7 @@ function nbSync() {
 }
 function nbSessExit() {
   const lesson = document.body.classList.contains('lesson');
-  const b = vis(lesson ? '[data-lexit], [data-lpath]' : '[data-cmenu], [data-back-book], [data-back-gram], [data-wmenu], [data-favback], [data-t="quit"], [data-mkact="quit"], [data-qc="end"], [data-qc="menu"], [data-gm="menu"]');
+  const b = vis(lesson ? '[data-lexit], [data-lpath]' : NB_BACK);
   if (b) b.click(); else { setFocus(false); setLesson(false); go(); }
 }
 window.addEventListener('popstate', e => {
@@ -9173,6 +9243,7 @@ function nbInit() {
   mo.observe($('#modal'), { attributes: true, attributeFilter: ['hidden'] });
   mo.observe($('#msg-panel'), { attributes: true, attributeFilter: ['hidden'] });
   mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  mo.observe(main, { childList: true });
 }
 /* ----- phones: keep the bar with Check (and other bars) above the on-screen keyboard ----- */
 // Chrome on Android should resize the page (interactive-widget=resizes-content); where it doesn't, the keyboard height goes into --kb.
