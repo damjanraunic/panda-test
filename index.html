@@ -847,6 +847,9 @@ details.howto>summary,details.more>summary,.ln-ctx>summary,.msg-more summary,.pa
 .qs-sw::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:var(--edge);transition:transform .25s cubic-bezier(.3,1.4,.5,1),background .2s}
 .qs-row[aria-checked="true"] .qs-sw{background:var(--pri);border-color:var(--pri)}
 .qs-row[aria-checked="true"] .qs-sw::after{transform:translateX(22px);background:var(--onpri)}
+.qs-card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;margin:0 0 6px;background:var(--surface);color:var(--ink);border:1.5px solid var(--line-2);border-radius:var(--r);cursor:pointer;font:inherit}
+.qs-card:hover{border-color:var(--ink)}.qs-card .qs-pd{width:40px;height:40px;flex:none}.qs-card .qs-l{flex:1;display:flex;flex-direction:column;gap:2px}.qs-card small{color:var(--muted);font-size:13px}.qs-card .qs-go{font-size:24px;color:var(--muted);line-height:1}
+[data-style="cute"] .qs-card{border-width:2px;background:var(--card)}
 .qs-more{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 10px}
 .qs-more .btn{justify-content:flex-start;font-weight:600;font-size:14px;padding:8px 12px}
 .qs-more .btn .n{margin-left:auto;background:var(--red);color:var(--onred);border-radius:9px;min-width:18px;height:18px;font:700 11px/18px var(--ui);text-align:center;padding:0 4px}
@@ -5003,7 +5006,31 @@ function lpFitName() {
   let f = parseFloat(getComputedStyle(e).fontSize);
   while (e.scrollWidth > e.clientWidth + 1 && f > 11) { f -= 1; e.style.fontSize = f + 'px'; }
 }
-window.addEventListener('resize', () => { if (view === 'learn') lpFitName(); });
+window.addEventListener('resize', () => { if (view === 'learn') { lpFitName(); lpHeroFix(); } });
+// The "Next lesson" card is as tall as it would be for the longest of the units' next lessons, so the levels
+// below it stay in the same place whichever unit is shown (after a swipe nothing jumps).
+function lpHeroFix() {
+  const hero = $('#lp-hero'); if (!hero || !hero.parentNode) return;
+  hero.style.minHeight = '';
+  const prog = S.learn || {}, rec = lRec(), probe = hero.cloneNode(true);
+  probe.removeAttribute('id');
+  Object.assign(probe.style, { position: 'absolute', visibility: 'hidden', left: '0', top: '0', width: hero.offsetWidth + 'px', pointerEvents: 'none' });
+  hero.parentNode.appendChild(probe);
+  const hgt = e => Math.ceil(e.getBoundingClientRect().height);
+  let mx = hgt(hero);
+  const cap = $('.cap', probe), t = $('.hero-t', probe), s = $('.hero-s', probe), b = $('[data-lstart]', probe);
+  for (const u of lUnits()) {
+    const lvs = LEVELS.filter(l => l.unit === u), nx = lvs.find(l => !prog[l.id]), h = nx || rec || lvs[lvs.length - 1];
+    const c = nx ? `${LEVELS.indexOf(h) ? 'Next lesson' : 'Start here'} · level ${lvs.indexOf(h) + 1} of ${lvs.length}` : rec ? `Unit ${u} complete · next lesson in Unit ${rec.unit}` : 'All levels done';
+    if (cap) cap.innerHTML = c.split(' · ').map(x => `<span class="nw">${esc(x)}</span>`).join(' · ');
+    if (t) t.textContent = h.title;
+    if (s) s.textContent = `Unit ${h.unit}: ${LUNITS[h.unit] || ''}. About ${lvMins(h)} minutes.`;
+    if (b) b.textContent = prog[h.id] ? 'Play again' : beginWord();
+    mx = Math.max(mx, hgt(probe));
+  }
+  probe.remove();
+  hero.style.minHeight = mx + 'px';
+}
 function lMoodPick(q) {
   const h = LN.hist || [], n = h.length;
   let rw = 0; while (rw < n && h[n - 1 - rw] === false) rw++;
@@ -6594,7 +6621,7 @@ function lPath() {
       <section class="box run-box"><div class="cap">Panda Run</div><p class="box-t">${top ? `Best score ${b[top.id]}` : 'Run through the right wall'}</p><p class="box-s">${top ? esc(top.label) : 'A game with your characters.'}</p><button type="button" class="btn" data-railrun>Play</button></section>
     </div></div>`;
   if (cute) trackWatch();
-  lpFitName();
+  lpFitName(); lpHeroFix();
   const hb = $('#lp-hero .bigz'); if (hb && HERO_INK !== h.id + styleOf()) { HERO_INK = h.id + styleOf(); hb.classList.remove('wipe'); inkWrite(hb, { delay: 350 }); }
   LN.justDone = null; countUp();
 }
@@ -8875,6 +8902,7 @@ function openQuick() {
   m.innerHTML = `<div class="modal-box help-box qs-box" role="dialog" aria-modal="true" aria-label="Settings">
     <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
     <h1 class="view-title">Settings</h1>${quickSettingsHtml()}
+    ${qsInstallHtml()}
     <div class="qs-grp"><h3>More</h3><div class="qs-more">
       <button type="button" class="btn" data-favs>★ Favourites</button><button type="button" class="btn" data-help>Info</button>
       <button type="button" class="btn" data-tutorial>Tutorial</button>${msgList().length ? `<button type="button" class="btn" data-msgs>Messages${n ? `<span class="n">${n}</span>` : ''}</button>` : ''}
@@ -9052,6 +9080,16 @@ document.addEventListener('click', e => {
   }
   vwClose();
 });
+
+/* ----- Settings: a card above "More" (phone and computer alike) that leads to installing the app;
+   inside the installed app it offers the voice for offline use instead ----- */
+function qsInstallHtml() {
+  const app = isStandalone(), pc = pwaKind() === 'pc';
+  if (app && (!vdlOk() || S.voiceDl === vdlFiles().length)) return '';
+  const t = app ? 'Use the voice without internet' : pc ? 'Panda Chinese on your phone' : 'Install the app';
+  const s = app ? `Download it once: about ${vdlMB()} MB` : pc ? 'Install it on your phone: it works like an app, even offline' : 'Opens like an app and works without internet';
+  return `<div class="qs-grp"><h3>${app ? 'Offline' : 'Install'}</h3><button type="button" class="qs-card" data-install>${pandaSvg('yay', 'qs-pd', '', true)}<span class="qs-l"><b>${t}</b><small>${s}</small></span><span class="qs-go" aria-hidden="true">›</span></button></div>`;
+}
 
 renderVoice();
 let rT; window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { if (view === 'writing') { const b = $('#w-box'); if (b && Math.abs(b.clientWidth - W.size) > 8 && W.mode !== 'free') mountWriter(); } }, 200); });
