@@ -1,6 +1,6 @@
 {
-  "name": "Panda Chinese",
-  "short_name": "Panda Chinese",
+  "name": "Panda Chinese TEST",
+  "short_name": "Panda TEST",
   "description": "Learn Chinese step by step with Contemporary Chinese.",
   "id": "./",
   "start_url": "./",
@@ -9,8 +9,23 @@
   "background_color": "#F3EEE3",
   "theme_color": "#F3EEE3",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
