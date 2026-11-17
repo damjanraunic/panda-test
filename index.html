@@ -7069,12 +7069,21 @@ function swTarget(dir) {
         const keep = document.createDocumentFragment(); while (main.firstChild) keep.appendChild(main.firstChild);
         LN.unit = n; lPath(); const s = $('section.lp-grid', main); main.textContent = ''; main.appendChild(keep); LN.unit = old; return s;
       },
-      commit: () => { LN.unit = n; S.lunit = n; save(); lPath(); } };
+      commit: () => { const oh = ($('#lp-hero') || {}).offsetHeight; LN.unit = n; S.lunit = n; save(); lPath(); swSmooth($('#lp-hero'), oh); } };
   }
   const sec = secOf(view); if (!sec || sec.pages.length < 2) return null;
   const p = sec.pages[sec.pages.findIndex(x => x[0] === view) + dir]; if (!p) return null;
   const old = view;
   return { show: () => { view = p[0]; VIEWS[view](); }, undo: () => { view = old; VIEWS[view](); }, commit: () => { SW.quiet = true; view = old; location.hash = p[0]; } };
+}
+// after a unit swipe the "Next lesson" card changes: it fades in and grows or shrinks smoothly to its new height, so nothing below jumps
+function swSmooth(el, oh) {
+  if (!el || !oh) return;
+  const nh = el.offsetHeight, s = el.style;
+  s.opacity = '0'; if (nh !== oh) { s.height = oh + 'px'; s.overflow = 'hidden'; }
+  void el.offsetHeight;
+  s.transition = 'height .28s ease, opacity .28s ease'; if (nh !== oh) s.height = nh + 'px'; s.opacity = '1';
+  setTimeout(() => { s.transition = ''; s.height = ''; s.overflow = ''; s.opacity = ''; }, 320);
 }
 const swPos = (el, x, ms) => { el.style.transition = ms ? `transform ${ms}ms cubic-bezier(.2,.7,.2,1)` : 'none'; el.style.transform = x ? `translateX(${x}px)` : ''; };
 function swStart(dir) {
