@@ -847,6 +847,9 @@ details.howto>summary,details.more>summary,.ln-ctx>summary,.msg-more summary,.pa
 .qs-sw::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:var(--edge);transition:transform .25s cubic-bezier(.3,1.4,.5,1),background .2s}
 .qs-row[aria-checked="true"] .qs-sw{background:var(--pri);border-color:var(--pri)}
 .qs-row[aria-checked="true"] .qs-sw::after{transform:translateX(22px);background:var(--onpri)}
+/* while audio plays, its button says Stop (a tap stops it) */
+.btn.playing>span{display:none}.btn.playing::after{content:'Stop';margin-left:6px}
+[data-say].playing:not(.btn){outline:2px solid var(--red);outline-offset:2px;border-radius:var(--r)}
 .qs-card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;margin:0 0 6px;background:var(--surface);color:var(--ink);border:1.5px solid var(--line-2);border-radius:var(--r);cursor:pointer;font:inherit}
 .qs-card:hover{border-color:var(--ink)}.qs-card .qs-pd{width:40px;height:40px;flex:none}.qs-card .qs-l{flex:1;display:flex;flex-direction:column;gap:2px}.qs-card small{color:var(--muted);font-size:13px}.qs-card .qs-go{font-size:24px;color:var(--muted);line-height:1}
 [data-style="cute"] .qs-card{border-width:2px;background:var(--card)}
@@ -3442,12 +3445,12 @@ const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch
 // "sess"   = an exercise is running: the page tabs hide, and on phones the tab bar too.
 // "lesson" = a Learn level: full screen, with the action bar fixed at the bottom.
 const isPhone = () => matchMedia('(max-width:760px)').matches;
-function setFocus(on) { document.body.classList.toggle('sess', !!on); }
+function setFocus(on) { if (document.body.classList.contains('sess') !== !!on && typeof stopAudio === 'function') stopAudio(); document.body.classList.toggle('sess', !!on); }
 function setLesson(on) {
   const b = document.body, was = b.classList.contains('lesson');
   b.classList.toggle('lesson', !!on);
   if (on && !was) { main.classList.remove('enter', 'enter-l'); void main.offsetWidth; main.classList.add('enter-l'); }
-  if (!on && was) main.classList.remove('enter-l');
+  if (!on && was) { main.classList.remove('enter-l'); stopAudio(); }
 }
 // "How it works" never opens by itself: it is behind the "?" next to the title. Until you open it once on a page, that "?" is marked (S.how[key] = 1 after the first time).
 const HOWS = {};
@@ -3656,9 +3659,25 @@ function stopAudio() {
   if (REC.src) { try { REC.src.stop(); } catch (e) { /* ignore */ } REC.src = null; }
   if (hasSpeech) { try { speechSynthesis.cancel(); } catch (e) { /* ignore */ } }
   if (seqBtn) { seqBtn.classList.remove('playing'); seqBtn = null; }
+  AUD.on = false;
 }
-function speak(text, spk) { stopAudio(); sayOne(text, seqTok, spk); }
+function speak(text, spk) {
+  stopAudio(); const tok = seqTok;
+  const b = AUD.btn0; AUD.btn0 = null; AUD.on = true;
+  if (b) { seqBtn = b; b.classList.add('playing'); }
+  sayOne(text, tok, spk).then(() => { if (tok !== seqTok) return; AUD.on = false; if (b) { b.classList.remove('playing'); if (seqBtn === b) seqBtn = null; } });
+}
 let seqTok = 0, seqBtn = null;
+/* ----- audio buttons: a tap while something is playing only stops it (the same button or another one);
+   the next tap plays. Audio also stops when a test, exercise, lesson or window closes, and when the app goes to the background. ----- */
+const AUD = { on: false, btn0: null };
+const AUD_BTN = '[data-say],[data-sayseq],[data-playdlg],[data-mkplay],[data-mkplaysec],[data-lplay],[data-voicetest],.say,.btn.play';
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest(AUD_BTN); if (!b || b.disabled) return;
+  if (AUD.on) { e.preventDefault(); e.stopImmediatePropagation(); stopAudio(); return; }
+  AUD.btn0 = b; setTimeout(() => { AUD.btn0 = null; }, 0);
+}, true);
+document.addEventListener('visibilitychange', () => { if (document.hidden) stopAudio(); });
 
 /* ----- sound effects: tiny sounds made in the browser (Web Audio), no files. Quieter than the Chinese voice and never stop it. ----- */
 const sfxOn = () => !(S.settings && S.settings.sfx === false);
@@ -3790,11 +3809,12 @@ const splitSent = t => (String(t).match(/[^。！？!?]+[。！？!?]?/g) || [t]
 function playSeq(parts, btn) {
   stopAudio(); const tok = seqTok; const segs = [];
   parts.forEach(p => { if (p.whole) { segs.push({ t: p.t, gap: p.gap, spk: p.spk }); return; } const ss = splitSent(p.t); ss.forEach((s, k) => segs.push({ t: s, gap: k === ss.length - 1 ? p.gap : 250 })); });
+  btn = btn || AUD.btn0; AUD.btn0 = null; AUD.on = true;
   seqBtn = btn || null; if (btn) btn.classList.add('playing');
   let i = 0;
   const next = () => {
     if (tok !== seqTok) return;
-    if (i >= segs.length) { if (btn) btn.classList.remove('playing'); if (seqBtn === btn) seqBtn = null; return; }
+    if (i >= segs.length) { AUD.on = false; if (btn) btn.classList.remove('playing'); if (seqBtn === btn) seqBtn = null; return; }
     const s = segs[i++];
     sayOne(s.t, tok, s.spk).then(() => setTimeout(next, s.gap));
   };
@@ -7035,7 +7055,7 @@ function wmPlay() {
   setTimeout(next, 200);
 }
 function closeModal() {
-  const m = $('#modal'), sp = !!$('.sp-box', m); wmTok++; m.hidden = true; m.innerHTML = ''; m.classList.remove('sheet'); MODAL_W = []; document.body.classList.remove('modal-open');
+  const m = $('#modal'), sp = !!$('.sp-box', m); wmTok++; if (!m.hidden) stopAudio(); m.hidden = true; m.innerHTML = ''; m.classList.remove('sheet'); MODAL_W = []; document.body.classList.remove('modal-open');
   if (sp) { S.styleAsked = true; save(); const a = SP.after; SP.after = null; if (a) { setTimeout(a, 120); return; } }
   if (TUT_PENDING && !TUT.on) { TUT_PENDING = false; setTimeout(tutStart, 300); }
   else if (PWA.pending && !TUT.on) pwaMaybe();
