@@ -1246,7 +1246,30 @@ body.lesson main.enter-l{animation:up .4s cubic-bezier(.2,.8,.2,1)}
 .lp-hi{min-width:0}
 @media (max-width:760px){
   .lp-top h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* phones: 你好 on top, the name smaller underneath, so it fits next to the buttons */
+  .lp-top h1{line-height:1.05}
+  .lp-top .lp-c{display:none}
+  .lp-top .lp-nm{display:block;font-size:15px;font-weight:600;letter-spacing:0;line-height:1.25;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+  /* Quick challenge: the ? stays at the top right, like on the other pages */
+  .qc-hero .view-title{position:relative;padding-right:44px;flex-wrap:nowrap}
+  .qc-hero .view-title .how-btn{position:absolute;right:0;top:50%;transform:translateY(-50%)}
 }
+@media (max-width:420px){.qc-hero .view-title{font-size:24px}[data-style="cute"] .qc-hero .view-title{font-size:22px}.qc-hero{gap:14px}}
+.cap .nw{white-space:nowrap}
+/* phones (review 17 Nov evening): no broken words under the level tiles, example sentences in one line each, the name before the streak */
+@media (max-width:420px){
+  .tl .tl-s{overflow-wrap:normal!important;word-break:normal!important}
+  [data-style="cute"] .tl .tl-s{font-size:10px;letter-spacing:-.2px}
+  .lp-tr .streak{display:none}
+  .ln-exr{grid-template-columns:1fr auto;grid-template-areas:"h b" "p b" "e e"}
+}
+@media (max-width:380px){.tl-s{font-size:10px;letter-spacing:-.2px}}
+/* a swipe to another unit: the levels slide in from that side */
+.sw-in-r{animation:swInR .28s ease-out}.sw-in-l{animation:swInL .28s ease-out}
+@keyframes swInR{from{transform:translateX(36px);opacity:.2}to{transform:none;opacity:1}}
+@keyframes swInL{from{transform:translateX(-36px);opacity:.2}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.sw-in-r,.sw-in-l{animation:none}}
+
 /* word list on phones: one word per row (character, pinyin over English), no sideways scrolling */
 @media (max-width:600px){
   table.wl,.wl tbody{display:block}
@@ -4971,6 +4994,15 @@ function pandaInner(mood, seal = true) {
 // The panda next to the question: its face follows how the quiz is going and what kind of question it is, and it does not repeat itself.
 // Start: thinking. One wrong: encouraging. Two or more wrong in a row: determined or a little worried, never sad.
 // Right after a run of mistakes: relieved (a heart). Three right in a row: happy or a wink; five, or 90% after six: sparkles. Listening: headphones.
+// phones: the name under 你好 gets smaller until it fits (down to 11 px, then "…")
+function lpFitName() {
+  const e = $('.lp-top .lp-nm'); if (!e) return;
+  e.style.fontSize = '';
+  if (getComputedStyle(e).display !== 'block') return;
+  let f = parseFloat(getComputedStyle(e).fontSize);
+  while (e.scrollWidth > e.clientWidth + 1 && f > 11) { f -= 1; e.style.fontSize = f + 'px'; }
+}
+window.addEventListener('resize', () => { if (view === 'learn') lpFitName(); });
 function lMoodPick(q) {
   const h = LN.hist || [], n = h.length;
   let rw = 0; while (rw < n && h[n - 1 - rw] === false) rw++;
@@ -6537,12 +6569,12 @@ function lPath() {
     const fr = LN.justDone === lv.id && st ? ' fresh' : '', nf = LN.justDone && cls === 'next' ? ' nfresh' : '';
     return `<button type="button" class="tl ${cls}${lv.zi ? ' zi' : ''}${ud}${fr}${nf}" style="animation-delay:${k * 22}ms;${pos}" data-lopen="${lv.id}" aria-label="Level ${k + 1}: ${esc(lv.title)}${st ? `, done, ${stars} of 3 stamps` : lv === h ? ', next up' : ''}">${cute && cls === 'next' ? `<span class="tl-pd" aria-hidden="true">${pandaSvg('yay', '', '', true)}</span>` : ''}<span class="hzf" aria-hidden="true">${esc(lv.icon)}</span><b>${esc(lv.title)}</b><small>${st ? st3(stars) + 'Done' : lv === h ? 'Next up' : lv.zi ? 'Characters' : lv.checkpoint ? 'Checkpoint' : 'New'}</small><i class="tl-s" aria-hidden="true">${esc(lvShort(lv))}</i></button>`;
   }).join('');
-  main.innerHTML = `<div class="lp-top"><div class="lp-hi"><div class="cap">Contemporary Chinese 1</div><h1><span class="hzf">你好</span>${n ? `, ${esc(n)}` : ''}</h1></div>
+  main.innerHTML = `<div class="lp-top"><div class="lp-hi"><div class="cap">Contemporary Chinese 1</div><h1><span class="hzf">你好</span>${n ? `<span class="lp-c">, </span><span class="lp-nm">${esc(n)}</span>` : ''}</h1></div>
       <div class="lp-tr">${streakHtml()}${unitMenu('l', `Unit ${u}`, us.map(x => { const ls = LEVELS.filter(l => l.unit === x), dn = ls.filter(l => prog[l.id]).length; return { label: `Unit ${x}`, sub: `${esc(LUNITS[x] || '')} · ${dn}/${ls.length}`, on: x === u, attrs: `data-lunit="${x}"` }; }), { right: true })}${msgBtnHtml('only-m')}<button type="button" class="ico only-m" data-search aria-label="Search" title="Search">${IC.search}</button><button type="button" class="ico line only-m" data-qs aria-label="Settings" title="Settings">${IC.set}</button></div></div>
     <div class="lp-cols"><div class="lp-a">
       ${!n && !S.nameAsked ? `<div class="nm-card"><label for="nm-learn"><b>What should the panda call you?</b> <span class="muted small">It’s only saved in this browser.</span></label><div class="nm-row">${nameInput('nm-learn')}<button type="button" class="btn primary sm" data-nmsave="nm-learn">Save</button><button type="button" class="link" data-nmskip>No thanks</button></div></div>` : ''}
       <section class="hero" id="lp-hero" aria-label="Next lesson"><span class="bigz hzf wipe" aria-hidden="true">${esc(h.icon)}</span><div class="hero-tx">
-        <div class="cap red">${cap}</div><div class="hero-t">${esc(h.title)}</div>
+        <div class="cap red">${String(cap).split(' · ').map(s => `<span class="nw">${s}</span>`).join(' · ')}</div><div class="hero-t">${esc(h.title)}</div>
         <div class="hero-s">Unit ${h.unit}: ${esc(LUNITS[h.unit] || '')}. About ${lvMins(h)} minutes.</div>
         <button type="button" class="btn primary big" data-lstart="${h.id}">${prog[h.id] ? 'Play again' : beginWord()}</button></div></section>
       ${howto('learn', `<p>Each level has two parts. First you <b>learn</b>: a few cards show new sounds, characters or a rule, with audio and stroke animations. Then a short <b>quiz</b> checks what you just learned, plus a couple of questions from earlier levels so you don’t forget. Mistakes come back at the end of the quiz.</p>
@@ -6561,6 +6593,7 @@ function lPath() {
       <section class="box run-box"><div class="cap">Panda Run</div><p class="box-t">${top ? `Best score ${b[top.id]}` : 'Run through the right wall'}</p><p class="box-s">${top ? esc(top.label) : 'A game with your characters.'}</p><button type="button" class="btn" data-railrun>Play</button></section>
     </div></div>`;
   if (cute) trackWatch();
+  lpFitName();
   const hb = $('#lp-hero .bigz'); if (hb && HERO_INK !== h.id + styleOf()) { HERO_INK = h.id + styleOf(); hb.classList.remove('wipe'); inkWrite(hb, { delay: 350 }); }
   LN.justDone = null; countUp();
 }
@@ -7012,6 +7045,33 @@ const PAGE_INFO = {
   test: ['测', 'Harder, exam-style questions'], mock: ['模', '50 questions like the midterm']
 };
 const secOf = v => SECTIONS.find(s => s.pages.some(p => p[0] === v));
+/* ----- phones: swipe left or right on a page to go to the next or previous page of its section (Quick challenge ↔ Grammar …);
+   on Learn, over the levels, to the next or previous unit. Never during a lesson, exercise, test or game, nor on things that scroll sideways or are drawn on. ----- */
+const SW = { on: false, x: 0, y: 0, t: 0, el: null };
+function swOk(t) {
+  const b = document.body.classList;
+  if (b.contains('lesson') || b.contains('sess') || TUT.on || !$('#modal').hidden || !t.closest('main')) return false;
+  if (t.closest('input,textarea,select,canvas,svg.hw-svg,[data-noswipe]')) return false;
+  for (let e = t; e && e !== document.body; e = e.parentElement) if (e.scrollWidth > e.clientWidth + 4 && /auto|scroll/.test(getComputedStyle(e).overflowX)) return false;
+  return true;
+}
+function swGo(dir) {
+  if (view === 'learn') {
+    if (!SW.el.closest('#lp-grid')) return;
+    const us = lUnits(), n = us[us.indexOf(lCurUnit()) + dir]; if (n === undefined) return;
+    lJump(n); const g = $('#lp-grid'); if (g) g.classList.add(dir > 0 ? 'sw-in-r' : 'sw-in-l');
+    return;
+  }
+  const sec = secOf(view); if (!sec || sec.pages.length < 2) return;
+  const p = sec.pages[sec.pages.findIndex(x => x[0] === view) + dir]; if (p) location.hash = p[0];
+}
+document.addEventListener('touchstart', e => { const t = e.touches[0]; SW.on = e.touches.length === 1 && swOk(e.target); SW.x = t.clientX; SW.y = t.clientY; SW.t = Date.now(); SW.el = e.target; }, { passive: true });
+document.addEventListener('touchend', e => {
+  if (!SW.on) return; SW.on = false;
+  const t = e.changedTouches[0], dx = t.clientX - SW.x, dy = t.clientY - SW.y;
+  if (Math.abs(dx) < 70 || Math.abs(dy) > Math.abs(dx) * 0.5 || Date.now() - SW.t > 700) return;
+  swGo(dx < 0 ? 1 : -1);
+}, { passive: true });
 const LASTPAGE = {};
 const COURSES = [['cc1', 'Contemporary Chinese 1'], ['hsk1', 'HSK 1 (coming soon)', true]];
 function courseSelect(id) {
