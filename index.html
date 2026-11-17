@@ -1267,6 +1267,7 @@ body.lesson main.enter-l{animation:up .4s cubic-bezier(.2,.8,.2,1)}
 /* swiping between pages and units (phones): the page follows the finger */
 html.sw-drag,html.sw-drag body{overflow-x:hidden}
 .sw-ghost{pointer-events:none;z-index:1}
+.sw-part{background:var(--paper);min-height:0!important}.sw-part>section{margin:0!important}
 .sw-ghost,.sw-ghost *,.sw-noanim *,.sw-noanim{animation:none!important}
 #main{touch-action:pan-y pinch-zoom}
 
@@ -7060,9 +7061,15 @@ function swOk(t) {
 // what a swipe in this direction would show: { show() renders it into main, undo() goes back, commit() keeps it }, or null
 function swTarget(dir) {
   if (view === 'learn') {
-    if (!SW.el.closest('#lp-grid')) return null;
+    // only the unit's own part moves (its title and levels); the rest of the page is updated when the swipe ends
+    if (!SW.el.closest('section.lp-grid')) return null;
     const us = lUnits(), old = lCurUnit(), n = us[us.indexOf(old) + dir]; if (n === undefined) return null;
-    return { show: () => { LN.unit = n; lPath(); }, undo: () => { LN.unit = old; lPath(); }, commit: () => { S.lunit = n; save(); } };
+    return { part: true,
+      build: () => {   // the other unit's part, made off-screen (the page itself stays as it is)
+        const keep = document.createDocumentFragment(); while (main.firstChild) keep.appendChild(main.firstChild);
+        LN.unit = n; lPath(); const s = $('section.lp-grid', main); main.textContent = ''; main.appendChild(keep); LN.unit = old; return s;
+      },
+      commit: () => { LN.unit = n; S.lunit = n; save(); lPath(); } };
   }
   const sec = secOf(view); if (!sec || sec.pages.length < 2) return null;
   const p = sec.pages[sec.pages.findIndex(x => x[0] === view) + dir]; if (!p) return null;
@@ -7074,7 +7081,19 @@ function swStart(dir) {
   SW.dir = dir; SW.W = main.getBoundingClientRect().width + 24;
   const tg = swTarget(dir);
   document.documentElement.classList.add('sw-drag');
-  if (!tg) { SW.st = 3; return; }   // nothing on that side: the page only gives a little
+  if (!tg) { SW.st = 3; SW.cur = view === 'learn' ? SW.el.closest('section.lp-grid') || main : main; return; }   // nothing on that side: it only gives a little
+  if (tg.part) {
+    main.classList.add('sw-noanim');
+    const cur = SW.el.closest('section.lp-grid'), r = cur.getBoundingClientRect(), nx = tg.build();
+    nx.querySelectorAll('[id]').forEach(x => x.removeAttribute('id'));
+    const g = document.createElement(main.tagName); g.className = main.className + ' sw-ghost sw-part';
+    Object.assign(g.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', margin: '0', padding: '0' });
+    g.appendChild(nx); document.body.appendChild(g);
+    Object.assign(SW, { ghost: g, cur, W: r.width + 24, tg, st: 4 });
+    swPos(cur, SW.dx); swPos(g, SW.dir * SW.W + SW.dx);
+    return;
+  }
+  SW.cur = main;
   // the current page moves into a holder that follows the finger; the page itself already shows the next one.
   // (The page's own elements are moved, not copied: the finger's touch belongs to one of them, and a removed
   // element would stop getting the rest of the swipe.)
@@ -7089,7 +7108,14 @@ function swStart(dir) {
 function swEnd(cancelled) {
   const st = SW.st; SW.st = 0; if (st < 2) return;
   const g = SW.ghost, done = () => { document.documentElement.classList.remove('sw-drag'); SW.anim = false; };
-  if (st === 3) { swPos(main, 0, 220); setTimeout(() => { main.style.transition = ''; done(); }, 240); return; }
+  if (st === 3) { const c = SW.cur; swPos(c, 0, 220); setTimeout(() => { c.style.transition = ''; done(); }, 240); return; }
+  if (st === 4) {
+    const c = SW.cur, ok = !cancelled && (Math.abs(SW.dx) > SW.W * 0.18 || (Math.abs(SW.vx) > 0.35 && Math.abs(SW.dx) > 24 && Math.sign(SW.vx) === -SW.dir)) && Math.sign(SW.dx) === -SW.dir;
+    SW.anim = true;
+    swPos(c, ok ? -SW.dir * SW.W : 0, 230); swPos(g, ok ? 0 : SW.dir * SW.W, 230);
+    setTimeout(() => { if (ok) { SW.tg.commit(); buzz(8); } else { swPos(c, 0); c.style.transition = ''; } g.remove(); SW.ghost = null; done(); }, 250);
+    return;
+  }
   const go = !cancelled && (Math.abs(SW.dx) > SW.W * 0.18 || (Math.abs(SW.vx) > 0.35 && Math.abs(SW.dx) > 24 && Math.sign(SW.vx) === -SW.dir)) && Math.sign(SW.dx) === -SW.dir;
   SW.anim = true;
   if (go) {
@@ -7116,7 +7142,8 @@ document.addEventListener('touchmove', e => {
   SW.vx = (t.clientX - SW.lx) / Math.max(1, now - SW.lt); SW.lx = t.clientX; SW.lt = now;
   // only towards the side it started; the other way it stops at the start
   SW.dx = SW.dir > 0 ? Math.min(0, dx) : Math.max(0, dx);
-  if (SW.st === 3) { swPos(main, SW.dx * 0.25); return; }
+  if (SW.st === 3) { swPos(SW.cur, SW.dx * 0.25); return; }
+  if (SW.st === 4) { swPos(SW.cur, SW.dx); swPos(SW.ghost, SW.dir * SW.W + SW.dx); return; }
   swPos(SW.ghost, SW.dx); swPos(main, SW.dir * SW.W + SW.dx);
 }, { passive: false });
 document.addEventListener('touchend', () => swEnd(false), { passive: true });
