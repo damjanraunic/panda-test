@@ -39,8 +39,13 @@ async function checkNew(url, key) {
     const r = await fetch(url, { cache: 'no-cache' });
     if (!r.ok) return tell({ st: 'none' });
     if (old && sig(old) && sig(old) === sig(r)) return tell({ st: 'none' });
-    await tell({ st: 'downloading' });
-    const body = await r.arrayBuffer();
+    await tell({ st: 'downloading', p: 0 });
+    // read it piece by piece, so the page can show how far it is
+    // (the size of the saved version is the best guess: the server may send the page compressed)
+    const total = (old ? (await old.clone().blob()).size : 0) || +r.headers.get('content-length') || 0, parts = []; let got = 0, last = 0;
+    const rd = r.body && r.body.getReader ? r.body.getReader() : null;
+    if (rd) for (;;) { const { done, value } = await rd.read(); if (done) break; parts.push(value); got += value.length; const pc = total ? Math.floor(got * 100 / total) : 0; if (pc >= last + 5) { last = pc; tell({ st: 'downloading', p: Math.min(99, pc) }); } }
+    const body = rd ? new Blob(parts) : await r.blob();
     await c.put(key, new Response(body, { status: 200, headers: r.headers }));
     await tell({ st: 'ready' });
   } catch (e) { tell({ st: 'offline' }); }

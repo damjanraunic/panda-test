@@ -850,10 +850,30 @@ details.howto>summary,details.more>summary,.ln-ctx>summary,.msg-more summary,.pa
 /* while audio plays, its button says Stop (a tap stops it) */
 .btn.playing>span{display:none}.btn.playing::after{content:'Stop';margin-left:6px}
 [data-say].playing:not(.btn){outline:2px solid var(--red);outline-offset:2px;border-radius:var(--r)}
+/* Settings (settings.js) */
+.st-me{display:flex;align-items:center;gap:14px;margin:4px 0 14px}
+.st-av{width:64px;height:64px;flex:none;border-radius:50%;background:var(--paper2);padding:6px;box-sizing:border-box}
+[data-style="cute"] .st-av{background:var(--pri-soft)}
+.st-me-t{display:flex;flex-direction:column;gap:2px;min-width:0}.st-me-t small{color:var(--muted);font-size:13px}
+.st-name{background:none;border:0;padding:0;font:700 20px/1.2 var(--ui);color:var(--ink);text-align:left;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st-pen{font-size:15px;color:var(--muted);font-weight:400}
+.st-edit{display:flex;gap:8px;align-items:center}.st-edit .in{max-width:200px}
+.st-cats{display:flex;flex-direction:column;gap:0}
+.st-cat .st-ci{width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--paper2);font-size:18px;color:var(--ink)}
+[data-style="cute"] .st-cat .st-ci{background:var(--pri-soft);color:var(--pri-ink)}
+.st-n{background:var(--red);color:var(--onred);border-radius:9px;min-width:18px;height:18px;font:700 11px/18px var(--ui);text-align:center;padding:0 5px}
+.st-back{display:inline-block;margin:0 0 6px;font-weight:600}
+.st-voice h2{display:none}
+.st-box .qs-more{grid-template-columns:1fr 1fr}
+@media (max-width:760px){
+  .modal.st-full{padding:0;place-items:stretch}
+  .modal.st-full .modal-box{width:100%;max-width:none;height:100%;max-height:none;border-radius:0!important;border-width:0!important;overflow:auto;animation:fade .2s;padding-top:calc(16px + env(safe-area-inset-top,0px))}
+}
+@media (min-width:761px){.modal.st-full .modal-box{max-width:560px;max-height:min(88vh,860px);overflow:auto}}
 /* updating / loading */
 .upd-ov,#boot{position:fixed;inset:0;z-index:2000;background:var(--paper);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px;font-family:var(--ui);transition:opacity .3s}
 .upd-ov.out,#boot.out{opacity:0}
-.upd-ov .upd-panda{width:120px;height:120px}.upd-ov b{font-size:19px}.upd-ov small{color:var(--muted);max-width:30ch}
+.upd-ov .upd-panda{width:120px;height:120px}.upd-bar{width:min(260px,70vw);height:8px;border-radius:4px;background:var(--line);overflow:hidden}.upd-bar i{display:block;height:100%;width:3%;background:var(--red);transition:width .3s}[data-style="cute"] .upd-bar i{background:var(--pri)}.upd-skip{margin-top:8px}.st-box select{font-family:var(--ui)}.upd-ov b{font-size:19px}.upd-ov small{color:var(--muted);max-width:30ch}
 .upd-spin,#boot i{width:28px;height:28px;border-radius:50%;border:3px solid var(--line-2);border-top-color:var(--red);animation:updSpin .9s linear infinite}
 @keyframes updSpin{to{transform:rotate(360deg)}}
 #boot{animation:bootIn .2s .35s both}#boot b{font-size:17px}
@@ -4927,7 +4947,8 @@ function applyBackup() {
   closeModal(); toast('Backup loaded.'); go();
 }
 
-function openSettings() {
+// (old Settings window, replaced by settings.js; kept only until the new one has been used for a while)
+function openSettingsOld() {
   const m = $('#modal'); m.classList.remove('sheet');
   m.innerHTML = `<div class="modal-box help-box set-box" role="dialog" aria-modal="true" aria-label="Settings">
     <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
@@ -7070,7 +7091,7 @@ function wmPlay() {
   setTimeout(next, 200);
 }
 function closeModal() {
-  const m = $('#modal'), sp = !!$('.sp-box', m); wmTok++; if (!m.hidden) stopAudio(); m.hidden = true; m.innerHTML = ''; m.classList.remove('sheet'); MODAL_W = []; document.body.classList.remove('modal-open');
+  const m = $('#modal'), sp = !!$('.sp-box', m); wmTok++; if (!m.hidden) stopAudio(); m.hidden = true; m.innerHTML = ''; m.classList.remove('sheet', 'st-full'); MODAL_W = []; document.body.classList.remove('modal-open');
   if (sp) { S.styleAsked = true; save(); const a = SP.after; SP.after = null; if (a) { setTimeout(a, 120); return; } }
   if (TUT_PENDING && !TUT.on) { TUT_PENDING = false; setTimeout(tutStart, 300); }
   else if (PWA.pending && !TUT.on) pwaMaybe();
@@ -7362,8 +7383,8 @@ const tutTab = id => vis(`.tab[data-sec="${id}"]`);
 // tutorial texts: short and simple, a list when a step shows several things
 const tutList = (...xs) => `<ul class="tut-ul">${xs.map(x => `<li>${x}</li>`).join('')}</ul>`;
 const TUT_SECS = tutList('<b>Learn</b>: lessons, step by step', '<b>Practice</b>: revise what you learned', '<b>Words</b>: words and characters', '<b>Tests</b>: get ready for the exam', '<b>Games</b>: play and learn');
-const tutSet = () => { if ($('#modal').hidden || !$('#modal .set-box')) openSettings(); };
-const tutQuick = () => { if ($('#modal').hidden || !$('#modal .qs-box')) openQuick(); };
+const tutSet = () => { if ($('#modal').hidden || !$('#modal .bk-panel')) openSettings('progress'); };
+const tutQuick = () => { if ($('#modal').hidden || !$('#modal .st-box:not(.st-sub)')) openSettings(); };
 function tutSteps() {
   const mob = tutMob(), rec = lRec(), fresh = !rec || LEVELS.indexOf(rec) === 0;
   const inSec = id => () => { const x = secOf(view); return !!x && x.id === id; };
@@ -8933,20 +8954,8 @@ function quickSettingsHtml() {
     <div class="qs-line"><b>Style</b>${styleSeg()}</div>
     <div class="qs-line"><b>Colours</b>${themeSeg()}</div></div>`;
 }
-function openQuick() {
-  const m = $('#modal'), n = msgUnread();
-  m.innerHTML = `<div class="modal-box help-box qs-box" role="dialog" aria-modal="true" aria-label="Settings">
-    <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
-    <h1 class="view-title">Settings</h1>${quickSettingsHtml()}
-    ${qsInstallHtml()}
-    <div class="qs-grp"><h3>More</h3><div class="qs-more">
-      <button type="button" class="btn" data-favs>★ Favourites</button><button type="button" class="btn" data-help>Info</button>
-      <button type="button" class="btn" data-tutorial>Tutorial</button>${msgList().length ? `<button type="button" class="btn" data-msgs>Messages${n ? `<span class="n">${n}</span>` : ''}</button>` : ''}
-      <button type="button" class="btn" data-report>Report a mistake</button><button type="button" class="btn" data-settings>All settings</button></div>
-      <p class="small muted">All settings: your name, the course, the voice, backup and reset.</p></div>
-    <p class="qs-ver"><button type="button" class="link" data-notes>Version ${APP_VERSION} beta: what’s new</button><button type="button" class="link" data-about>About</button></p></div>`;
-  m.classList.add('sheet'); m.hidden = false; document.body.classList.add('modal-open');
-}
+// the settings button: Settings (see settings.js)
+function openQuick() { openSettings(); }
 // a button under "More" first closes the sheet; then its own handler opens what it should
 document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.qs-more button, .qs-ver button')) closeModal(); }, true);
 function qsUpdate() { $$('[data-qset]').forEach(b => { const k = b.dataset.qset, on = k === 'listen' ? !noListenOn() : k === 'sfx' ? sfxOn() : k === 'tc' ? !!S.settings.toneCol : !!S.settings[k]; b.setAttribute('aria-checked', String(on)); }); }
@@ -9135,17 +9144,24 @@ function updOverlay(on) {
   if (!on) { if (o) { o.classList.add('out'); setTimeout(() => o.remove(), 300); } return; }
   if (o) return;
   o = document.createElement('div'); o.id = 'upd-ov'; o.className = 'upd-ov'; o.setAttribute('role', 'status');
-  o.innerHTML = `${pandaSvg('happy', 'upd-panda bob', '', true)}<b>Updating Panda Chinese…</b><span class="upd-spin" aria-hidden="true"></span><small>A new version is downloading. This takes a few seconds.</small>`;
+  o.innerHTML = `${pandaSvg('happy', 'upd-panda bob', '', true)}<b>Updating Panda Chinese… <span id="upd-p"></span></b><span class="upd-bar" aria-hidden="true"><i id="upd-fill"></i></span><small>A new version is downloading. This takes a few seconds.</small><button type="button" class="btn upd-skip" data-updskip hidden>Open the app now</button>`;
   document.body.appendChild(o);
+  // after 3 s: no need to wait, the download goes on in the background
+  setTimeout(() => { const k = $('#upd-ov [data-updskip]'); if (k) k.hidden = false; }, 3000);
 }
+const UPD_BAR = '<p><b>Downloading the new version…</b> You can keep learning; it will be ready soon.</p><div class="vw-act"><button type="button" class="btn sm primary" data-vwok>OK</button></div>';
+function updSkip() { clearTimeout(PWA.updT); updOverlay(false); vwBar(UPD_BAR); }
+document.addEventListener('click', e => { if (e.target.closest('[data-updskip]')) updSkip(); });
 function updMsg(m) {
   if (!m || m.pc !== 'upd') return;
   if (m.st === 'downloading') {
+    if (m.p) { const t = $('#upd-p'), f = $('#upd-fill'); if (t) t.textContent = m.p + ' %'; if (f) f.style.width = m.p + '%'; }
+    if (PWA.updShown) return; PWA.updShown = true;
     if (Date.now() - T0 < UPD_WAIT) {
       updOverlay(true);
       clearTimeout(PWA.updT);
-      PWA.updT = setTimeout(() => { if (!$('#upd-ov')) return; updOverlay(false); vwBar('<p><b>Downloading the new version…</b> You can keep learning; it will be ready soon.</p><div class="vw-act"><button type="button" class="btn sm primary" data-vwok>OK</button></div>'); }, UPD_WAIT - (Date.now() - T0));
-    } else vwBar('<p><b>Downloading the new version…</b> You can keep learning; it will be ready soon.</p><div class="vw-act"><button type="button" class="btn sm primary" data-vwok>OK</button></div>');
+      PWA.updT = setTimeout(() => { if ($('#upd-ov')) updSkip(); }, UPD_WAIT - (Date.now() - T0));
+    } else vwBar(UPD_BAR);
   }
   if (m.st === 'ready') {
     clearTimeout(PWA.updT);
@@ -9178,6 +9194,82 @@ document.addEventListener('touchstart', e => {
 // the "Loading…" panda in the page (for a slow first start) goes away once the app is ready
 setTimeout(() => { const b = document.getElementById('boot'); if (b) { b.classList.add('out'); setTimeout(() => b.remove(), 300); } }, 0);
 
+/* ----- Settings: one place, the same on phones and computers.
+   On top: the panda and your name, then the settings used most, the install card and the categories.
+   A category opens its own page (← back to Settings). Phones: full screen. ----- */
+const ST_PAGES = [
+  ['learning', '学', 'Learning', 'Tones, tone colours, character size, course'],
+  ['voice', '声', 'Voice and sound', 'Recorded voice, speed, offline, sound effects'],
+  ['look', '色', 'Look', 'Style and colours'],
+  ['progress', '存', 'Your progress and favourites', 'Favourites, backup, start over'],
+  ['help', '问', 'Help and info', 'Info, tutorial, messages, report a mistake']
+];
+function stMain() {
+  const n = userName(), done = Object.keys(S.learn || {}).length, course = (COURSES.find(c => c[0] === (S.settings.course || 'cc1')) || COURSES[0])[1];
+  const unread = msgUnread(), rate = (S.settings && S.settings.rate) || 0.6;
+  return `<div class="st-me">${pandaSvg('happy', 'st-av', '', true)}<div class="st-me-t">
+      <button type="button" class="st-name" data-stname aria-label="Change your name">${n ? esc(n) : 'Add your name'} <span class="st-pen" aria-hidden="true">✎</span></button>
+      <small>${esc(course)} · ${done} level${done === 1 ? '' : 's'} done</small></div></div>
+    <div class="qs-grp"><h3>Most used</h3>
+      ${qsw('listen', !noListenOn(), 'Listening exercises', 'Questions where you listen')}
+      ${qsw('pinyin', !!S.settings.pinyin, 'Pinyin under characters', 'In exercises, tests and grammar')}
+      <div class="qs-line"><b>Voice speed</b><div class="seg" role="group" aria-label="Voice speed">${VOICE_RATES.map(([l, r]) => `<button type="button" aria-pressed="${rate === r}" data-rate="${r}">${l}</button>`).join('')}</div></div>
+      <div class="qs-line"><b>Style</b>${styleSeg()}</div>
+      <div class="qs-line"><b>Colours</b>${themeSeg()}</div></div>
+    ${qsInstallHtml()}
+    <div class="qs-grp"><h3>More settings</h3><div class="st-cats">${ST_PAGES.map(([k, hz, l, sub]) => `<button type="button" class="qs-card st-cat" data-stpage="${k}"><span class="st-ci hzf" aria-hidden="true">${hz}</span><span class="qs-l"><b>${l}</b><small>${sub}</small></span>${k === 'help' && unread ? `<span class="st-n">${unread}</span>` : ''}<span class="qs-go" aria-hidden="true">›</span></button>`).join('')}</div></div>
+    <p class="qs-ver"><button type="button" class="link" data-notes>Version ${APP_VERSION} beta: what’s new</button><button type="button" class="link" data-about>About</button></p>`;
+}
+function stPage(k) {
+  if (k === 'learning') return `<div class="qs-grp">
+      ${qsw('strict', !!S.settings.strict, 'Tones must be right', 'A wrong tone counts as a mistake')}
+      ${qsw('tc', !!S.settings.toneCol, 'Tone colours', 'Pinyin in one colour per tone')}
+      <div class="qs-line"><b>Character size</b>${zhSeg()}</div>
+      <div class="qs-line"><b>Course</b>${courseSelect('set')}</div>
+      <p class="small muted">HSK is coming later.</p></div>`;
+  if (k === 'voice') return `<div class="qs-grp st-voice">${voiceSettingsHtml().replace('<h2>Voice</h2>', '')}</div>
+    <div class="qs-grp"><h3>Sound</h3>${qsw('sfx', sfxOn(), 'Sound effects', 'Ding for right, bonk for wrong')}</div>`;
+  if (k === 'look') return `<div class="qs-grp"><div class="qs-line"><b>Style</b>${styleSeg()}</div><div class="qs-line"><b>Colours</b>${themeSeg()}</div><div class="qs-line"><b>Character size</b>${zhSeg()}</div></div>`;
+  if (k === 'progress') return `<div class="qs-grp"><h3>Favourites</h3><div class="qs-more"><button type="button" class="btn" data-favs>★ Your favourites</button></div></div>
+    <div class="qs-grp"><h3>Backup</h3>
+    <p class="small">Your progress and favourites are saved <b>in this browser, on this device</b>. A backup lets you keep them safe or move them to another device.</p>
+    <div class="bk-panel">
+      <div class="card-actions"><button type="button" class="btn primary" data-bksave>Save backup file</button><button type="button" class="btn" data-bkload>Load backup file</button><input type="file" id="bk-file" accept=".json,application/json" hidden></div>
+      <div id="bk-msg" aria-live="polite"></div>
+      <div id="bk-code" hidden><p class="small">Saving a file isn’t possible here, so the app shows a <b>backup code</b> instead. Copy all of it and keep it in a note or an email to yourself.</p><textarea class="in bk-ta" readonly rows="3"></textarea></div>
+      <details class="more"><summary>Restore from a backup code</summary><textarea class="in bk-ta" id="bk-paste" rows="3" placeholder="Paste your backup code here"></textarea><button type="button" class="btn sm" data-bkpaste>Load from code</button></details>
+    </div>
+    <details class="more"><summary>Learn more</summary><ul>
+      <li>Always open the app in the <b>same browser</b> on the same device. Your phone and your laptop each keep their own progress.</li>
+      <li><b>New device:</b> on the old one press <b>Save backup file</b>, send the file to yourself (for example by email), and on the new one press <b>Load backup file</b>.</li>
+      <li>Updates arrive by themselves, and your progress stays.</li>
+      <li>Your progress is lost if you clear your browser’s data or use a private (incognito) window. Safari deletes it if you don’t open the app for 7 days; installing the app (Home Screen) avoids this.</li>
+      <li>Nobody else can see your progress.</li></ul></details></div>
+    <div class="qs-grp"><h3>Start over</h3><p class="small muted">Deletes all your progress in this browser. You can’t undo it, so save a backup first.</p>
+    <div class="card-actions"><button type="button" class="btn danger-o" data-reset>Reset progress…</button></div></div>`;
+  const n = msgUnread();
+  return `<div class="qs-grp"><div class="qs-more">
+      <button type="button" class="btn" data-help>Info</button><button type="button" class="btn" data-tutorial>Tutorial</button>
+      ${msgList().length ? `<button type="button" class="btn" data-msgs>Messages${n ? `<span class="n">${n}</span>` : ''}</button>` : ''}<button type="button" class="btn" data-report>Report a mistake</button>
+      <button type="button" class="btn" data-notes>What’s new</button><button type="button" class="btn" data-about>About</button>
+      ${isStandalone() ? '' : '<button type="button" class="btn" data-install>Install the app</button>'}</div></div>`;
+}
+function openSettings(page) {
+  const m = $('#modal'), pg = ST_PAGES.find(p => p[0] === page);
+  m.innerHTML = `<div class="modal-box help-box qs-box set-box st-box${pg ? ' st-sub' : ''}" role="dialog" aria-modal="true" aria-label="${pg ? pg[2] : 'Settings'}">
+    <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
+    ${pg ? `<button type="button" class="link st-back" data-stpage="">← Settings</button><h1 class="view-title">${pg[2]}</h1>${stPage(pg[0])}` : `<h1 class="view-title">Settings</h1>${stMain()}`}</div>`;
+  m.classList.add('sheet', 'st-full'); m.hidden = false; document.body.classList.add('modal-open');
+  const box = $('.modal-box', m); if (box) box.scrollTop = 0;
+}
+document.addEventListener('click', e => {
+  const p = e.target.closest('[data-stpage]'); if (p) { openSettings(p.dataset.stpage); return; }
+  const nm = e.target.closest('[data-stname]');
+  if (nm) { nm.outerHTML = `<span class="st-edit">${nameInput('opt-name', 'Your name')}<button type="button" class="btn sm primary" data-stnameok>Done</button></span>`; const i = $('#opt-name'); if (i) { i.focus(); i.select(); } return; }
+  if (e.target.closest('[data-stnameok]')) { const i = $('#opt-name'); if (i) { setName(i.value); if (view === 'learn' && LN.phase === 'path') lPath(); } openSettings(); }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'opt-name' && e.target.closest('.st-box')) { e.preventDefault(); const ok = $('[data-stnameok]'); if (ok) ok.click(); } });
+
 renderVoice();
 let rT; window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { if (view === 'writing') { const b = $('#w-box'); if (b && Math.abs(b.clientWidth - W.size) > 8 && W.mode !== 'free') mountWriter(); } }, 200); });
 try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { applyTheme(); if (view === 'writing') renderWriting(); }); } catch (e) { /* old browser */ }
@@ -9190,7 +9282,8 @@ const nbMine = st => !!(st && st.lid === NB.lid);
 // a sub-page inside a tab (Games → Panda Run setup, a challenge, the result) is a step too: back returns to the tab's start page
 const NB_BACK = '[data-cmenu], [data-back-book], [data-back-gram], [data-wmenu], [data-favback], [data-t="quit"], [data-mkact="quit"], [data-qc="end"], [data-qc="menu"], [data-gm="menu"]';
 const nbSub = () => !document.body.classList.contains('lesson') && !!main.querySelector(NB_BACK);
-const nbLayers = () => { const b = document.body.classList; return (b.contains('lesson') || b.contains('sess') || nbSub() ? 1 : 0) + ((!$('#modal').hidden || !$('#msg-panel').hidden) ? 1 : 0); };
+// a page of Settings (Learning, Voice…) is one more step: back returns to Settings
+const nbLayers = () => { const b = document.body.classList; return (b.contains('lesson') || b.contains('sess') || nbSub() ? 1 : 0) + ((!$('#modal').hidden || !$('#msg-panel').hidden) ? 1 : 0) + (!$('#modal').hidden && $('#modal .st-sub') ? 1 : 0); };
 const nbLevel = () => (nbMine(history.state) && history.state.ov) || 0;
 function nbPush(from, to) { for (let k = from + 1; k <= to; k++) history.pushState({ lid: NB.lid, ov: k }, ''); }
 let nbT = 0;
@@ -9218,7 +9311,7 @@ window.addEventListener('popstate', e => {
   const lvl = st.ov || 0;
   let have = nbLayers();
   if (lvl < have) {
-    if (!$('#msg-panel').hidden) toggleMsgs(false); else if (!$('#modal').hidden) closeModal(); else nbSessExit();
+    if (!$('#msg-panel').hidden) toggleMsgs(false); else if (!$('#modal').hidden) { if ($('#modal .st-sub')) openSettings(); else closeModal(); } else nbSessExit();
     have = nbLayers();
     if (have > lvl) nbPush(lvl, have);   // it asks first (e.g. leaving the Mock exam) or could not close: the step comes back
     return;
@@ -9240,7 +9333,7 @@ function nbInit() {
     if (h0 && h0 !== '#learn' && h0 !== '#') history.pushState({ lid: NB.lid }, '', h0);
   } catch (e) { return; }
   const mo = new MutationObserver(nbSync);
-  mo.observe($('#modal'), { attributes: true, attributeFilter: ['hidden'] });
+  mo.observe($('#modal'), { attributes: true, attributeFilter: ['hidden'], childList: true });
   mo.observe($('#msg-panel'), { attributes: true, attributeFilter: ['hidden'] });
   mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   mo.observe(main, { childList: true });
