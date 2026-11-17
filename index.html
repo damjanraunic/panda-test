@@ -1264,11 +1264,11 @@ body.lesson main.enter-l{animation:up .4s cubic-bezier(.2,.8,.2,1)}
   .ln-exr{grid-template-columns:1fr auto;grid-template-areas:"h b" "p b" "e e"}
 }
 @media (max-width:380px){.tl-s{font-size:10px;letter-spacing:-.2px}}
-/* a swipe to another unit: the levels slide in from that side */
-.sw-in-r{animation:swInR .28s ease-out}.sw-in-l{animation:swInL .28s ease-out}
-@keyframes swInR{from{transform:translateX(36px);opacity:.2}to{transform:none;opacity:1}}
-@keyframes swInL{from{transform:translateX(-36px);opacity:.2}to{transform:none;opacity:1}}
-@media (prefers-reduced-motion:reduce){.sw-in-r,.sw-in-l{animation:none}}
+/* swiping between pages and units (phones): the page follows the finger */
+html.sw-drag,html.sw-drag body{overflow-x:hidden}
+.sw-ghost{pointer-events:none;z-index:1}
+.sw-ghost,.sw-ghost *,.sw-noanim *,.sw-noanim{animation:none!important}
+#main{touch-action:pan-y pinch-zoom}
 
 /* word list on phones: one word per row (character, pinyin over English), no sideways scrolling */
 @media (max-width:600px){
@@ -7047,7 +7047,9 @@ const PAGE_INFO = {
 const secOf = v => SECTIONS.find(s => s.pages.some(p => p[0] === v));
 /* ----- phones: swipe left or right on a page to go to the next or previous page of its section (Quick challenge ↔ Grammar …);
    on Learn, over the levels, to the next or previous unit. Never during a lesson, exercise, test or game, nor on things that scroll sideways or are drawn on. ----- */
-const SW = { on: false, x: 0, y: 0, t: 0, el: null };
+// The page follows the finger like on a conveyor belt: the next page comes in from the side. Let go past
+// about a fifth of the screen (or flick) and it moves on; let go earlier and everything slides back.
+const SW = { st: 0, x: 0, y: 0, t: 0, el: null, dx: 0, vx: 0, lt: 0, lx: 0, dir: 0, ghost: null, W: 0, undo: null, commit: null, anim: false };
 function swOk(t) {
   const b = document.body.classList;
   if (b.contains('lesson') || b.contains('sess') || TUT.on || !$('#modal').hidden || !t.closest('main')) return false;
@@ -7055,23 +7057,70 @@ function swOk(t) {
   for (let e = t; e && e !== document.body; e = e.parentElement) if (e.scrollWidth > e.clientWidth + 4 && /auto|scroll/.test(getComputedStyle(e).overflowX)) return false;
   return true;
 }
-function swGo(dir) {
+// what a swipe in this direction would show: { show() renders it into main, undo() goes back, commit() keeps it }, or null
+function swTarget(dir) {
   if (view === 'learn') {
-    if (!SW.el.closest('#lp-grid')) return;
-    const us = lUnits(), n = us[us.indexOf(lCurUnit()) + dir]; if (n === undefined) return;
-    lJump(n); const g = $('#lp-grid'); if (g) g.classList.add(dir > 0 ? 'sw-in-r' : 'sw-in-l');
-    return;
+    if (!SW.el.closest('#lp-grid')) return null;
+    const us = lUnits(), old = lCurUnit(), n = us[us.indexOf(old) + dir]; if (n === undefined) return null;
+    return { show: () => { LN.unit = n; lPath(); }, undo: () => { LN.unit = old; lPath(); }, commit: () => { S.lunit = n; save(); } };
   }
-  const sec = secOf(view); if (!sec || sec.pages.length < 2) return;
-  const p = sec.pages[sec.pages.findIndex(x => x[0] === view) + dir]; if (p) location.hash = p[0];
+  const sec = secOf(view); if (!sec || sec.pages.length < 2) return null;
+  const p = sec.pages[sec.pages.findIndex(x => x[0] === view) + dir]; if (!p) return null;
+  const old = view;
+  return { show: () => { view = p[0]; VIEWS[view](); }, undo: () => { view = old; VIEWS[view](); }, commit: () => { SW.quiet = true; view = old; location.hash = p[0]; } };
 }
-document.addEventListener('touchstart', e => { const t = e.touches[0]; SW.on = e.touches.length === 1 && swOk(e.target); SW.x = t.clientX; SW.y = t.clientY; SW.t = Date.now(); SW.el = e.target; }, { passive: true });
-document.addEventListener('touchend', e => {
-  if (!SW.on) return; SW.on = false;
-  const t = e.changedTouches[0], dx = t.clientX - SW.x, dy = t.clientY - SW.y;
-  if (Math.abs(dx) < 70 || Math.abs(dy) > Math.abs(dx) * 0.5 || Date.now() - SW.t > 700) return;
-  swGo(dx < 0 ? 1 : -1);
+const swPos = (el, x, ms) => { el.style.transition = ms ? `transform ${ms}ms cubic-bezier(.2,.7,.2,1)` : 'none'; el.style.transform = x ? `translateX(${x}px)` : ''; };
+function swStart(dir) {
+  SW.dir = dir; SW.W = main.getBoundingClientRect().width + 24;
+  const tg = swTarget(dir);
+  document.documentElement.classList.add('sw-drag');
+  if (!tg) { SW.st = 3; return; }   // nothing on that side: the page only gives a little
+  // the current page moves into a holder that follows the finger; the page itself already shows the next one.
+  // (The page's own elements are moved, not copied: the finger's touch belongs to one of them, and a removed
+  // element would stop getting the rest of the swipe.)
+  const r = main.getBoundingClientRect(), g = document.createElement(main.tagName);
+  g.className = main.className + ' sw-ghost';
+  while (main.firstChild) g.appendChild(main.firstChild);
+  g.querySelectorAll('[id]').forEach(x => x.removeAttribute('id')); Object.assign(g.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', margin: '0' });
+  document.body.appendChild(g); SW.ghost = g;
+  main.classList.add('sw-noanim'); tg.show(); SW.tg = tg; SW.st = 2;
+  swPos(main, SW.dir * SW.W + SW.dx);
+}
+function swEnd(cancelled) {
+  const st = SW.st; SW.st = 0; if (st < 2) return;
+  const g = SW.ghost, done = () => { document.documentElement.classList.remove('sw-drag'); SW.anim = false; };
+  if (st === 3) { swPos(main, 0, 220); setTimeout(() => { main.style.transition = ''; done(); }, 240); return; }
+  const go = !cancelled && (Math.abs(SW.dx) > SW.W * 0.18 || (Math.abs(SW.vx) > 0.35 && Math.abs(SW.dx) > 24 && Math.sign(SW.vx) === -SW.dir)) && Math.sign(SW.dx) === -SW.dir;
+  SW.anim = true;
+  if (go) {
+    swPos(g, -SW.dir * SW.W, 230); swPos(main, 0, 230);
+    setTimeout(() => { g.remove(); SW.ghost = null; main.style.transition = ''; SW.tg.commit(); buzz(8); done(); }, 250);
+  } else {
+    swPos(g, 0, 220); swPos(main, SW.dir * SW.W, 220);
+    setTimeout(() => { SW.tg.undo(); swPos(main, 0); main.style.transition = ''; g.remove(); SW.ghost = null; done(); }, 240);
+  }
+}
+document.addEventListener('touchstart', e => {
+  if (SW.anim) return; const t = e.touches[0];
+  SW.st = e.touches.length === 1 && swOk(e.target) ? 1 : 0; SW.x = SW.lx = t.clientX; SW.y = t.clientY; SW.t = SW.lt = Date.now(); SW.el = e.target; SW.dx = 0; SW.vx = 0;
 }, { passive: true });
+document.addEventListener('touchmove', e => {
+  if (!SW.st) return;
+  const t = e.touches[0], dx = t.clientX - SW.x, dy = t.clientY - SW.y, now = Date.now();
+  if (SW.st === 1) {
+    if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { SW.st = 0; return; }   // scrolling up or down
+    if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+    SW.dx = dx; swStart(dx < 0 ? 1 : -1);
+  }
+  e.preventDefault();
+  SW.vx = (t.clientX - SW.lx) / Math.max(1, now - SW.lt); SW.lx = t.clientX; SW.lt = now;
+  // only towards the side it started; the other way it stops at the start
+  SW.dx = SW.dir > 0 ? Math.min(0, dx) : Math.max(0, dx);
+  if (SW.st === 3) { swPos(main, SW.dx * 0.25); return; }
+  swPos(SW.ghost, SW.dx); swPos(main, SW.dir * SW.W + SW.dx);
+}, { passive: false });
+document.addEventListener('touchend', () => swEnd(false), { passive: true });
+document.addEventListener('touchcancel', () => swEnd(true), { passive: true });
 const LASTPAGE = {};
 const COURSES = [['cc1', 'Contemporary Chinese 1'], ['hsk1', 'HSK 1 (coming soon)', true]];
 function courseSelect(id) {
@@ -7972,9 +8021,12 @@ function go() {
   if (view !== 'learn') setLesson(false);
   umClose(); renderNav();
   stopAudio(); gmStop();
+  // after a swipe the new page is already in place: no second entrance and no jump to the top
+  const quiet = SW.quiet; SW.quiet = false;
+  if (!quiet) main.classList.remove('sw-noanim');
   VIEWS[view]();
-  window.scrollTo(0, 0);
-  if (!document.body.classList.contains('lesson')) {
+  if (!quiet) window.scrollTo(0, 0);
+  if (!quiet && !document.body.classList.contains('lesson')) {
     const po = SECTIONS.flatMap(s => s.pages.map(p => p[0])), a = po.indexOf(prevView), b = po.indexOf(view);
     main.classList.remove('enter', 'from-r', 'from-l'); void main.offsetWidth; main.classList.add('enter');
     if (a >= 0 && b >= 0 && a !== b) main.classList.add(b > a ? 'from-r' : 'from-l');
