@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#F3EEE3">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="robots" content="noindex, nofollow">
 <meta name="apple-mobile-web-app-title" content="Panda TEST">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>TEST · Panda Chinese: learn Chinese step by step</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&family=Noto+Serif+SC:wght@500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&family=Noto+Serif+SC:wght@500;700;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
 <style>
 /* ===== Ink and paper (v1.0): tokens ===== */
 :root{
@@ -1544,6 +1544,72 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
   [data-style="cute"] .tl-pd{right:calc(50% - 40px);top:-16px;width:26px;height:26px}
   [data-style="cute"] .hero .bigz{width:84px;height:84px;font-size:44px}
 }
+
+/* ----- fixes (18 Nov) ----- */
+/* Settings: between Settings and a category only the content slides in (the window stays: no flash of the app behind it) */
+.modal .modal-box.st-nav{animation:none!important}
+.st-nav.st-fwd>:not(.modal-x){animation:stF .2s cubic-bezier(.2,.7,.2,1)}
+.st-nav.st-bk>:not(.modal-x){animation:stB .2s cubic-bezier(.2,.7,.2,1)}
+@keyframes stF{from{opacity:0;transform:translateX(18px)}}
+@keyframes stB{from{opacity:0;transform:translateX(-18px)}}
+@media (prefers-reduced-motion:reduce){.st-nav>*{animation:none!important}}
+.st-box .qs-more.st-rows{display:flex;flex-direction:column;gap:0}
+.st-rows .qs-card{margin:0 0 6px}
+.st-note{margin:-2px 0 4px;font-size:13px;text-align:left}
+.qs-line:has(> [data-voicetest]){align-items:flex-start}
+/* the ink animation follows the colours of the page (it kept the old colour after a theme change) */
+.inkw .inkc svg path[stroke]:not([stroke^="rgba(221"]){stroke:currentColor}
+/* 字 levels: their own character with a little 字 badge */
+.tl .hzf{position:relative}
+.tl-zb{position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:var(--paper);color:var(--ink);border:1.5px solid var(--line-2);font:700 11px/17px var(--hz);text-align:center;pointer-events:none}
+.tl.next .tl-zb{border-color:var(--nxt)}
+[data-style="cute"] .tl-zb{background:var(--pri);color:var(--onpri);border:2px solid var(--paper);line-height:16px;top:-5px;right:-5px}
+/* Bamboo green and Sweet pink: every segment button is a whole pill, so a row that wraps on a phone still looks right */
+[data-style="cute"] .seg button,[data-style="cute"] .seg button:first-child,[data-style="cute"] .seg button:last-child{border-radius:999px}
+/* Bamboo green and Sweet pink: Grammar and Book exercises as cards like the other pages */
+[data-style="cute"] .cat{border-top:0;padding-top:4px}
+[data-style="cute"] .cat > .set-row{background:var(--card);border:2px solid var(--line);border-radius:18px;margin-bottom:8px;padding:10px 12px}
+[data-style="cute"] .cat > .set-row:hover{background:var(--paper2)}
+
+/* ===== style: Sweet pink = Bamboo green's shapes with a pink palette, bows, sparkles and hearts (html: data-style="cute" data-tone="pink") ===== */
+:root[data-style="cute"][data-tone="pink"]:not([data-theme="dark"]){
+  --paper:#FFF0F5; --paper2:#FFE3EE; --surface:#FFFFFF; --sunk:#FFE8F1; --ink:#4A2C3A; --muted:#7E5066; --line:#FBCFE0; --line-2:#F0AECB;
+  --red:#B8322F; --redbg:#FDE1DF; --redink:#8E2522; --onred:#FFFFFF; --onink:#FFF0F5;
+  --ok:#237A55; --ok-soft:#D9F6E8; --bad:#B8322F; --bad-soft:#FDE1DF; --warn:#7A4B00; --warn-soft:#FFEFC2;
+  --t5:#7E5066; --focus:#D23A7B; --dim:rgba(74,44,58,.45);
+  --grid:#EFA6C4; --grid-soft:#FBD7E5; --outline:#FBCFE0;
+  --pri:#D23A7B; --onpri:#FFFFFF; --pri-sh:#A82A60; --pri-soft:#FFE3EE; --pri-ink:#B52A63;
+  --done:#FFC2DA; --ondone:#7A1F45; --doneline:#F08DB7; --nxt:#D23A7B; --onnxt:#FFFFFF;
+  --card:#FFFFFF; --pink:#FFC2DA; --pinkbg:#FFF7FA; --onpink:#7A1F45; --rail:#F3A9C8; --coin:#FFC2DA; --coinline:#F08DB7; --coinink:#7A1F45;
+  --dot:#FFDCEA; --stitch:#FFC9DF;
+}
+:root[data-style="cute"][data-tone="pink"][data-theme="dark"]{
+  --paper:#331A2B; --paper2:#47233C; --surface:#47233C; --sunk:#3D1F34; --ink:#FFEAF3; --muted:#E2B6CB; --line:#6D3A5C; --line-2:#86507A;
+  --red:#FF8A80; --redbg:#4E2430; --redink:#FFB8B0; --onred:#2A1422; --onink:#2A1422;
+  --ok:#9FE3C4; --ok-soft:#24463A; --bad:#FF8A80; --bad-soft:#4E2430; --warn:#FFD66B; --warn-soft:#4A3A22;
+  --t5:#E2B6CB; --focus:#FF8DBF; --dim:rgba(0,0,0,.55);
+  --grid:#9A5A7E; --grid-soft:#56294A; --outline:#6D3A5C;
+  --pri:#FF8DBF; --onpri:#331A2B; --pri-sh:#C25A8C; --pri-soft:#5A2A4A; --pri-ink:#FF9FCA;
+  --done:#6E2F57; --ondone:#FFD6E8; --doneline:#9A4A7C; --nxt:#FF8DBF; --onnxt:#331A2B;
+  --card:#47233C; --pink:#FF8DBF; --pinkbg:#47233C; --onpink:#331A2B; --rail:#9A4A7C; --coin:#6E2F57; --coinline:#9A4A7C; --coinink:#FFD6E8;
+  --dot:#3E2036; --stitch:#7D4468;
+}
+[data-tone="pink"]{--bow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 32'%3E%3Cpath d='M18 15L13 29L17.5 26.5L19.5 30ZM22 15L27 29L22.5 26.5L20.5 30Z' fill='%23FF7EB3' stroke='%234A2C3A' stroke-width='1.4' stroke-linejoin='round'/%3E%3Cpath d='M20 14C12 2 2 4 3 13C4 22 14 20 20 14ZM20 14C28 2 38 4 37 13C36 22 26 20 20 14Z' fill='%23FF7EB3' stroke='%234A2C3A' stroke-width='1.6' stroke-linejoin='round'/%3E%3Ccircle cx='9' cy='10' r='1.6' fill='white'/%3E%3Ccircle cx='31' cy='10' r='1.6' fill='white'/%3E%3Cellipse cx='20' cy='14' rx='4.2' ry='4.6' fill='%23E8559A' stroke='%234A2C3A' stroke-width='1.6'/%3E%3C/svg%3E");--spark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 0C11 7 13 9 20 10C13 11 11 13 10 20C9 13 7 11 0 10C7 9 9 7 10 0Z' fill='%23FFC93C'/%3E%3C/svg%3E")}
+[data-tone="pink"] body{background-image:radial-gradient(var(--dot) 1.7px,transparent 2.1px);background-size:22px 22px}
+[data-tone="pink"] .lp-top h1 .hzf{font-family:"ZCOOL KuaiLe",var(--hz);font-weight:400;color:var(--pri-ink)}
+[data-tone="pink"] :is(.hero,.box,.mcard,.gm-hero,.nm-card,.zi-practise,.qs-card,.gm-card){box-shadow:0 5px 0 var(--line)}
+[data-tone="pink"] .hero{position:relative;overflow:visible}
+[data-tone="pink"] .hero::before{content:"";position:absolute;inset:7px;border:2px dashed var(--stitch);border-radius:18px;pointer-events:none}
+[data-tone="pink"] .hero::after{content:"";position:absolute;top:-15px;left:16px;width:44px;height:35px;background:var(--bow) center/contain no-repeat;transform:rotate(-14deg);pointer-events:none}
+[data-tone="pink"] .hero .bigz{position:relative;box-shadow:0 5px 0 var(--pri-sh)}
+[data-tone="pink"] .hero .bigz::after{content:"";position:absolute;top:-4px;left:-6px;width:20px;height:20px;background:var(--spark) center/contain no-repeat}
+[data-tone="pink"] .hero-tx,[data-tone="pink"] .hero .bigz{z-index:1}
+[data-tone="pink"] :is(.tabbar,.side) .tab[aria-selected="true"]{position:relative;overflow:visible}
+[data-tone="pink"] :is(.tabbar,.side) .tab[aria-selected="true"]::before{content:"";position:absolute;top:-9px;left:50%;width:24px;height:19px;margin-left:-12px;background:var(--bow) center/contain no-repeat;pointer-events:none}
+[data-tone="pink"] .tl.done .hzf{box-shadow:0 3px 0 var(--coinline)}
+[data-tone="pink"] .tl.next .hzf{box-shadow:0 0 0 4px var(--paper),0 0 0 6.5px var(--nxt),0 6px 0 4px var(--pri-sh)}
+[data-tone="pink"] .sh-prev img{background:#FFF0F5}
+[data-tone="pink"] .dp-box{background:var(--card);border-color:var(--line)}
 </style>
 </head>
 <body>
@@ -3757,20 +3823,23 @@ function sfx(name, delay = 0) {
 /* ----- look: two styles (Classic = ink and paper, Cute bamboo) × colours (Light, Dark, Like my phone) ----- */
 // A new style is only a new palette in the CSS (:root[data-style="…"]) plus a line in STYLES and THEME_C.
 const themeOf = () => (S.settings && S.settings.theme) || 'light';
-const styleOf = () => (S.settings && S.settings.style) === 'cute' ? 'cute' : 'classic';
-const isCute = () => styleOf() === 'cute';
-const THEME_C = { classic: ['#F3EEE3', '#33302B'], cute: ['#FFF6EA', '#16302A'] };   // browser bar colour: light, dark
+// Sweet pink ('pink') is Bamboo green's shapes and layout with its own palette and extras: html gets data-style="cute" and data-tone="pink"
+const styleOf = () => { const s = S.settings && S.settings.style; return s === 'cute' || s === 'pink' ? s : 'classic'; };
+const isCute = () => styleOf() !== 'classic';
+const isPink = () => styleOf() === 'pink';
+const THEME_C = { classic: ['#F3EEE3', '#33302B'], cute: ['#FFF6EA', '#16302A'], pink: ['#FFF0F5', '#331A2B'] };   // browser bar colour: light, dark
 const sysDark = () => { try { return matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; } };
 function applyTheme() {
   const t = themeOf();
   const dark = t === 'dark' || (t === 'auto' && sysDark());
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-  document.documentElement.dataset.style = styleOf();
+  document.documentElement.dataset.style = isCute() ? 'cute' : 'classic';
+  if (isPink()) document.documentElement.dataset.tone = 'pink'; else delete document.documentElement.dataset.tone;
   const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.content = THEME_C[styleOf()][dark ? 1 : 0];
 }
 applyTheme();
 const THEMES = [['light', 'Light'], ['dark', 'Dark'], ['auto', 'Like my device']];
-const STYLES = [['classic', 'Classic'], ['cute', 'Cute bamboo']];
+const STYLES = [['classic', 'Classic'], ['cute', 'Bamboo green'], ['pink', 'Sweet pink']];
 const styleSeg = () => `<div class="seg" role="group" aria-label="Style">${STYLES.map(([v, l]) => `<button type="button" aria-pressed="${styleOf() === v}" data-setstyle="${v}">${l}</button>`).join('')}</div>`;
 // redraw what is on screen in the new style (not in the middle of an exercise: it gets the new colours from the CSS)
 function restyle() {
@@ -3779,7 +3848,7 @@ function restyle() {
   if (!b.contains('sess') && !b.contains('lesson') && VIEWS[view]) VIEWS[view]();
   if (typeof spRefresh === 'function') spRefresh();
 }
-function setStyle(v) { S.settings.style = v === 'cute' ? 'cute' : 'classic'; save(); applyTheme(); $$('[data-setstyle]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.setstyle === S.settings.style))); restyle(); }
+function setStyle(v) { S.settings.style = v === 'cute' || v === 'pink' ? v : 'classic'; save(); applyTheme(); $$('[data-setstyle]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.setstyle === S.settings.style))); restyle(); }
 document.addEventListener('click', e => { const b = e.target.closest('[data-setstyle]'); if (b) setStyle(b.dataset.setstyle); });
 // Character size: "Larger" makes the Chinese text in lessons and exercises 20% bigger (rules made once from the stylesheet; big display characters stay)
 const zhSeg = () => `<div class="seg" role="group" aria-label="Character size">${[['n', 'Normal'], ['lg', 'Larger']].map(([v, l]) => `<button type="button" aria-pressed="${(S.settings.zhSize || 'n') === v}" data-setzh="${v}">${l}</button>`).join('')}</div>`;
@@ -5014,6 +5083,12 @@ const PANDA_MOOD = { idle: 'idle', notbad: 'idle', sleep: 'idle', think: 'think'
 const CUTE_MOOD = PANDA_MOOD;
 const pStar = (x, y, r) => `M${x} ${y - r}l${r * .3} ${r * .7} ${r * .7} ${r * .3}-${r * .7} ${r * .3}-${r * .3} ${r * .7}-${r * .3}-${r * .7}-${r * .7}-${r * .3} ${r * .7}-${r * .3}z`;
 const pHeart = (x, y, k) => `M${x} ${y + 12 * k}c${-12 * k} ${-8 * k} ${-18 * k} ${-14 * k} ${-18 * k} ${-21 * k}a${9 * k} ${9 * k} 0 0 1 ${18 * k} ${-3 * k}a${9 * k} ${9 * k} 0 0 1 ${18 * k} ${3 * k}c0 ${7 * k} ${-6 * k} ${13 * k} ${-18 * k} ${21 * k}z`;
+// Sweet pink: a hair bow on the right ear, a heart hair clip on the left, little blush lines
+const PINK_BOW = '<path d="M44 128l-3 6M50 128l-3 6M56 128l-3 6M144 128l-3 6M150 128l-3 6M156 128l-3 6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>'
+  + '<g transform="translate(130 6) rotate(20 23 18) scale(1.18)"><path d="M18 15L12 30L17 27L19.5 31ZM22 15L28 30L23 27L20.5 31Z" fill="#FF7EB3" stroke="#2B2B2B" stroke-width="2.4" stroke-linejoin="round"/>'
+  + '<path d="M20 14C11 1 1 4 2 13C3 23 14 20 20 14ZM20 14C29 1 39 4 38 13C37 23 26 20 20 14Z" fill="#FF7EB3" stroke="#2B2B2B" stroke-width="2.6" stroke-linejoin="round"/>'
+  + '<circle cx="9" cy="10" r="1.8" fill="#fff"/><circle cx="31" cy="10" r="1.8" fill="#fff"/><ellipse cx="20" cy="14" rx="5" ry="5.6" fill="#E8559A" stroke="#2B2B2B" stroke-width="2.6"/></g>'
+  + '<g transform="translate(26 62) rotate(-22)"><rect x="0" y="0" width="24" height="8" rx="4" fill="#FFD66B" stroke="#2B2B2B" stroke-width="2.2"/><path d="M12 9.5C7.5 6.6 6 4.4 6 2.6C6 .8 7.3-.4 8.9-.4C10.2-.4 11.3.4 12 1.5C12.7.4 13.8-.4 15.1-.4C16.7-.4 18 .8 18 2.6C18 4.4 16.5 6.6 12 9.5Z" fill="#FF6FA8" stroke="#2B2B2B" stroke-width="1.6"/></g>';
 function pandaCute(mood, sprig = true) {
   const [mm, acc] = String(mood).split(':'), m = CUTE_MOOD[mm] || 'idle', K = '#2B2B2B';
   const st = (d, w = 5, c = '#fff') => `<path d="${d}" stroke="${c}" stroke-width="${w}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
@@ -5034,7 +5109,8 @@ function pandaCute(mood, sprig = true) {
     + `<ellipse cx="72" cy="102" rx="18" ry="22" transform="rotate(-22 72 102)" fill="${K}"/><ellipse cx="128" cy="102" rx="18" ry="22" transform="rotate(22 128 102)" fill="${K}"/>`
     + eyes + brows + `<ellipse cx="54" cy="130" rx="12" ry="7.5" fill="#F9C4CF"/><ellipse cx="146" cy="130" rx="12" ry="7.5" fill="#F9C4CF"/><ellipse cx="100" cy="122" rx="8.5" ry="6" fill="${K}"/>` + mouth
     + (m === 'sad' ? '<path d="M58 118q-7 12 0 17q7-5 0-17z" fill="#7FB6E8"/>' : '') + extra
-    + (sprig && !extra ? '<rect x="168" y="112" width="10" height="70" rx="5" fill="#5FAE6E"/><rect x="168" y="142" width="10" height="3" fill="#3E8A50"/><ellipse cx="188" cy="122" rx="14" ry="5.5" transform="rotate(-32 188 122)" fill="#7DC48A"/>' : '');
+    + (isPink() ? PINK_BOW : '')
+    + (sprig && !extra && !isPink() ? '<rect x="168" y="112" width="10" height="70" rx="5" fill="#5FAE6E"/><rect x="168" y="142" width="10" height="3" fill="#3E8A50"/><ellipse cx="188" cy="122" rx="14" ry="5.5" transform="rotate(-32 188 122)" fill="#7DC48A"/>' : '');
 }
 function pandaInner(mood, seal = true) {
   if (isCute()) return pandaCute(mood, seal);
@@ -6466,7 +6542,11 @@ Object.entries(ZI_EXTRA).forEach(([u, cs]) => { u = +u; [...cs].forEach(c => { i
 const ziN = lv => lv.virtual ? (lv.ziMaster ? lv.zi.length : Math.round(lv.zi.length * 1.3) + 1) : lv.ziReview ? 16 : Math.min(18, Math.max(12, lv.zi.length + 2));
 ZI_LEVELS.forEach((z, k) => {
   const cs = z.review ? [...(ZI_UNIT[z.unit] || [])] : [...z.chars];
-  const lv = { id: z.id, unit: z.unit, icon: z.review ? '识' : '认', title: z.title, zi: cs, ziReview: !!z.review, ziK: k, cards: [{ k: 'zi' }], quiz: [],
+  // the tile shows one of its own characters (one no other level of the unit shows) with a little 字 badge; the review keeps 识
+  const used = new Set(LEVELS.filter(l => l.unit === z.unit).map(l => l.icon));
+  const free = cs.filter(c => !used.has(c)), bound = c => /^as in /.test((CHARINFO[c] || {}).m || '');
+  const icon = z.review ? '识' : (free.find(c => !bound(c)) || free[0] || cs[0] || '认');
+  const lv = { id: z.id, unit: z.unit, icon, title: z.title, zi: cs, ziReview: !!z.review, ziK: k, cards: [{ k: 'zi' }], quiz: [],
     desc: z.review ? `All the characters from Unit ${z.unit}, mixed. The ones you know least come up most often.` : `${cs.length} characters: what they mean, how they sound, and how to tell them apart from look-alikes.` };
   LEVELS.splice(LEVELS.findIndex(l => l.id === z.after) + 1, 0, lv);
 });
@@ -6651,7 +6731,7 @@ function lPath() {
     const row = Math.floor(k / 5), col = row % 2 ? 4 - k % 5 : k % 5;
     const pos = cute ? `grid-row:${row + 1};grid-column:${col + 1};` : '', ud = cute ? (col % 2 ? ' dn' : ' up') : '';
     const fr = LN.justDone === lv.id && st ? ' fresh' : '', nf = LN.justDone && cls === 'next' ? ' nfresh' : '';
-    return `<button type="button" class="tl ${cls}${lv.zi ? ' zi' : ''}${ud}${fr}${nf}" style="animation-delay:${k * 22}ms;${pos}" data-lopen="${lv.id}" aria-label="Level ${k + 1}: ${esc(lv.title)}${st ? `, done, ${stars} of 3 stamps` : lv === h ? ', next up' : ''}">${cute && cls === 'next' ? `<span class="tl-pd" aria-hidden="true">${pandaSvg('yay', '', '', true)}</span>` : ''}<span class="hzf" aria-hidden="true">${esc(lv.icon)}</span><b>${esc(lv.title)}</b><small>${st ? st3(stars) + 'Done' : lv === h ? 'Next up' : lv.zi ? 'Characters' : lv.checkpoint ? 'Checkpoint' : 'New'}</small><i class="tl-s" aria-hidden="true">${esc(lvShort(lv))}</i></button>`;
+    return `<button type="button" class="tl ${cls}${lv.zi ? ' zi' : ''}${ud}${fr}${nf}" style="animation-delay:${k * 22}ms;${pos}" data-lopen="${lv.id}" aria-label="Level ${k + 1}: ${esc(lv.title)}${st ? `, done, ${stars} of 3 stamps` : lv === h ? ', next up' : ''}">${cute && cls === 'next' ? `<span class="tl-pd" aria-hidden="true">${pandaSvg('yay', '', '', true)}</span>` : ''}<span class="hzf" aria-hidden="true">${esc(lv.icon)}${lv.zi ? '<span class="tl-zb">字</span>' : ''}</span><b>${esc(lv.title)}</b><small>${st ? st3(stars) + 'Done' : lv === h ? 'Next up' : lv.zi ? 'Characters' : lv.checkpoint ? 'Checkpoint' : 'New'}</small><i class="tl-s" aria-hidden="true">${esc(lvShort(lv))}</i></button>`;
   }).join('');
   main.innerHTML = `<div class="lp-top"><div class="lp-hi"><div class="cap">Contemporary Chinese 1</div><h1><span class="hzf">你好</span>${n ? `<span class="lp-c">, </span><span class="lp-nm">${esc(n)}</span>` : ''}</h1></div>
       <div class="lp-tr">${streakHtml()}${unitMenu('l', `Unit ${u}`, us.map(x => { const ls = LEVELS.filter(l => l.unit === x), dn = ls.filter(l => prog[l.id]).length; return { label: `Unit ${x}`, sub: `${esc(LUNITS[x] || '')} · ${dn}/${ls.length}`, on: x === u, attrs: `data-lunit="${x}"` }; }), { right: true })}${msgBtnHtml('only-m')}<button type="button" class="ico only-m" data-search aria-label="Search" title="Search">${IC.search}</button><button type="button" class="ico line only-m" data-qs aria-label="Settings" title="Settings">${IC.set}</button></div></div>
@@ -6663,7 +6743,7 @@ function lPath() {
         <button type="button" class="btn primary big" data-lstart="${h.id}">${prog[h.id] ? 'Play again' : beginWord()}</button></div></section>
       ${howto('learn', `<p>Each level has two parts. First you <b>learn</b>: a few cards show new sounds, characters or a rule, with audio and stroke animations. Then a short <b>quiz</b> checks what you just learned, plus a couple of questions from earlier levels so you don’t forget. Mistakes come back at the end of the quiz.</p>
       <p>Questions marked ${LTAG} need sound; you can skip them with “Can’t listen now”, or hide them all in Settings.</p>
-      <p>You get up to three 好 stamps: three if at least 90% is right the first time, two from 70%. All levels are open: ${tileWords()} are done, ${isCute() ? 'the green one' : 'the red one'} is the recommended next level, and ${isCute() ? 'coins' : 'tiles'} with a dashed line practise characters. Want more practice? The other tabs follow your textbook more closely.</p>`)}
+      <p>You get up to three 好 stamps: three if at least 90% is right the first time, two from 70%. All levels are open: ${tileWords()} are done, ${isPink() ? 'the bright pink one' : isCute() ? 'the green one' : 'the red one'} is the recommended next level, and ${isPink() ? 'bubbles' : isCute() ? 'coins' : 'tiles'} with a dashed line and a little 字 practise characters. Want more practice? The other tabs follow your textbook more closely.</p>`)}
       <section class="lp-grid"><div class="lp-gh"><div class="cap">Unit ${u} · ${esc(LUNITS[u] || '')}</div>${howBtn('learn')}</div>
         <div class="grid" id="lp-grid">${tiles}</div>
         <p class="lp-end">${(() => { const cp = lvs.find(l => l.checkpoint), dn = lvs.filter(l => prog[l.id]).length; return (cp && dn < lvs.length - 1 ? `<button type="button" class="link" data-lknow="${u}">Already know Unit ${u}? Take the checkpoint</button>` : '') + (dn === lvs.length ? `<button type="button" class="link" data-share="diploma" data-unit="${u}">Your Unit ${u} diploma</button>` : ''); })()}${nextU !== undefined ? `<button type="button" class="link" data-lunit="${nextU}">Unit ${nextU} →</button>` : '<span>More units are coming. <span class="hzf">敬请期待</span> jìng qǐng qīdài: stay tuned!</span>'}</p></section>
@@ -6683,7 +6763,7 @@ function lPath() {
 }
 function lJump(u) { LN.unit = +u; S.lunit = +u; save(); lPath(); }
 const beginWord = () => isCute() ? 'Let’s go!' : 'Begin';
-const tileWords = () => isCute() ? 'gold coins' : 'filled tiles';
+const tileWords = () => isPink() ? 'pink bubbles' : isCute() ? 'gold coins' : 'filled tiles';
 // short titles under the tiles on phones (1–2 words); the id stays the key
 const LV_SHORT = {
   'u0-1': 'Tones', 'u0-2': 'Pinyin', 'u0-3': 'Tone changes', 'u0-4': '1–10', 'u0-5': 'Strokes', 'u0-z1': '字 Pictures', 'u0-6': 'Building words', 'u0-z2': '字 First words', 'u0-7': 'Classroom', 'u0-zr': '字 Review', 'u0-8': 'Checkpoint',
@@ -6977,7 +7057,7 @@ function lDone() {
 // Cute bamboo: a little confetti for a good result
 function confetti() {
   const c = document.createElement('div'); c.className = 'confetti'; c.setAttribute('aria-hidden', 'true');
-  const cols = ['#F4C451', '#F9A8B8', '#7FCB98', '#8FC1F0', '#F28B82'];
+  const cols = isPink() ? ['#FF7EB3', '#FFC2DA', '#FFD66B', '#C9B6FF', '#9ED9BE'] : ['#F4C451', '#F9A8B8', '#7FCB98', '#8FC1F0', '#F28B82'];
   c.innerHTML = Array.from({ length: 34 }, (_, k) => `<i style="left:${Math.round(Math.random() * 100)}%;background:${cols[k % cols.length]};animation-delay:${(Math.random() * 0.6).toFixed(2)}s;--dx:${Math.round(Math.random() * 120 - 60)}px;--rt:${Math.round(Math.random() * 720 - 360)}deg"></i>`).join('');
   document.body.appendChild(c); setTimeout(() => c.remove(), 3400);
 }
@@ -7040,7 +7120,7 @@ function openAbout() {
   m.innerHTML = `<div class="modal-box help-box" role="dialog" aria-modal="true" aria-label="About this app">
     <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
     <h1 class="view-title">About this app</h1>
-    <p><b>Panda Chinese</b> is a free study app for <i>Contemporary Chinese 1</i>, made for classmates and other learners. Version ${APP_VERSION} beta, 17 November 2026. <button type="button" class="link" data-notes>What’s new</button></p>
+    <p><b>Panda Chinese</b> is a free study app for <i>Contemporary Chinese 1</i>. Version ${APP_VERSION} beta, 17 November 2026. <button type="button" class="link" data-notes>What’s new</button></p>
     <h2>Privacy</h2><p>The app collects no data. Your progress and favourites stay in your own browser.</p>
     <h2>Content</h2><p>The exercises in Book exercises and the vocabulary follow the textbook <i>Contemporary Chinese</i> (当代中文); all rights to the textbook belong to its authors and publisher. The Learn levels, the Test questions, the grammar explanations and the practice tests were written for this app with the help of AI (Claude by Anthropic). The Chinese voice recordings were made with Microsoft Azure text-to-speech.</p>
     <h2>Credits</h2><p>Made by <b>Damjan Raunić</b> (draunic@gmail.com). Stroke animations: <b>Hanzi Writer</b> by David Chanin (MIT License). Stroke data: <b>hanzi-writer-data</b>, based on <b>Make Me a Hanzi</b> (Arphic Public License). Fonts: <b>Inter</b> and <b>Noto Serif SC</b> (SIL Open Font License). If the recordings can’t load, the app uses your device’s built-in voice.</p>
@@ -7092,7 +7172,7 @@ function wmPlay() {
 }
 function closeModal() {
   const m = $('#modal'), sp = !!$('.sp-box', m); wmTok++; if (!m.hidden) stopAudio(); m.hidden = true; m.innerHTML = ''; m.classList.remove('sheet', 'st-full'); MODAL_W = []; document.body.classList.remove('modal-open');
-  if (sp) { S.styleAsked = true; save(); const a = SP.after; SP.after = null; if (a) { setTimeout(a, 120); return; } }
+  if (sp) { S.styleAsked = 2; save(); const a = SP.after; SP.after = null; if (a) { setTimeout(a, 120); return; } }
   if (TUT_PENDING && !TUT.on) { TUT_PENDING = false; setTimeout(tutStart, 300); }
   else if (PWA.pending && !TUT.on) pwaMaybe();
 }
@@ -7274,7 +7354,7 @@ function renderNav() {
 }
 /* ----- patch notes and welcome ----- */
 const NOTES = [
-  { v: '1.0.0', date: '17 November 2026', items: ['Two styles: Classic (ink and paper) and Cute bamboo, each light or dark.', 'The five tabs are at the bottom on phones and on the left on computers.', 'A new Learn page: your next lesson first, then every level of the unit.', 'Three new units: family and numbers, maps and books, shopping and eating out.', 'In lessons, “I don’t know” shows the answer, and you can skip a unit you already know.', 'Settings: bigger Chinese characters, and tone colours on or off.', 'New: “My mistakes” in Practice, and a search for words, characters and grammar.', 'Print practice sheets in Writing, and get a diploma for every unit you finish.', 'Book exercises can follow the order of your books.', 'Install Panda Chinese on your phone: it opens like an app and works without internet.', 'Small fixes.'] },
+  { v: '1.0.0', date: '17 November 2026', items: ['New look: three styles (Classic, Bamboo green, Sweet pink), light or dark.', 'A new Learn page and tabs.', 'New units: family, maps and books, shopping.', 'My mistakes, search, diplomas and practice sheets.', 'Install the app on your phone. It works without internet.', 'Small fixes.'] },
   { v: '0.8.0', date: '16 November 2026', items: ['New game: Panda Run in the Games tab. Challenge your friends!', 'Daily practice with a streak on the Learn page.', 'Dark mode and sound effects.', 'New Words tab and quick settings.', 'Small fixes.'] },
   { v: '0.7.9', date: '14 November 2026', items: ['New 字 levels in Learn for reading characters: what they mean, how they sound, and how to tell look-alike characters apart.', 'Every unit now has a character review that brings back the characters you know least.', 'New on the Learn page: “My characters” shows every character and how well you know it, and lets you practise your weakest ones: 10 or 20 at a time, or until you get them all right.', 'Pinyin is hidden for characters you already know well. Tap a word to show it.'] },
   { v: '0.7.8', date: '14 November 2026', items: ['Dialogues now have different voices: every character in the texts speaks with their own voice.', 'A new “Play the dialogue” button plays a whole conversation.', 'On Slow, single characters and short words are spoken extra slowly, so the tones are clearer.'] },
@@ -7318,19 +7398,24 @@ function openWelcome() {
 /* ----- Pick your style: once for everybody (new: style → Welcome → tour; after the update: style → What's new) ----- */
 const SP = { after: null };
 function spPreview(st, dark) {
-  const C = st === 'cute'
+  const C = st === 'pink'
+    ? (dark ? { bg: '#331A2B', card: '#47233C', cl: '#6D3A5C', tx: '#FFEAF3', mu: '#E2B6CB', a: '#FF8DBF', on: '#331A2B', rail: '#9A4A7C', off: '#47233C', offl: '#80476B', coin: '#6E2F57', coinl: '#9A4A7C' }
+            : { bg: '#FFF0F5', card: '#FFFFFF', cl: '#FBCFE0', tx: '#4A2C3A', mu: '#E7B3C8', a: '#D23A7B', on: '#FFFFFF', rail: '#F3A9C8', off: '#FFFFFF', offl: '#F3B5CF', coin: '#FFC2DA', coinl: '#F08DB7' })
+    : st === 'cute'
     ? (dark ? { bg: '#16302A', card: '#1F3D35', cl: '#2F5448', tx: '#F3F1E6', mu: '#B9CBBF', a: '#9BE0B0', on: '#12271F', rail: '#A88457', off: '#1F3D35', offl: '#3A6354' }
             : { bg: '#FFF6EA', card: '#FFFFFF', cl: '#F1DFC8', tx: '#3B2F2A', mu: '#C9B8A8', a: '#2F7D4F', on: '#FFFFFF', rail: '#C99A64', off: '#FFFFFF', offl: '#E8CFAE' })
     : (dark ? { bg: '#33302B', tx: '#F2ECE1', mu: '#7D7569', a: '#F08470', on: '#1B1A17', done: '#4A463F', ondone: '#F2ECE1', offl: '#625B50' }
             : { bg: '#F3EEE3', tx: '#1B1A17', mu: '#B9AF9B', a: '#A8281C', on: '#FFF6E8', done: '#1B1A17', ondone: '#F3EEE3', offl: '#B9AF9B' });
   const hz = `font-family="Noto Serif SC,Songti SC,serif"`;
   let b = `<rect width="160" height="120" fill="${C.bg}"/>`;
-  if (st === 'cute') {
+  if (st === 'cute' || st === 'pink') {
     b += `<text x="12" y="22" font-size="13" font-weight="900" fill="${C.tx}" ${hz}>你好</text>`
       + `<rect x="9" y="30" width="142" height="44" rx="13" fill="${C.card}" stroke="${C.cl}" stroke-width="2"/><circle cx="31" cy="52" r="14" fill="${C.a}"/><text x="31" y="58" font-size="15" text-anchor="middle" fill="${C.on}" ${hz} font-weight="700">学</text>`
       + `<rect x="52" y="42" width="50" height="6" rx="3" fill="${C.mu}"/><rect x="52" y="54" width="34" height="5" rx="2.5" fill="${C.mu}" opacity=".6"/><rect x="108" y="46" width="36" height="13" rx="6.5" fill="${C.a}"/>`
       + `<path d="M8 98H152" stroke="${C.rail}" stroke-width="7" stroke-linecap="round"/><path d="M8 98H152" stroke="${C.bg}" stroke-width="3.5"/>`
-      + [0, 1, 2, 3, 4].map(k => `<circle cx="${20 + k * 30}" cy="${98 + (k % 2 ? 4 : -4)}" r="10" fill="${k < 2 ? '#F4C451' : k === 2 ? C.a : C.off}" stroke="${k < 2 ? '#D9A21B' : k === 2 ? C.a : C.offl}" stroke-width="2"/>`).join('');
+      + [0, 1, 2, 3, 4].map(k => `<circle cx="${20 + k * 30}" cy="${98 + (k % 2 ? 4 : -4)}" r="10" fill="${k < 2 ? C.coin || '#F4C451' : k === 2 ? C.a : C.off}" stroke="${k < 2 ? C.coinl || '#D9A21B' : k === 2 ? C.a : C.offl}" stroke-width="2"/>`).join('');
+    if (st === 'pink') b += `<g transform="translate(118 26) rotate(14)"><path d="M10 7C6 1 1 2 1.5 6.5C2 11 7 10 10 7ZM10 7C14 1 19 2 18.5 6.5C18 11 13 10 10 7Z" fill="#FF7EB3" stroke="#4A2C3A" stroke-width="1"/><circle cx="10" cy="7" r="2.4" fill="#E8559A" stroke="#4A2C3A" stroke-width="1"/></g>`
+      + `<path d="M140 64l1.6 3.4 3.4 1.6-3.4 1.6-1.6 3.4-1.6-3.4-3.4-1.6 3.4-1.6z" fill="#FFC93C"/>`;
   } else {
     b += `<text x="12" y="22" font-size="13" font-weight="900" fill="${C.tx}" ${hz}>你好</text><rect x="10" y="30" width="140" height="2" fill="${C.tx}"/>`
       + `<text x="12" y="70" font-size="34" font-weight="900" fill="${C.tx}" ${hz}>学</text><rect x="54" y="42" width="56" height="6" fill="${C.mu}"/><rect x="54" y="54" width="38" height="5" fill="${C.mu}" opacity=".6"/><rect x="54" y="62" width="34" height="11" fill="${C.tx}"/>`
@@ -7365,7 +7450,7 @@ function checkNotes() {
   // a friend who opens a challenge link first: no tour now (it would leave the challenge), it comes on the next visit
   if (GM.ch && GM.screen === 'challenge') { TUT_PENDING = false; PWA.pending = false; }
   // the style first (a friend with a challenge link gets it on the next visit, like the tour)
-  if (!S.styleAsked && !(GM.ch && GM.screen === 'challenge')) { openStylePick(() => checkNotes()); return; }
+  if (S.styleAsked !== 2 && !(GM.ch && GM.screen === 'challenge')) { openStylePick(() => checkNotes()); return; }
   if (seen === APP_VERSION) { if (TUT_PENDING) { TUT_PENDING = false; setTimeout(tutStart, 400); } else if (PWA.pending) pwaMaybe(600); return; }
   const used = ['sets', 'cards', 'chars', 'learn', 'favs'].some(k => S[k] && Object.keys(S[k]).length);
   S.seenVersion = APP_VERSION; save();
@@ -7391,8 +7476,8 @@ function tutSteps() {
   const all = [
     { el: () => vis('#side-tabs, #tabbar'), before: () => { closeModal(); if (document.body.classList.contains('lesson')) lExit(); tutNav('learn'); window.scrollTo({ top: 0 }); }, title: 'Quick tour', text: 'Hi! I’m your panda guide. Here’s a quick look around.' + TUT_SECS },
     // phones: the grid is below the fold, so it gets its own step
-    { el: () => mob ? [$('[data-um="l"] .um-btn'), $('#lp-hero')] : [$('[data-um="l"] .um-btn'), $('#lp-hero'), $('#lp-grid')], before: () => { tutNav('learn'); window.scrollTo({ top: 0 }); }, title: 'Learn', text: tutList('<b>Unit</b>: choose a unit', `<b>${beginWord()}</b>: your next lesson`, ...(mob ? [] : [`<b>${isCute() ? 'Coins' : 'Tiles'}</b>: all lessons of the unit, open any`])) },
-    { mob: true, el: () => $('#lp-grid'), before: () => tutNav('learn'), scroll: true, title: 'All lessons', text: `Every ${isCute() ? 'coin' : 'tile'} is a lesson. You can open any of them.` },
+    { el: () => mob ? [$('[data-um="l"] .um-btn'), $('#lp-hero')] : [$('[data-um="l"] .um-btn'), $('#lp-hero'), $('#lp-grid')], before: () => { tutNav('learn'); window.scrollTo({ top: 0 }); }, title: 'Learn', text: tutList('<b>Unit</b>: choose a unit', `<b>${beginWord()}</b>: your next lesson`, ...(mob ? [] : [`<b>${isPink() ? 'Bubbles' : isCute() ? 'Coins' : 'Tiles'}</b>: all lessons of the unit, open any`])) },
+    { mob: true, el: () => $('#lp-grid'), before: () => tutNav('learn'), scroll: true, title: 'All lessons', text: `Every ${isPink() ? 'bubble' : isCute() ? 'coin' : 'tile'} is a lesson. You can open any of them.` },
     { el: () => $('.dp-box'), before: () => tutNav('learn'), scroll: true, title: 'Daily practice', text: 'A short review every day. Keep your streak going!' },
     { el: () => tutTab('practice'), click: true, before: () => window.scrollTo({ top: 0 }), title: 'Practice', text: 'Now tap <b>Practice</b>.' },
     { el: () => [$('#subtabs'), $('#main .filters')], before: () => { if (view !== 'challenge') tutNav('challenge'); window.scrollTo({ top: 0 }); }, wait: inSec('practice'), title: 'Practice', text: tutList('<b>Pages</b>: Quick challenge, Grammar, Book exercises, My mistakes', '<b>Choose</b> the units and what to practise') },
@@ -7765,7 +7850,8 @@ async function drawShare(D, noPanda) {
 async function drawShareCute(D, noPanda) {
   const W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
   const UI = '"Nunito","Segoe UI",system-ui,-apple-system,sans-serif', HZ = '"Noto Serif SC","Songti SC","STSong","SimSun","Noto Serif CJK SC",serif';
-  const BG = '#FFF6EA', LINE = '#F1DFC8', INK = '#3B2F2A', MUTE = '#76665C', GREEN = '#2F7D4F', GOLD = '#F4C451', GOLD2 = '#D9A21B', PINK = '#F9D4DB', PINKT = '#9C3D55';
+  const pk = isPink();   // Sweet pink: the same picture in pink (GREEN = the main colour, GOLD = the coin)
+  const BG = pk ? '#FFF0F5' : '#FFF6EA', LINE = pk ? '#FBCFE0' : '#F1DFC8', INK = pk ? '#4A2C3A' : '#3B2F2A', MUTE = pk ? '#8A5A70' : '#76665C', GREEN = pk ? '#D23A7B' : '#2F7D4F', GOLD = pk ? '#FFC2DA' : '#F4C451', GOLD2 = pk ? '#F08DB7' : '#D9A21B', PINK = '#F9D4DB', PINKT = '#9C3D55';
   try { await Promise.race([Promise.all([document.fonts.load(`900 60px ${UI}`, 'Panda 0123456789'), document.fonts.load(`700 60px ${HZ}`, '汉好' + D.say[0]), document.fonts.ready]), new Promise(ok => setTimeout(ok, 2500))]); } catch (e) { /* ignore */ }
   const rr = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
   const txt = (s, x, y, size, color, weight = 700, align = 'left', font = UI) => { g.font = `${weight} ${size}px ${font}`; g.fillStyle = color; g.textAlign = align; g.textBaseline = 'alphabetic'; g.fillText(s, x, y); };
@@ -7773,7 +7859,7 @@ async function drawShareCute(D, noPanda) {
   const circ = (x, y, r, fill) => { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fillStyle = fill; g.fill(); };
   const coin = (x, y, r, s) => { circ(x, y + 12, r, GOLD2); circ(x, y, r, GOLD); g.lineWidth = 8; g.strokeStyle = GOLD2; g.beginPath(); g.arc(x, y, r - 4, 0, Math.PI * 2); g.stroke(); g.lineWidth = 3; g.strokeStyle = 'rgba(255,255,255,.55)'; g.beginPath(); g.arc(x, y, r - 22, Math.PI * 1.1, Math.PI * 1.6); g.stroke(); txt(s, x, y + r * 0.3, fit(s, r * 1.55, r * 0.9, 900), INK, 900, 'center'); };
   g.fillStyle = BG; g.fillRect(0, 0, W, H);
-  g.fillStyle = '#F5E2C9'; for (let y = 30, k = 0; y < H; y += 56, k++) for (let x = k % 2 ? 30 : 58; x < W; x += 56) { g.beginPath(); g.arc(x, y, 4, 0, Math.PI * 2); g.fill(); }
+  g.fillStyle = pk ? '#FFD6E6' : '#F5E2C9'; for (let y = 30, k = 0; y < H; y += 56, k++) for (let x = k % 2 ? 30 : 58; x < W; x += 56) { g.beginPath(); g.arc(x, y, 4, 0, Math.PI * 2); g.fill(); }
   // bamboo on the left, a lantern on the right
   [[22, 640, '#5FAE6E'], [56, 760, '#7DC48A']].forEach(([x, top, col]) => { g.fillStyle = col; rr(x, top, 22, H - top + 20, 11); g.fill(); g.fillStyle = '#3E8A50'; for (let y = top + 90; y < H; y += 110) g.fillRect(x, y, 22, 5); });
   g.fillStyle = '#7DC48A'; [[70, 660, -0.6], [96, 700, -0.3], [40, 800, 0.5]].forEach(([x, y, a]) => { g.save(); g.translate(x, y); g.rotate(a); g.beginPath(); g.ellipse(0, 0, 40, 12, 0, 0, Math.PI * 2); g.fill(); g.restore(); });
@@ -7797,7 +7883,7 @@ async function drawShareCute(D, noPanda) {
     D.units.forEach((u, i) => {
       const y = y0 + i * rowH, bh = Math.min(22, rowH - 16);
       txt(u.name, 140, y + bh, 28, INK, 800);
-      g.fillStyle = '#F3E6D3'; rr(bx, y + 2, bw, bh, bh / 2); g.fill();
+      g.fillStyle = pk ? '#FFE3EE' : '#F3E6D3'; rr(bx, y + 2, bw, bh, bh / 2); g.fill();
       const w = bw * u.done / Math.max(1, u.total); if (w > bh) { g.fillStyle = GREEN; rr(bx, y + 2, w, bh, bh / 2); g.fill(); }
       txt(`${u.done}/${u.total}`, bx + bw + 24, y + bh, 26, MUTE, 800);
     });
@@ -8958,12 +9044,13 @@ function quickSettingsHtml() {
 function openQuick() { openSettings(); }
 // a button under "More" first closes the sheet; then its own handler opens what it should
 document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.qs-more button, .qs-ver button')) closeModal(); }, true);
-function qsUpdate() { $$('[data-qset]').forEach(b => { const k = b.dataset.qset, on = k === 'listen' ? !noListenOn() : k === 'sfx' ? sfxOn() : k === 'tc' ? !!S.settings.toneCol : !!S.settings[k]; b.setAttribute('aria-checked', String(on)); }); }
+function qsUpdate() { $$('[data-qset]').forEach(b => { const k = b.dataset.qset, on = k === 'listen' ? !noListenOn() : k === 'rec' ? recWanted() : k === 'sfx' ? sfxOn() : k === 'tc' ? !!S.settings.toneCol : !!S.settings[k]; b.setAttribute('aria-checked', String(on)); }); }
 document.addEventListener('click', e => {
   const q = e.target.closest('[data-qset]');
   if (q) {
     const k = q.dataset.qset, on = q.getAttribute('aria-checked') !== 'true';
     if (k === 'sfx') setSfx(on);
+    else if (k === 'rec') { S.settings.recVoice = on; save(); renderVoice(); const dv = $('#dev-voice'); if (dv) dv.hidden = recOn(); speak('你好！很高兴认识你。'); }
     else if (k === 'tc') { S.settings.toneCol = on; save(); applySettings(); }
     else if (k === 'listen') { S.settings.noListen = !on; save(); toast(on ? 'Listening exercises are back.' : 'Listening exercises are hidden.'); if (!document.body.classList.contains('sess')) go(); }
     else { S.settings[k] = on; save(); applySettings(); }
@@ -9200,7 +9287,6 @@ setTimeout(() => { const b = document.getElementById('boot'); if (b) { b.classLi
 const ST_PAGES = [
   ['learning', '学', 'Learning', 'Tones, tone colours, character size, course'],
   ['voice', '声', 'Voice and sound', 'Recorded voice, speed, offline, sound effects'],
-  ['look', '色', 'Look', 'Style and colours'],
   ['progress', '存', 'Your progress and favourites', 'Favourites, backup, start over'],
   ['help', '问', 'Help and info', 'Info, tutorial, messages, report a mistake']
 ];
@@ -9227,9 +9313,7 @@ function stPage(k) {
       <div class="qs-line"><b>Character size</b>${zhSeg()}</div>
       <div class="qs-line"><b>Course</b>${courseSelect('set')}</div>
       <p class="small muted">HSK is coming later.</p></div>`;
-  if (k === 'voice') return `<div class="qs-grp st-voice">${voiceSettingsHtml().replace('<h2>Voice</h2>', '')}</div>
-    <div class="qs-grp"><h3>Sound</h3>${qsw('sfx', sfxOn(), 'Sound effects', 'Ding for right, bonk for wrong')}</div>`;
-  if (k === 'look') return `<div class="qs-grp"><div class="qs-line"><b>Style</b>${styleSeg()}</div><div class="qs-line"><b>Colours</b>${themeSeg()}</div><div class="qs-line"><b>Character size</b>${zhSeg()}</div></div>`;
+  if (k === 'voice') return stVoice();
   if (k === 'progress') return `<div class="qs-grp"><h3>Favourites</h3><div class="qs-more"><button type="button" class="btn" data-favs>★ Your favourites</button></div></div>
     <div class="qs-grp"><h3>Backup</h3>
     <p class="small">Your progress and favourites are saved <b>in this browser, on this device</b>. A backup lets you keep them safe or move them to another device.</p>
@@ -9248,19 +9332,45 @@ function stPage(k) {
     <div class="qs-grp"><h3>Start over</h3><p class="small muted">Deletes all your progress in this browser. You can’t undo it, so save a backup first.</p>
     <div class="card-actions"><button type="button" class="btn danger-o" data-reset>Reset progress…</button></div></div>`;
   const n = msgUnread();
-  return `<div class="qs-grp"><div class="qs-more">
-      <button type="button" class="btn" data-help>Info</button><button type="button" class="btn" data-tutorial>Tutorial</button>
-      ${msgList().length ? `<button type="button" class="btn" data-msgs>Messages${n ? `<span class="n">${n}</span>` : ''}</button>` : ''}<button type="button" class="btn" data-report>Report a mistake</button>
-      <button type="button" class="btn" data-notes>What’s new</button><button type="button" class="btn" data-about>About</button>
-      ${isStandalone() ? '' : '<button type="button" class="btn" data-install>Install the app</button>'}</div></div>`;
+  // the same rows as the categories; What’s new and About are at the bottom of Settings
+  const row = (attr, hz, l, sub, extra = '') => `<button type="button" class="qs-card st-cat" ${attr}><span class="st-ci hzf" aria-hidden="true">${hz}</span><span class="qs-l"><b>${l}</b><small>${sub}</small></span>${extra}<span class="qs-go" aria-hidden="true">›</span></button>`;
+  return `<div class="qs-grp"><div class="qs-more st-rows">
+      ${row('data-help', '?', 'Info', 'What is where in the app')}${row('data-tutorial', '看', 'Tutorial', 'The quick tour again')}
+      ${msgList().length ? row('data-msgs', '信', 'Messages', 'News and tips from the app', n ? `<span class="st-n">${n}</span>` : '') : ''}${row('data-report', '错', 'Report a mistake', 'Found something wrong? Tell us')}
+      ${isStandalone() ? '' : row('data-install', '装', 'Install the app', 'On your phone it opens like an app')}</div></div>`;
 }
+// Voice and sound: the same switches and rows as the rest of Settings
+function stVoice() {
+  const vs = zhVoices(), cur = voicePref(), rate = voiceRate();
+  return `<div class="qs-grp">
+      ${qsw('rec', recWanted(), 'Recorded voice', 'Recommended: a natural voice recorded for this app, the same on every device')}
+      ${REC.st === 'none' && recWanted() ? '<p class="small muted st-note">Not available right now (are you offline?), so your device’s voice is used.</p>' : ''}
+      <div class="qs-line"><b>Speed</b><div class="seg" role="group" aria-label="Speed">${VOICE_RATES.map(([l, r]) => `<button type="button" aria-pressed="${rate === r}" data-rate="${r}">${l}</button>`).join('')}</div></div>
+      <div class="qs-line"><button type="button" class="btn sm" data-voicetest>${ICON}<span>Test the voice</span></button></div>
+      ${voiceDlHtml()}
+      <div id="dev-voice"${recOn() ? ' hidden' : ''}>
+      <label class="qs-line"><b>Device voice</b><select class="in" id="opt-voice">${vs.length ? `<option value="">Automatic: best available</option>${vs.map(v => `<option value="${esc(v.name)}"${v.name === cur ? ' selected' : ''}>${esc(v.name)}</option>`).join('')}` : '<option value="">No Chinese voice found on this device</option>'}</select></label>
+      <details class="more"><summary>How to get a better device voice</summary><ul>
+        <li><b>Computer:</b> open the app in <b>Microsoft Edge</b>. It has free, natural-sounding Chinese voices; their names end in “Online (Natural)”.</li>
+        <li><b>Android:</b> in Settings, search for “Text-to-speech”, choose Google’s engine and install the Chinese (Mandarin) voice.</li>
+        <li><b>iPhone and iPad:</b> Settings → Accessibility → Spoken Content → Voices → Chinese, and download a voice.</li>
+        <li>Then restart the browser and choose the voice above.</li></ul></details></div></div>
+    <div class="qs-grp"><h3>Sound</h3>${qsw('sfx', sfxOn(), 'Sound effects', 'Ding for right, bonk for wrong')}</div>`;
+}
+// going between Settings and a category: no new fade-in of the whole window (it flashed the app behind it), only the content slides in;
+// back on Settings, you are where you were
+const STN = { y: 0 };
 function openSettings(page) {
   const m = $('#modal'), pg = ST_PAGES.find(p => p[0] === page);
+  const old = !m.hidden && $('.st-box', m);
+  if (old && !old.classList.contains('st-sub') && pg) STN.y = old.scrollTop;
+  if (!old) STN.y = 0;
   m.innerHTML = `<div class="modal-box help-box qs-box set-box st-box${pg ? ' st-sub' : ''}" role="dialog" aria-modal="true" aria-label="${pg ? pg[2] : 'Settings'}">
     <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
     ${pg ? `<button type="button" class="link st-back" data-stpage="">← Settings</button><h1 class="view-title">${pg[2]}</h1>${stPage(pg[0])}` : `<h1 class="view-title">Settings</h1>${stMain()}`}</div>`;
   m.classList.add('sheet', 'st-full'); m.hidden = false; document.body.classList.add('modal-open');
-  const box = $('.modal-box', m); if (box) box.scrollTop = 0;
+  const box = $('.modal-box', m);
+  if (box) { if (old) box.classList.add('st-nav', pg ? 'st-fwd' : 'st-bk'); box.scrollTop = !pg && old ? STN.y : 0; }
 }
 document.addEventListener('click', e => {
   const p = e.target.closest('[data-stpage]'); if (p) { openSettings(p.dataset.stpage); return; }
