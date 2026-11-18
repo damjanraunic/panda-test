@@ -1647,6 +1647,19 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 :root[data-theme="dark"] .gm-card.gm-off{opacity:1;filter:saturate(.35);background:var(--paper)!important}
 :root[data-theme="dark"] .gm-card.gm-off :is(b,h3,p,small,span){color:var(--muted)}
 .st-box .st-note{font-size:13px;line-height:1.45}
+
+/* ===== the big panda on the Next lesson card (Bamboo green, Sweet pink): it sits on the character, which goes down next to the button ===== */
+.hero-z{display:contents}
+[data-style="cute"] .hero{align-items:flex-end;overflow:visible}
+[data-style="cute"] .hero-z{display:block;position:relative;flex:none;align-self:flex-end;z-index:1}
+[data-style="cute"] .hero .bigz{width:92px;height:92px;font-size:48px}
+[data-style="cute"] .hero-pd{position:absolute;left:calc(50% - 58px);bottom:calc(100% - 20px);width:116px;height:116px;pointer-events:none;z-index:2;transform-origin:50% 92%;animation:pdSway 3.6s ease-in-out infinite}
+[data-style="cute"] .hero-pd svg{width:100%;height:100%;display:block}
+@keyframes pdSway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@media (max-width:760px){[data-style="cute"] .hero .bigz{width:72px;height:72px;font-size:38px}[data-style="cute"] .hero-pd{width:94px;height:94px;left:calc(50% - 47px);bottom:calc(100% - 16px)}}
+@media (prefers-reduced-motion:reduce){.hero-pd{animation:none}}
+[data-tone="pink"] .hero::after{display:none}
+[data-tone="pink"] .hero .bigz::after{top:auto;left:auto;bottom:0;right:-8px}
 </style>
 </head>
 <body>
@@ -5219,6 +5232,24 @@ function lMoodPick(q) {
   LN.mood = c[Math.floor(Math.random() * c.length)];
   return LN.mood;
 }
+// The big panda on the "Next lesson" card (Bamboo green and Sweet pink): it sits on the character of the next level.
+// Bamboo green: the usual panda. Sweet pink: a rounder, cuter panda that is only used here.
+const PINK_HERO = '<circle cx="40" cy="46" r="19" fill="#2B2B2B"/><circle cx="160" cy="46" r="19" fill="#2B2B2B"/><circle cx="40" cy="46" r="8.5" fill="#FFB3CC"/><circle cx="160" cy="46" r="8.5" fill="#FFB3CC"/>'
+  + '<ellipse cx="100" cy="172" rx="50" ry="28" fill="#fff" stroke="#2B2B2B" stroke-width="5"/>'
+  + '<ellipse cx="100" cy="98" rx="84" ry="66" fill="#fff" stroke="#2B2B2B" stroke-width="6"/>'
+  + '<ellipse cx="66" cy="104" rx="18" ry="20" transform="rotate(-16 66 104)" fill="#2B2B2B"/><ellipse cx="134" cy="104" rx="18" ry="20" transform="rotate(16 134 104)" fill="#2B2B2B"/>'
+  + '<g class="eyes"><circle cx="68" cy="104" r="11" fill="#fff"/><circle cx="132" cy="104" r="11" fill="#fff"/><circle cx="70" cy="106" r="7.5" fill="#2B2B2B"/><circle cx="134" cy="106" r="7.5" fill="#2B2B2B"/>'
+  + '<circle cx="66" cy="101" r="3.2" fill="#fff"/><circle cx="130" cy="101" r="3.2" fill="#fff"/><circle cx="72.5" cy="110" r="1.5" fill="#fff"/><circle cx="136.5" cy="110" r="1.5" fill="#fff"/></g>'
+  + '<circle cx="42" cy="128" r="13" fill="#FF9EC0" opacity=".9"/><circle cx="158" cy="128" r="13" fill="#FF9EC0" opacity=".9"/><circle cx="38" cy="124" r="2.4" fill="#fff"/><circle cx="154" cy="124" r="2.4" fill="#fff"/>'
+  + '<ellipse cx="100" cy="121" rx="6" ry="4.2" fill="#2B2B2B"/><path d="M90 129q5 7 10 0q5 7 10 0" stroke="#2B2B2B" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+  + '<ellipse cx="72" cy="188" rx="14" ry="10" fill="#2B2B2B"/><ellipse cx="128" cy="188" rx="14" ry="10" fill="#2B2B2B"/>'
+  + '<g transform="translate(76 2) scale(1.2)"><path d="M18 15L12 30L17 27L19.5 31ZM22 15L28 30L23 27L20.5 31Z" fill="#FF7EB3" stroke="#2B2B2B" stroke-width="2.2" stroke-linejoin="round"/><path d="M20 14C11 1 1 4 2 13C3 23 14 20 20 14ZM20 14C29 1 39 4 38 13C37 23 26 20 20 14Z" fill="#FF7EB3" stroke="#2B2B2B" stroke-width="2.4" stroke-linejoin="round"/><circle cx="9" cy="10" r="1.8" fill="#fff"/><circle cx="31" cy="10" r="1.8" fill="#fff"/><ellipse cx="20" cy="14" rx="5" ry="5.6" fill="#E8559A" stroke="#2B2B2B" stroke-width="2.4"/></g>'
+  + '<path d="M156 66C151 62.5 149 60 149 57.6C149 55.6 150.5 54.2 152.4 54.2C153.9 54.2 155.2 55 156 56.2C156.8 55 158.1 54.2 159.6 54.2C161.5 54.2 163 55.6 163 57.6C163 60 161 62.5 156 66Z" fill="#FF6FA8" stroke="#2B2B2B" stroke-width="1.8"/>';
+function pandaHero() {
+  if (!isCute()) return '';
+  if (!isPink()) return pandaSvg('happy', 'hero-pds');   // with its bamboo
+  return `<svg class="panda hero-pds" viewBox="0 0 200 200" aria-hidden="true">${PINK_HERO}</svg>`;
+}
 function pandaSvg(mood, cls = '', id = '', noSeal = false) {
   return `<svg class="panda ${cls}"${id ? ` id="${id}"` : ''} viewBox="0 0 200 200" style="--bd:${(Math.random() * 4).toFixed(1)}s" aria-hidden="true"${noSeal ? ' data-noseal' : ''}>${pandaInner(mood, !noSeal)}</svg>`;
 }
@@ -6774,7 +6805,7 @@ function lPath() {
       <div class="lp-tr">${streakHtml()}${unitMenu('l', `Unit ${u}`, us.map(x => { const ls = LEVELS.filter(l => l.unit === x), dn = ls.filter(l => prog[l.id]).length; return { label: `Unit ${x}`, sub: `${esc(LUNITS[x] || '')} · ${dn}/${ls.length}`, on: x === u, attrs: `data-lunit="${x}"` }; }), { right: true })}${msgBtnHtml('only-m')}<button type="button" class="ico only-m" data-search aria-label="Search" title="Search">${IC.search}</button><button type="button" class="ico line only-m" data-qs aria-label="Settings" title="Settings">${IC.set}</button></div></div>
     <div class="lp-cols"><div class="lp-a">
       ${!n && !S.nameAsked ? `<div class="nm-card"><label for="nm-learn"><b>What should the panda call you?</b> <span class="muted small">It’s only saved in this browser.</span></label><div class="nm-row">${nameInput('nm-learn')}<button type="button" class="btn primary sm" data-nmsave="nm-learn">Save</button><button type="button" class="link" data-nmskip>No thanks</button></div></div>` : ''}
-      <section class="hero" id="lp-hero" aria-label="Next lesson"><span class="bigz hzf wipe" aria-hidden="true">${esc(h.icon)}</span><div class="hero-tx">
+      <section class="hero" id="lp-hero" aria-label="Next lesson"><span class="hero-z">${cute ? `<span class="hero-pd" aria-hidden="true">${pandaHero()}</span>` : ''}<span class="bigz hzf wipe" aria-hidden="true">${esc(h.icon)}</span></span><div class="hero-tx">
         <div class="cap red">${String(cap).split(' · ').map(s => `<span class="nw">${s}</span>`).join(' · ')}</div><div class="hero-t">${esc(h.title)}</div>
         <div class="hero-s">Unit ${h.unit}: ${esc(LUNITS[h.unit] || '')}. About ${lvMins(h)} minutes.</div>
         <button type="button" class="btn primary big" data-lstart="${h.id}">${prog[h.id] ? 'Play again' : beginWord()}</button></div></section>
