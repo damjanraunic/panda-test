@@ -1610,6 +1610,43 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 [data-tone="pink"] .tl.next .hzf{box-shadow:0 0 0 4px var(--paper),0 0 0 6.5px var(--nxt),0 6px 0 4px var(--pri-sh)}
 [data-tone="pink"] .sh-prev img{background:#FFF0F5}
 [data-tone="pink"] .dp-box{background:var(--card);border-color:var(--line)}
+
+/* ===== dark = "night desk" (18 Nov, option E): the page around is dark, the cards stay paper (light islands) ===== */
+:root[data-theme="dark"]:not([data-style="cute"]){--paper:#22201C;--paper2:#2B2924;--surface:#2B2924;--sunk:#2B2924;--line:#4A463F;--line-2:#5A554B;--done:#CFC4AC;--ondone:#1B1A17;--doneline:#CFC4AC}
+:root[data-style="cute"][data-theme="dark"]:not([data-tone="pink"]){--paper:#1B2421;--paper2:#232E2A;--surface:#232E2A;--sunk:#202A26;--line:#33413B;--line-2:#3E4E47;--card:#232E2A;--pri-soft:#2A3A33;--outline:#33413B}
+:root[data-style="cute"][data-tone="pink"][data-theme="dark"]{--paper:#261C21;--paper2:#30242A;--surface:#30242A;--sunk:#2B2025;--line:#46343D;--line-2:#56414C;--card:#30242A;--pri-soft:#3A2A33;--coin:#F3B5CF;--coinline:#D98FB0;--coinink:#4A2C3A;--dot:#30242A;--outline:#46343D}
+/* the islands: each style's light palette, a little dimmer than the light mode */
+:root[data-theme="dark"]:not([data-style="cute"]) :is(.hero,.box,.mcard,.gm-hero,.gm-card,.nm-card,.zi-practise,.ln-opt,.ln-tile,.ln-bub,.qs-card){color-scheme:light;
+  --paper:#EFE8D8;--paper2:#E4DCC9;--surface:#EFE8D8;--sunk:#E4DCC9;--ink:#1B1A17;--muted:#5E584C;--line:#CFC6B3;--line-2:#B9AF9B;
+  --red:#A8281C;--redbg:#F6E2D9;--redink:#7C1B12;--onred:#FFF6E8;--onink:#EFE8D8;--jade:var(--ink);--jade-ink:var(--onink);--jade-soft:var(--paper2);
+  --ok:#2F5D46;--ok-soft:#DCE6D8;--bad:#A8281C;--bad-soft:#F6E2D9;--warn:#7A5A12;--warn-soft:#ECDDB8;
+  --t1:#C0392B;--t2:#2E7D32;--t3:#1F5FBF;--t4:#7B3FA0;--t5:#5E584C;--focus:#A8281C;--grid:#C9A097;--grid-soft:#E4D2C6;--outline:#D6CCB8;
+  --pri:var(--ink);--onpri:var(--onink);--done:var(--ink);--ondone:var(--onink);--doneline:var(--ink);--nxt:var(--red);--onnxt:var(--onred);--rule:var(--ink);--edge:var(--ink);
+  color:var(--ink)}
+:root[data-theme="dark"]:not([data-style="cute"]) :is(.hero,.box,.mcard,.gm-hero,.nm-card,.zi-practise){background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+:root[data-theme="dark"]:not([data-style="cute"]) :is(.ln-opt,.ln-tile,.ln-bub,.gm-card,.qs-card){background:var(--paper);border-color:var(--line-2)}
+:root[data-theme="dark"]:not([data-style="cute"]) .ln-bub{border-radius:8px;padding:10px 16px;border-left-width:3px}
+:root[data-style="cute"][data-theme="dark"]:not([data-tone="pink"]) :is(:is(.hero,.box,.mcard,.gm-hero,.gm-card,.nm-card,.zi-practise,.ln-opt,.ln-tile,.ln-bub,.qs-card),.cat>.set-row){color-scheme:light;
+  --paper:#F3EADB;--paper2:#ECDFCA;--surface:#F7EFE3;--sunk:#EEE2CF;--ink:#3B2F2A;--muted:#6E5F55;--line:#E6D4BB;--line-2:#DCC3A2;
+  --red:#C8443F;--redbg:#FADDDA;--redink:#8E2B27;--onred:#FFFFFF;--onink:#FFF6EA;
+  --ok:#2F7D4F;--ok-soft:#D7EBDD;--bad:#C8443F;--bad-soft:#FADDDA;--warn:#8A5A08;--warn-soft:#F7E8C0;
+  --t1:#C0392B;--t2:#2E7D32;--t3:#1F5FBF;--t4:#7B3FA0;--t5:#6E5F55;--focus:#2F7D4F;--grid:#E3B9A8;--grid-soft:#F3DCCB;--outline:#E6D4BB;
+  --pri:#2F7D4F;--onpri:#FFFFFF;--pri-sh:#215C39;--pri-soft:#D7EBDD;--pri-ink:#215C39;--done:#F4C451;--ondone:#3B2F2A;--doneline:#D9A21B;--nxt:#2F7D4F;--onnxt:#FFFFFF;
+  --rule:var(--line);--edge:var(--line-2);--card:#F7EFE3;--pink:#F9D4DB;--pinkbg:#FAE6EA;--onpink:#7A2E3E;--coin:#F4C451;--coinline:#D9A21B;--coinink:#3B2F2A;
+  color:var(--ink)}
+:root[data-style="cute"][data-tone="pink"][data-theme="dark"] :is(:is(.hero,.box,.mcard,.gm-hero,.gm-card,.nm-card,.zi-practise,.ln-opt,.ln-tile,.ln-bub,.qs-card),.cat>.set-row){color-scheme:light;
+  --paper:#F4E2E9;--paper2:#EED4DF;--surface:#F7E6EC;--sunk:#F0DAE3;--ink:#4A2C3A;--muted:#7A4D62;--line:#EBC6D6;--line-2:#E0AFC5;
+  --red:#B8322F;--redbg:#FADCDB;--redink:#8E2522;--onred:#FFFFFF;--onink:#FFF0F5;
+  --ok:#237A55;--ok-soft:#D3F0E2;--bad:#B8322F;--bad-soft:#FADCDB;--warn:#7A4B00;--warn-soft:#FBEBC0;
+  --t1:#C0392B;--t2:#2E7D32;--t3:#1F5FBF;--t4:#7B3FA0;--t5:#7A4D62;--focus:#D23A7B;--grid:#EFA6C4;--grid-soft:#F7D0E0;--outline:#EBC6D6;
+  --pri:#D23A7B;--onpri:#FFFFFF;--pri-sh:#A82A60;--pri-soft:#F9D7E5;--pri-ink:#B52A63;--done:#F3B5CF;--ondone:#4A2C3A;--doneline:#D98FB0;--nxt:#D23A7B;--onnxt:#FFFFFF;
+  --rule:var(--line);--edge:var(--line-2);--card:#F7E6EC;--pink:#F3B5CF;--pinkbg:#F7E6EC;--onpink:#4A2C3A;--coin:#F3B5CF;--coinline:#D98FB0;--coinink:#4A2C3A;--stitch:#E7B9CB;
+  color:var(--ink)}
+
+/* dark: a "coming soon" game stays a paper card, only its colours are muted (opacity made it muddy on the dark desk) */
+:root[data-theme="dark"] .gm-card.gm-off{opacity:1;filter:saturate(.35);background:var(--paper)!important}
+:root[data-theme="dark"] .gm-card.gm-off :is(b,h3,p,small,span){color:var(--muted)}
+.st-box .st-note{font-size:13px;line-height:1.45}
 </style>
 </head>
 <body>
@@ -3827,7 +3864,7 @@ const themeOf = () => (S.settings && S.settings.theme) || 'light';
 const styleOf = () => { const s = S.settings && S.settings.style; return s === 'cute' || s === 'pink' ? s : 'classic'; };
 const isCute = () => styleOf() !== 'classic';
 const isPink = () => styleOf() === 'pink';
-const THEME_C = { classic: ['#F3EEE3', '#33302B'], cute: ['#FFF6EA', '#16302A'], pink: ['#FFF0F5', '#331A2B'] };   // browser bar colour: light, dark
+const THEME_C = { classic: ['#F3EEE3', '#22201C'], cute: ['#FFF6EA', '#1B2421'], pink: ['#FFF0F5', '#261C21'] };   // browser bar colour: light, dark
 const sysDark = () => { try { return matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; } };
 function applyTheme() {
   const t = themeOf();
@@ -7399,12 +7436,12 @@ function openWelcome() {
 const SP = { after: null };
 function spPreview(st, dark) {
   const C = st === 'pink'
-    ? (dark ? { bg: '#331A2B', card: '#47233C', cl: '#6D3A5C', tx: '#FFEAF3', mu: '#E2B6CB', a: '#FF8DBF', on: '#331A2B', rail: '#9A4A7C', off: '#47233C', offl: '#80476B', coin: '#6E2F57', coinl: '#9A4A7C' }
+    ? (dark ? { bg: '#261C21', card: '#F7E6EC', cl: '#E0AFC5', tx: '#F6E9EE', mu: '#E7B3C8', a: '#D23A7B', on: '#FFFFFF', rail: '#9A4A7C', off: '#261C21', offl: '#7A5868', coin: '#F3B5CF', coinl: '#D98FB0' }
             : { bg: '#FFF0F5', card: '#FFFFFF', cl: '#FBCFE0', tx: '#4A2C3A', mu: '#E7B3C8', a: '#D23A7B', on: '#FFFFFF', rail: '#F3A9C8', off: '#FFFFFF', offl: '#F3B5CF', coin: '#FFC2DA', coinl: '#F08DB7' })
     : st === 'cute'
-    ? (dark ? { bg: '#16302A', card: '#1F3D35', cl: '#2F5448', tx: '#F3F1E6', mu: '#B9CBBF', a: '#9BE0B0', on: '#12271F', rail: '#A88457', off: '#1F3D35', offl: '#3A6354' }
+    ? (dark ? { bg: '#1B2421', card: '#F3EADB', cl: '#DCC3A2', tx: '#EEF3EF', mu: '#C9B8A8', a: '#2F7D4F', on: '#FFFFFF', rail: '#A88457', off: '#1B2421', offl: '#5A6B63' }
             : { bg: '#FFF6EA', card: '#FFFFFF', cl: '#F1DFC8', tx: '#3B2F2A', mu: '#C9B8A8', a: '#2F7D4F', on: '#FFFFFF', rail: '#C99A64', off: '#FFFFFF', offl: '#E8CFAE' })
-    : (dark ? { bg: '#33302B', tx: '#F2ECE1', mu: '#7D7569', a: '#F08470', on: '#1B1A17', done: '#4A463F', ondone: '#F2ECE1', offl: '#625B50' }
+    : (dark ? { bg: '#22201C', tx: '#EDE6D6', mu: '#7D7569', a: '#F08470', on: '#1B1A17', done: '#CFC4AC', ondone: '#1B1A17', offl: '#6A6458' }
             : { bg: '#F3EEE3', tx: '#1B1A17', mu: '#B9AF9B', a: '#A8281C', on: '#FFF6E8', done: '#1B1A17', ondone: '#F3EEE3', offl: '#B9AF9B' });
   const hz = `font-family="Noto Serif SC,Songti SC,serif"`;
   let b = `<rect width="160" height="120" fill="${C.bg}"/>`;
