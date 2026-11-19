@@ -1670,7 +1670,7 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
     <header class="mtop" id="mtop"></header>
     <nav class="subtabs" id="subtabs" aria-label="Pages" hidden></nav>
     <main id="main"></main>
-    <footer><span id="voice-note"></span><span>Progress is saved in this browser only.</span><button type="button" class="link" data-report>Found a mistake?</button><button type="button" class="link" data-notes>v1.0.0 beta</button><button type="button" class="link" data-about>About</button></footer>
+    <footer><span id="voice-note"></span><span id="sy-foot">Progress is saved in this browser only.</span><button type="button" class="link" data-report>Found a mistake?</button><button type="button" class="link" data-notes>v1.1.0 beta</button><button type="button" class="link" data-about>About</button></footer>
   </div>
 </div>
 <nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
@@ -3592,7 +3592,7 @@ const KEY = 'hz-midterm-v1';
 const DEF = { settings: { pinyin: true, strict: true, noListen: false }, sets: {}, cards: {}, chars: {}, favs: {}, learn: {} };
 let S = JSON.parse(JSON.stringify(DEF));
 try { const raw = localStorage.getItem(KEY); if (raw) { const o = JSON.parse(raw); S = { ...S, ...o, settings: { ...DEF.settings, ...(o.settings || {}) } }; } } catch (e) { /* storage unavailable */ }
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } };
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } syTouch(); };
 // Layout: a side column with the five tabs on computers, a tab bar at the bottom on phones. There is no header.
 // "sess"   = an exercise is running: the page tabs hide, and on phones the tab bar too.
 // "lesson" = a Learn level: full screen, with the action bar fixed at the bottom.
@@ -4687,7 +4687,7 @@ function wHandle(a) {
 const MKKEY = 'hz-mock-practice-v1';
 const MK = { test: null, ans: {}, self: {}, done: false, timerMin: 0, endAt: 0, timerId: null, attempt: null, hist: [], bar: '', missing: 0 };
 try { MK.hist = JSON.parse(localStorage.getItem(MKKEY) || '[]'); } catch (e) { MK.hist = []; }
-function mkSaveHist() { try { localStorage.setItem(MKKEY, JSON.stringify(MK.hist.slice(0, 20))); } catch (e) { /* ignore */ } }
+function mkSaveHist() { try { localStorage.setItem(MKKEY, JSON.stringify(MK.hist.slice(0, 20))); } catch (e) { /* ignore */ } syTouch(); }
 const ML = 'abcd';
 const mkShuf = x => { const idx = shuffle(x.o.map((_, i) => i)); return { ...x, o: idx.map(i => x.o[i]), c: idx.indexOf(x.c) }; };
 function mkWords(w) { const p = w[w.length - 1], b = w.slice(0, -1); let s = shuffle(b), k = 0; while (s.join('') === b.join('') && k++ < 5) s = shuffle(b); return [...s, p]; }
@@ -4828,7 +4828,7 @@ function mkSubmit(force, auto) {
   if (!auto && missing && !force) { MK.bar = 'confirmSubmit'; MK.missing = missing; return mkBar(); }
   MK.done = true; MK.bar = ''; mkStopTimer(); stopAudio(); sfx('end');
   const now = new Date();
-  MK.attempt = { when: now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), got: 0, pending: 15 };
+  MK.attempt = { t: now.getTime(), when: now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), got: 0, pending: 15 };
   MK.hist.unshift(MK.attempt); mkSaveAttempt();
   if (view === 'mock') { renderMock(); window.scrollTo({ top: 0 }); }
   if (auto) toast('Time is up. Your mock test was submitted.');
@@ -5118,7 +5118,7 @@ function openReset() {
     <h1 class="view-title" id="rs-h">Reset all progress?</h1>
     <p>This deletes everything the app has saved in this browser:</p>
     <ul class="hl"><li>your levels and stars in Learn</li><li>how well you know each character and word</li><li>your favourites</li><li>your Daily practice streak</li><li>your Mock exam results and game records</li><li>your name and settings</li></ul>
-    <p><b>You can’t undo this.</b> A backup file lets you bring it all back later.</p>
+    <p><b>You can’t undo this.</b> A backup file lets you bring it all back later.</p>${syOn() ? '<p>You’ll also be signed out of sync on this device. Your synced copy stays: sign in again to get it back.</p>' : ''}
     <div id="bk-msg" aria-live="polite"></div>
     <div id="bk-code" hidden><p class="small">Saving a file isn’t possible here, so the app shows a <b>backup code</b> instead. Copy all of it and keep it somewhere safe.</p><textarea class="in bk-ta" readonly rows="3"></textarea></div>
     <div class="card-actions rs-act"><button type="button" class="btn primary" data-bksave>Save a backup first</button><button type="button" class="btn danger" data-resetyes>Delete everything</button><button type="button" class="btn" data-settings>Cancel</button></div>
@@ -7188,7 +7188,7 @@ function openAbout() {
   m.innerHTML = `<div class="modal-box help-box" role="dialog" aria-modal="true" aria-label="About this app">
     <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
     <h1 class="view-title">About this app</h1>
-    <p><b>Panda Chinese</b> is a free study app for <i>Contemporary Chinese 1</i>. Version ${APP_VERSION} beta, 17 November 2026. <button type="button" class="link" data-notes>What’s new</button></p>
+    <p><b>Panda Chinese</b> is a free study app for <i>Contemporary Chinese 1</i>. Version ${APP_VERSION} beta, 19 November 2026. <button type="button" class="link" data-notes>What’s new</button></p>
     <h2>Privacy</h2><p>The app collects no data. Your progress and favourites stay in your own browser.</p>
     <h2>Content</h2><p>The exercises in Book exercises and the vocabulary follow the textbook <i>Contemporary Chinese</i> (当代中文); all rights to the textbook belong to its authors and publisher. The Learn levels, the Test questions, the grammar explanations and the practice tests were written for this app with the help of AI (Claude by Anthropic). The Chinese voice recordings were made with Microsoft Azure text-to-speech.</p>
     <h2>Credits</h2><p>Made by <b>Damjan Raunić</b> (draunic@gmail.com). Stroke animations: <b>Hanzi Writer</b> by David Chanin (MIT License). Stroke data: <b>hanzi-writer-data</b>, based on <b>Make Me a Hanzi</b> (Arphic Public License). Fonts: <b>Inter</b> and <b>Noto Serif SC</b> (SIL Open Font License). If the recordings can’t load, the app uses your device’s built-in voice.</p>
@@ -7257,7 +7257,7 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').hidden) closeModal(); });
 
 /* ================= navigation, course, version ================= */
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.1.0';
 const pandaSm = () => pandaSvg('idle', 'tab-panda', '', true);
 // A Shaolin monk in a classic staff pose: bald head, robe with wide sleeves, sash, prayer beads, leg wraps.
 // Drawn as one silhouette; the details are cut out with a mask so it stays readable at any opacity.
@@ -7422,6 +7422,7 @@ function renderNav() {
 }
 /* ----- patch notes and welcome ----- */
 const NOTES = [
+  { v: '1.1.0', date: '19 November 2026', items: ['Sync your progress across devices: sign in with Google in Settings.'] },
   { v: '1.0.0', date: '17 November 2026', items: ['New look: three styles (Classic, Bamboo green, Sweet pink), light or dark.', 'A new Learn page and tabs.', 'New units: family, maps and books, shopping.', 'My mistakes, search, diplomas and practice sheets.', 'Install the app on your phone. It works without internet.', 'Small fixes.'] },
   { v: '0.8.0', date: '16 November 2026', items: ['New game: Panda Run in the Games tab. Challenge your friends!', 'Daily practice with a streak on the Learn page.', 'Dark mode and sound effects.', 'New Words tab and quick settings.', 'Small fixes.'] },
   { v: '0.7.9', date: '14 November 2026', items: ['New 字 levels in Learn for reading characters: what they mean, how they sound, and how to tell look-alike characters apart.', 'Every unit now has a character review that brings back the characters you know least.', 'New on the Learn page: “My characters” shows every character and how well you know it, and lets you practise your weakest ones: 10 or 20 at a time, or until you get them all right.', 'Pinyin is hidden for characters you already know well. Tap a word to show it.'] },
@@ -7770,7 +7771,7 @@ function keepTip() {
   if (!S.safariTip && isIOS && !isStandalone()) return `<div class="nm-card keep-card" id="keep-card"><b>Keep your progress safe</b><p>On iPhone and iPad, Safari deletes saved progress if you don’t open the app for 7 days. Add Panda Chinese to your <b>Home Screen</b>: tap <b>Share</b> <span aria-hidden="true">⎙</span>, then <b>Add to Home Screen</b>. Then open it from there.</p><div class="nm-row"><button type="button" class="btn primary sm" data-keepok="safariTip">Got it</button><button type="button" class="link" data-settings>Save a backup</button></div></div>`;
   if (!S.safariTip && isMacSafari) return `<div class="nm-card keep-card" id="keep-card"><b>Keep your progress safe</b><p>Safari deletes saved progress if you don’t open the app for 7 days of using Safari. Save a backup now and then, or use Chrome, Edge or Firefox, which don’t do this.</p><div class="nm-row"><button type="button" class="btn primary sm" data-keepok="safariTip">Got it</button><button type="button" class="link" data-settings>Save a backup</button></div></div>`;
   const last = Math.max(S.lastBackup || 0, S.since || 0, S.backupSnooze || 0);
-  if (hasProgress() && Date.now() - last > 7 * DAY) return `<div class="nm-card keep-card" id="keep-card"><b>Time for a backup?</b><p>${S.lastBackup ? 'Your last backup is more than a week old.' : 'You haven’t saved a backup yet.'} A backup keeps your progress safe and lets you move it to another device.</p><div class="nm-row"><button type="button" class="btn primary sm" data-settings>Save a backup</button><button type="button" class="link" data-keepok="backupSnooze">Remind me later</button></div></div>`;
+  if (hasProgress() && !syOn() && Date.now() - last > 7 * DAY) return `<div class="nm-card keep-card" id="keep-card"><b>Time for a backup?</b><p>${S.lastBackup ? 'Your last backup is more than a week old.' : 'You haven’t saved a backup yet.'} A backup keeps your progress safe and lets you move it to another device.</p><div class="nm-row"><button type="button" class="btn primary sm" data-settings>Save a backup</button><button type="button" class="link" data-keepok="backupSnooze">Remind me later</button></div></div>`;
   return '';
 }
 document.addEventListener('click', e => {
@@ -8353,7 +8354,7 @@ document.addEventListener('click', e => {
   if (d.wnav) { const n = wList().length; W.i = d.wnav === 'rand' ? Math.floor(Math.random() * n) : (W.i + (+d.wnav) + n) % n; return renderWriting(); }
   if (d.w) return wHandle(d.w);
   if (d.reset !== undefined) return openReset();
-  if (d.resetyes !== undefined) { S = JSON.parse(JSON.stringify(DEF)); save(); MK.hist = []; mkSaveHist(); applySettings(); closeModal(); LN.phase = 'path'; LN.lv = null; toast('Progress reset.'); return go(); }
+  if (d.resetyes !== undefined) { syOnReset(); S = JSON.parse(JSON.stringify(DEF)); save(); MK.hist = []; mkSaveHist(); applySettings(); closeModal(); LN.phase = 'path'; LN.lv = null; toast('Progress reset.'); return go(); }
 });
 document.addEventListener('keydown', e => {
   if (view !== 'characters' || C.screen !== 'session') return;
@@ -9356,7 +9357,8 @@ const ST_PAGES = [
   ['learning', '学', 'Learning', 'Tones, tone colours, character size, course'],
   ['voice', '声', 'Voice and sound', 'Recorded voice, speed, offline, sound effects'],
   ['progress', '存', 'Your progress and favourites', 'Favourites, backup, start over'],
-  ['help', '问', 'Help and info', 'Info, tutorial, messages, report a mistake']
+  ['help', '问', 'Help and info', 'Info, tutorial, messages, report a mistake'],
+  ['sync', '云', 'Sync across devices', 'Sign in with Google to keep your progress on all your devices']
 ];
 function stMain() {
   const n = userName(), done = Object.keys(S.learn || {}).length, course = (COURSES.find(c => c[0] === (S.settings.course || 'cc1')) || COURSES[0])[1];
@@ -9364,6 +9366,7 @@ function stMain() {
   return `<div class="st-me">${pandaSvg('happy', 'st-av', '', true)}<div class="st-me-t">
       <button type="button" class="st-name" data-stname aria-label="Change your name">${n ? esc(n) : 'Add your name'} <span class="st-pen" aria-hidden="true">✎</span></button>
       <small>${esc(course)} · ${done} level${done === 1 ? '' : 's'} done</small></div></div>
+    ${syRow()}
     <div class="qs-grp"><h3>Most used</h3>
       ${qsw('listen', !noListenOn(), 'Listening exercises', 'Questions where you listen')}
       ${qsw('pinyin', !!S.settings.pinyin, 'Pinyin under characters', 'In exercises, tests and grammar')}
@@ -9371,7 +9374,7 @@ function stMain() {
       <div class="qs-line"><b>Style</b>${styleSeg()}</div>
       <div class="qs-line"><b>Colours</b>${themeSeg()}</div></div>
     ${qsInstallHtml()}
-    <div class="qs-grp"><h3>More settings</h3><div class="st-cats">${ST_PAGES.map(([k, hz, l, sub]) => `<button type="button" class="qs-card st-cat" data-stpage="${k}"><span class="st-ci hzf" aria-hidden="true">${hz}</span><span class="qs-l"><b>${l}</b><small>${sub}</small></span>${k === 'help' && unread ? `<span class="st-n">${unread}</span>` : ''}<span class="qs-go" aria-hidden="true">›</span></button>`).join('')}</div></div>
+    <div class="qs-grp"><h3>More settings</h3><div class="st-cats">${ST_PAGES.filter(p => p[0] !== 'sync').map(([k, hz, l, sub]) => `<button type="button" class="qs-card st-cat" data-stpage="${k}"><span class="st-ci hzf" aria-hidden="true">${hz}</span><span class="qs-l"><b>${l}</b><small>${sub}</small></span>${k === 'help' && unread ? `<span class="st-n">${unread}</span>` : ''}<span class="qs-go" aria-hidden="true">›</span></button>`).join('')}</div></div>
     <p class="qs-ver"><button type="button" class="link" data-notes>Version ${APP_VERSION} beta: what’s new</button><button type="button" class="link" data-about>About</button></p>`;
 }
 function stPage(k) {
@@ -9382,9 +9385,10 @@ function stPage(k) {
       <div class="qs-line"><b>Course</b>${courseSelect('set')}</div>
       <p class="small muted">HSK is coming later.</p></div>`;
   if (k === 'voice') return stVoice();
+  if (k === 'sync') return syPageHtml();
   if (k === 'progress') return `<div class="qs-grp"><h3>Favourites</h3><div class="qs-more"><button type="button" class="btn" data-favs>★ Your favourites</button></div></div>
     <div class="qs-grp"><h3>Backup</h3>
-    <p class="small">Your progress and favourites are saved <b>in this browser, on this device</b>. A backup lets you keep them safe or move them to another device.</p>
+    <p class="small">Your progress and favourites are saved <b>in this browser, on this device</b>. A backup lets you keep them safe or move them to another device. Or turn on <button type="button" class="link" data-stpage="sync">Sync</button> to have them on all your devices.</p>
     <div class="bk-panel">
       <div class="card-actions"><button type="button" class="btn primary" data-bksave>Save backup file</button><button type="button" class="btn" data-bkload>Load backup file</button><input type="file" id="bk-file" accept=".json,application/json" hidden></div>
       <div id="bk-msg" aria-live="polite"></div>
@@ -9392,7 +9396,7 @@ function stPage(k) {
       <details class="more"><summary>Restore from a backup code</summary><textarea class="in bk-ta" id="bk-paste" rows="3" placeholder="Paste your backup code here"></textarea><button type="button" class="btn sm" data-bkpaste>Load from code</button></details>
     </div>
     <details class="more"><summary>Learn more</summary><ul>
-      <li>Always open the app in the <b>same browser</b> on the same device. Your phone and your laptop each keep their own progress.</li>
+      <li>Always open the app in the <b>same browser</b> on the same device. Your phone and your laptop each keep their own progress, unless you turn on Sync.</li>
       <li><b>New device:</b> on the old one press <b>Save backup file</b>, send the file to yourself (for example by email), and on the new one press <b>Load backup file</b>.</li>
       <li>Updates arrive by themselves, and your progress stays.</li>
       <li>Your progress is lost if you clear your browser’s data or use a private (incognito) window. Safari deletes it if you don’t open the app for 7 days; installing the app (Home Screen) avoids this.</li>
@@ -9447,6 +9451,384 @@ document.addEventListener('click', e => {
   if (e.target.closest('[data-stnameok]')) { const i = $('#opt-name'); if (i) { setName(i.value); if (view === 'learn' && LN.phase === 'path') lPath(); } openSettings(); }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'opt-name' && e.target.closest('.st-box')) { e.preventDefault(); const ok = $('[data-stnameok]'); if (ok) ok.click(); } });
+
+/* ----- Sync across devices (from 1.1.0): sign in with Google (Firebase Authentication), the progress goes to Cloud Firestore.
+   The progress on the device stays the main copy: everything is saved on the device first, the server copy only carries it to other devices.
+   Without signing in nothing changes and nothing is loaded from Firebase.
+   Joining two copies uses the last synced copy as the base: stars and best scores keep the best, counters add up,
+   newer character strengths win, a favourite deleted on one device is deleted everywhere. Progress is never lowered.
+   New localStorage keys: 'pc-sync-v1' (signed in or not, when synced) and 'pc-sync-base-v1' (the last synced copy). Old keys untouched.
+   Server: <collection>/<uid> = { d: JSON string { p: progress, m: mock exam history }, at, v, app }. Live site 'sync', everything else 'sync-test'. ----- */
+var SY = null;   // var: save() can run before this part of the file
+const SY_CFG = { apiKey: 'AIzaSyCpGZqHUQBUpL-Vc0-P7iNhnU_f9b6NU-I', authDomain: 'panda-chinese-b07c7.firebaseapp.com', projectId: 'panda-chinese-b07c7', appId: '1:227107346536:web:a56ab4f6741fab4a0ec3dd' };
+const SY_CLIENT = '227107346536-ur0qceoel5291eutppba8adikhe9h684.apps.googleusercontent.com';
+const SY_SDK = 'https://www.gstatic.com/firebasejs/13.4.0/';
+const SY_COL = location.hostname === 'panda-chinese.github.io' ? 'sync' : 'sync-test';
+const SY_K = 'pc-sync-v1', SY_KB = 'pc-sync-base-v1', SY_GAP = 120000;
+// kept on each device only
+const SY_LOCAL = ['lastBackup', 'backupSnooze', 'safariTip', 'instAsked', 'vdlAsked', 'voiceDl'], SY_LOCAL_SET = ['voice'];
+
+// <merge>  (pure functions; devtools test them on their own)
+const syIsObj = x => !!x && typeof x === 'object' && !Array.isArray(x);
+const syJ = x => JSON.stringify(x, (k, v) => syIsObj(v) ? Object.keys(v).sort().reduce((o, q) => { o[q] = v[q]; return o; }, {}) : v);
+const syEq = (a, b) => syJ(a) === syJ(b);
+const syMax = (a, b) => Math.max(+a || 0, +b || 0);
+// a counter: what the other device added comes on top; never below either copy
+const syCnt = (b, l, r) => { b = +b || 0; l = +l || 0; r = +r || 0; return Math.max(l, r, r + l - b); };
+// one value: the side that changed it since the last sync; changed on both, the newer side
+function syPick(b, l, r, lN) { if (l === undefined) return r; if (r === undefined) return l; const lc = !syEq(l, b), rc = !syEq(r, b); if (lc && !rc) return l; if (rc && !lc) return r; return lc && rc && !lN ? r : l; }
+function syUnion(l, r) { const seen = new Set(), o = []; [...(l || []), ...(r || [])].forEach(x => { const k = syJ(x); if (!seen.has(k)) { seen.add(k); o.push(x); } }); return o; }
+// a map of entries; dels: a deletion on one side carries over if the other side didn't change that entry
+function syMap(b, l, r, f, dels) {
+  b = syIsObj(b) ? b : {}; l = syIsObj(l) ? l : {}; r = syIsObj(r) ? r : {}; const o = {};
+  new Set([...Object.keys(l), ...Object.keys(r)]).forEach(k => {
+    const inL = k in l, inR = k in r, inB = k in b;
+    if (dels && inB && !inL && inR && syEq(r[k], b[k])) return;
+    if (dels && inB && !inR && inL && syEq(l[k], b[k])) return;
+    const v = f(b[k], inL ? l[k] : undefined, inR ? r[k] : undefined, k);
+    if (v !== undefined) o[k] = v;
+  });
+  return o;
+}
+const syOne = f => (b, l, r, k) => l === undefined ? r : r === undefined ? l : f(b, l, r, k);
+function syGen(b, l, r, lN) {
+  if (l === undefined) return r; if (r === undefined) return l;
+  if (syIsObj(l) && syIsObj(r)) return syMap(b, l, r, (bb, ll, rr) => syGen(bb, ll, rr, lN), true);
+  const lc = !syEq(l, b), rc = !syEq(r, b);
+  if (lc && rc && typeof l === 'number' && typeof r === 'number') return Math.max(l, r);
+  if (lc && rc && Array.isArray(l) && Array.isArray(r)) return syUnion(l, r);
+  return syPick(b, l, r, lN);
+}
+const SY_RULES = {
+  // Learn levels: the most stars and the best score; a "known" mark (placement) only if both copies have only that
+  learn: (b, l, r, lN) => syMap(b, l, r, syOne((bb, x, y) => { const o = { ...y, ...x, stars: syMax(x.stars, y.stars), best: syMax(x.best, y.best), at: syMax(x.at, y.at) }; if (!(x.known && y.known)) delete o.known; return o; })),
+  sets: (b, l, r, lN) => syMap(b, l, r, syOne((bb, x, y) => ({ ...syPick(bb, x, y, lN), best: syMax(x.best, y.best) }))),
+  cards: (b, l, r, lN) => syMap(b, l, r, syOne((bb, x, y) => { bb = bb || {}; const o = { ...syPick(bb, x, y, lN) }; ['ok', 'bad'].forEach(q => { o[q] = syCnt(bb[q], x[q], y[q]); }); return o; })),
+  zi: (b, l, r, lN) => syMap(b, l, r, syOne((bb, x, y) => { const o = { ...((+x.at || 0) >= (+y.at || 0) ? x : y) }; o.n = syCnt((bb || {}).n, x.n, y.n); return o; })),
+  chars: (b, l, r, lN) => syMap(b, l, r, syOne((bb, x, y) => {
+    const o = syMap(bb, x, y, (q, a, c) => syPick(q, a, c, lN));
+    if (x.mem !== undefined || y.mem !== undefined) o.mem = Math.min(x.mem ?? 99, y.mem ?? 99);
+    if (x.trace || y.trace) o.trace = true;
+    return o;
+  })),
+  favs: (b, l, r, lN) => syMap(b, l, r, (bb, x, y) => syPick(bb, x, y, lN), true),
+  lmiss: (b, l, r, lN) => syMap(b, l, r, (bb, x, y) => syPick(bb, x, y, lN), true),
+  how: (b, l, r) => ({ ...(r || {}), ...(l || {}) }),
+  msgSeen: (b, l, r) => syUnion(l, r),
+  since: (b, l, r) => { const a = [l, r].filter(x => +x > 0).map(Number); return a.length ? Math.min(...a) : l; },
+  settings: (b, l, r, lN) => syMap(b, l, r, (bb, x, y) => syPick(bb, x, y, lN)),
+  daily: (b, l, r) => { l = l || {}; r = r || {}; b = b || {}; return { ...r, ...l, days: [...new Set([...(l.days || []), ...(r.days || [])])].sort().slice(-120), best: syMax(l.best, r.best), total: syCnt(b.total, l.total, r.total) }; },
+  games: (b, l, r, lN) => syMap(b, l, r, (bb, x, y, k) => {
+    if (k !== 'run' || !x || !y) return syGen(bb, x, y, lN);
+    bb = bb || {}; const o = syGen(bb, x, y, lN), best = {}, runs = {};
+    new Set([...Object.keys(x.best || {}), ...Object.keys(y.best || {})]).forEach(d => {
+      const a = (x.best || {})[d] || 0, c = (y.best || {})[d] || 0; best[d] = Math.max(a, c);
+      const src = a >= c ? x : y, run = (src.runs || {})[d] || ((a >= c ? y : x).runs || {})[d]; if (run) runs[d] = run;
+    });
+    o.best = best; if (Object.keys(runs).length || x.runs || y.runs) o.runs = runs; o.plays = syCnt(bb.plays, x.plays, y.plays);
+    return o;
+  })
+};
+function syMergeP(B, L, R, lN, D) {
+  const hadB = syIsObj(B); B = hadB ? B : {}; L = L || {}; R = R || {};
+  const o = {};
+  new Set([...Object.keys(L), ...Object.keys(R)]).forEach(k => {
+    let b = B[k]; if (!hadB && k === 'settings') b = D || {};   // first sync: a default setting on this device doesn't beat a chosen one
+    const f = SY_RULES[k], v = L[k] === undefined ? R[k] : R[k] === undefined ? L[k] : f ? f(b, L[k], R[k], lN) : syGen(b, L[k], R[k], lN);
+    if (v !== undefined) o[k] = v;
+  });
+  return o;
+}
+// Mock exam attempts: newest first, at most 20. Attempts from 1.1.0 on have a time (t).
+function syMergeM(l, r) {
+  const key = a => a && a.t ? 't' + a.t : 'w' + (a && a.when) + '|' + (a && a.max);
+  const m = new Map();
+  [...(l || []), ...(r || [])].forEach(a => { if (!a) return; const k = key(a), o = m.get(k); if (!o || (+a.pending || 0) < (+o.pending || 0)) m.set(k, a); });
+  const all = [...m.values()], withT = all.filter(a => a.t).sort((x, y) => y.t - x.t);
+  return [...withT, ...all.filter(a => !a.t)].slice(0, 20);
+}
+function syMerge(B, L, R, lN, D) { B = B || {}; return { p: syMergeP(B.p, L.p, R.p, lN, D), m: syMergeM(L.m, R.m) }; }
+// </merge>
+
+/* ----- state ----- */
+function syLoad(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+SY = { st: syLoad(SY_K) || {}, user: null, fb: null, busy: false, again: false, timer: 0, status: '', msg: '', tok: null, del: false, fresh: false, applying: false };
+const sySt = () => { try { localStorage.setItem(SY_K, JSON.stringify(SY.st)); } catch (e) { /* ignore */ } };
+function syOn() { return !!(SY && SY.st.on); }
+function syBase() { const b = syLoad(SY_KB); return b && SY.user && b.uid === SY.user.uid ? b.d : null; }
+function sySetBase(d) { try { localStorage.setItem(SY_KB, JSON.stringify({ uid: SY.user.uid, d })); } catch (e) { /* ignore */ } }
+// what goes to the server: everything except the things that belong to one device
+function syLocal() {
+  const p = JSON.parse(JSON.stringify(S)); SY_LOCAL.forEach(k => delete p[k]);
+  if (p.settings) SY_LOCAL_SET.forEach(k => delete p.settings[k]);
+  return { p, m: JSON.parse(JSON.stringify(MK.hist || [])) };
+}
+// called by save() and mkSaveHist(): something changed on this device
+function syTouch() {
+  if (!SY || !SY.st.on || SY.applying) return;
+  SY.st.dirty = 1; SY.st.lt = Date.now(); sySt(); sySchedule();
+}
+function sySchedule(ms) {
+  if (!SY.user || SY.timer) return;
+  const wait = ms !== undefined ? ms : Math.max(5000, (SY.st.push || 0) + SY_GAP - Date.now());
+  SY.timer = setTimeout(() => { SY.timer = 0; syRun(); }, wait);
+}
+
+/* ----- the server (Firestore REST with the user's sign-in) ----- */
+const syUrl = () => `https://firestore.googleapis.com/v1/projects/${SY_CFG.projectId}/databases/(default)/documents/${SY_COL}/${SY.user.uid}`;
+async function syReq(method, qs, body) {
+  for (let i = 0; i < 2; i++) {
+    const tok = await SY.user.getIdToken(i > 0);
+    let r;
+    try { r = await fetch(syUrl() + (qs || ''), { method, cache: 'no-store', headers: body ? { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' } : { Authorization: 'Bearer ' + tok }, body: body ? JSON.stringify(body) : undefined }); }
+    catch (e) { const er = new Error('offline'); er.net = 1; throw er; }
+    if (r.status === 401 && i === 0) continue;
+    return r;
+  }
+}
+function syFail(r) { const e = new Error('http ' + r.status); e.http = r.status; return e; }
+async function syGet() {
+  const r = await syReq('GET');
+  if (r.status === 404) return null;
+  if (!r.ok) throw syFail(r);
+  const j = await r.json(), f = j.fields || {};
+  let d = null; try { d = JSON.parse(f.d.stringValue); } catch (e) { d = null; }
+  return { d: d && syIsObj(d.p) ? d : { p: {}, m: [] }, at: +((f.at || {}).integerValue || 0), ut: j.updateTime };
+}
+async function syPut(d, ut) {
+  const body = { fields: { d: { stringValue: JSON.stringify(d) }, at: { integerValue: String(Date.now()) }, v: { integerValue: '1' }, app: { stringValue: APP_VERSION } } };
+  const r = await syReq('PATCH', ut ? '?currentDocument.updateTime=' + encodeURIComponent(ut) : '?currentDocument.exists=false', body);
+  if (r.ok) return true;
+  if (r.status === 409 || r.status === 412 || r.status === 400) { let j = null; try { j = await r.json(); } catch (e) { /* ignore */ } const s = j && j.error && j.error.status; if (r.status !== 400 || s === 'FAILED_PRECONDITION' || s === 'ALREADY_EXISTS' || s === 'ABORTED') return false; }
+  throw syFail(r);
+}
+
+/* ----- one sync: read, join, write if needed, take the joined copy ----- */
+async function syRun() {
+  if (!SY.user || SY.del) return;
+  if (SY.busy) { SY.again = true; return; }
+  if (navigator.onLine === false) { syStatus('offline'); return; }
+  SY.busy = true; syStatus('syncing');
+  try {
+    let wrote = false, M = null, L = null, R = null;
+    for (let i = 0; i < 4; i++) {
+      R = await syGet(); if (SY.del || !SY.user) return;
+      L = syLocal();
+      M = R ? syMerge(syBase(), L, R.d, (SY.st.lt || 0) >= R.at, DEF.settings) : L;
+      if (R && syEq(M, R.d)) break;
+      if (JSON.stringify(M).length > 950000) { syStatus('big'); return; }
+      if (await syPut(M, R && R.ut)) { wrote = true; break; }
+      M = null;
+    }
+    if (!M) throw new Error('busy');
+    // anything changed on this device while syncing stays on top
+    const L2 = syLocal(), F = syEq(L2, L) ? M : syMerge(L, L2, M, true, DEF.settings);
+    const before = syJ(L2.p), wasEmpty = !hasProgress();
+    if (!syEq(F, L2)) syApply(F);
+    sySetBase(M);
+    SY.st.last = Date.now(); if (wrote) SY.st.push = Date.now(); SY.st.dirty = syEq(F, M) ? 0 : 1; sySt();
+    syStatus('ok');
+    if (SY.fresh) { SY.fresh = false; toast(wasEmpty && hasProgress() ? 'Signed in. Your progress from your other devices is here.' : 'Signed in. Your progress is now synced.'); }
+    else if (before !== syJ(F.p) && R && !document.body.classList.contains('sess')) toast('Progress from your other device is here.');
+  } catch (e) {
+    if (e.net) syStatus('offline');
+    else if (e.http === 429 || e.http >= 500) { syStatus('paused'); SY.busy = false; return sySchedule(e.http === 429 ? 15 * 60000 : 5 * 60000); }
+    else if (e.http === 403 || e.http === 401) syStatus('denied');
+    else syStatus('paused');
+  } finally {
+    SY.busy = false;
+    if (SY.again) { SY.again = false; if (SY.st.dirty) sySchedule(); }
+    else if (SY.st.dirty && SY.status === 'ok') sySchedule();
+  }
+}
+// put the joined copy into the app, in place (pages keep their references), without counting it as a new change
+function syApply(F) {
+  SY.applying = true;
+  try {
+    const into = (t, s, top) => {
+      Object.keys(t).forEach(k => { if (!(k in s) && !(top === 1 && SY_LOCAL.includes(k)) && !(top === 2 && SY_LOCAL_SET.includes(k))) delete t[k]; });
+      Object.keys(s).forEach(k => { if (syIsObj(s[k]) && syIsObj(t[k])) into(t[k], s[k], top === 1 && k === 'settings' ? 2 : 0); else t[k] = JSON.parse(JSON.stringify(s[k])); });
+    };
+    into(S, F.p, 1);
+    if (!S.settings) S.settings = { ...DEF.settings };
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ }
+    MK.hist.splice(0, MK.hist.length, ...F.m);
+    try { localStorage.setItem(MKKEY, JSON.stringify(MK.hist.slice(0, 20))); } catch (e) { /* ignore */ }
+    applySettings();
+    const b = document.body;
+    if (!b.classList.contains('sess') && !b.classList.contains('lesson') && $('#modal').hidden) go();
+  } finally { SY.applying = false; }
+}
+
+/* ----- Firebase, loaded only for people who sign in ----- */
+async function syFb() {
+  if (SY.fb) return SY.fb;
+  if (!SY.fbP) SY.fbP = (async () => {
+    const [A, U] = await Promise.all([import(SY_SDK + 'firebase-app.js'), import(SY_SDK + 'firebase-auth.js')]);
+    const app = A.initializeApp(SY_CFG);
+    // no popup helper here: it is passed to the popup only (in a Home Screen app on iPhone the helper never answers)
+    const auth = U.initializeAuth(app, { persistence: [U.indexedDBLocalPersistence, U.browserLocalPersistence] });
+    SY.fb = { U, auth };
+    await new Promise(res => { let first = true; U.onAuthStateChanged(auth, u => { syUser(u); if (first) { first = false; res(); } }); });
+    return SY.fb;
+  })().catch(e => { SY.fbP = null; throw e; });
+  return SY.fbP;
+}
+function syUser(u) {
+  const was = SY.user; SY.user = u || null;
+  if (u) {
+    SY.st.on = 1; SY.st.uid = u.uid; SY.st.email = u.email || ''; delete SY.st.exp; sySt();
+    if (!SY.del && (!was || was.uid !== u.uid)) { SY.st.dirty = 1; syRun(); }
+  } else if (SY.st.on && !SY.del) { SY.st.on = 0; SY.st.exp = 1; sySt(); syStatus('off'); }
+  syRender();
+}
+const syProvider = U => { const p = new U.GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' }); return p; };
+// on the Home Screen (installed app) a popup can't come back, so the app goes to Google itself and comes back here
+const syDirect = () => isStandalone() || localStorage.getItem('pc-sync-direct') === '1';
+const syBack = () => location.origin + location.pathname.replace(/[^/]*$/, '');
+function syGoogle(del) {
+  const s = Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('');
+  SY.st.oauth = { s, t: Date.now(), del: del ? 1 : 0 }; sySt();
+  const q = new URLSearchParams({ client_id: SY_CLIENT, redirect_uri: syBack(), response_type: 'token', scope: 'openid email profile', state: s, prompt: 'select_account' });
+  location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + q;
+}
+// back from Google: take the answer out of the address before the pages read it
+(function syCatch() {
+  const h = location.hash; if (!/[#&](access_token|error)=/.test(h) || !/state=/.test(h)) return;
+  const q = new URLSearchParams(h.slice(1)), o = SY.st.oauth;
+  try { history.replaceState(null, '', location.pathname + location.search + '#learn'); } catch (e) { location.hash = 'learn'; }
+  delete SY.st.oauth; sySt();
+  if (!o || o.s !== q.get('state') || Date.now() - o.t > 30 * 60000 || (q.get('error') && q.get('error') !== 'access_denied')) { SY.msg = 'Sign-in didn’t work. Please try again.'; return; }
+  if (q.get('access_token')) SY.tok = { a: q.get('access_token'), del: o.del };
+})();
+async function sySignIn() {
+  if (navigator.onLine === false) return toast('You’re offline. Connect to the internet to sign in.');
+  if (syDirect()) return syGoogle(false);
+  SY.msg = ''; syStatus('signing');
+  try {
+    const fb = await syFb(); SY.fresh = true;
+    await fb.U.signInWithPopup(fb.auth, syProvider(fb.U), fb.U.browserPopupRedirectResolver);
+  } catch (e) {
+    SY.fresh = false; const c = (e && e.code) || '';
+    if (/popup-blocked|operation-not-supported|web-storage-unsupported/.test(c)) return syGoogle(false);
+    SY.msg = /popup-closed|cancelled-popup|user-cancelled/.test(c) ? '' : (e && !e.code ? 'Couldn’t connect. Check your internet and try again.' : 'Sign-in didn’t work. Please try again.');
+    syStatus(SY.user ? 'ok' : 'off');
+  }
+}
+async function sySignOut() {
+  clearTimeout(SY.timer); SY.timer = 0;
+  try { const fb = await syFb(); await fb.U.signOut(fb.auth); } catch (e) { /* ignore */ }
+  SY.user = null; SY.st = {}; sySt(); syStatus('off'); syRender(); toast('Signed out. Your progress stays on this device.');
+}
+// Reset: this device starts over and leaves sync; the server copy stays (sign in again to get it back)
+function syOnReset() {
+  if (!SY || !SY.st.on) return;
+  try { localStorage.removeItem(SY_KB); } catch (e) { /* ignore */ }
+  clearTimeout(SY.timer); SY.timer = 0; SY.st = {}; sySt(); SY.user = null; syStatus('off');
+  if (SY.fb) SY.fb.U.signOut(SY.fb.auth).catch(() => {});
+  else syFb().then(fb => fb.U.signOut(fb.auth)).catch(() => {});
+}
+// delete the server copy and the sign-in; the progress on the device stays
+async function syDelete() {
+  SY.del = true; clearTimeout(SY.timer); SY.timer = 0; syStatus('deleting');
+  try {
+    const fb = await syFb(); const u = fb.auth.currentUser; if (!u) throw new Error('signed out');
+    SY.user = u;
+    const r = await syReq('DELETE'); if (!r.ok && r.status !== 404) throw syFail(r);
+    try { await fb.U.deleteUser(u); }
+    catch (e) {
+      if (!(e && e.code === 'auth/requires-recent-login')) throw e;
+      if (syDirect()) return syGoogle(true);
+      await fb.U.reauthenticateWithPopup(u, syProvider(fb.U), fb.U.browserPopupRedirectResolver);
+      await fb.U.deleteUser(u);
+    }
+    try { localStorage.removeItem(SY_KB); } catch (e) { /* ignore */ }
+    SY.user = null; SY.st = {}; sySt(); SY.del = false; syStatus('off'); syRender();
+    toast('Your synced data is deleted. Your progress on this device stays.');
+  } catch (e) {
+    SY.del = false; SY.msg = e && e.net ? 'You’re offline. Try again when you’re online.' : 'Couldn’t delete it. Please try again.';
+    syStatus(SY.user ? 'ok' : 'off'); syRender();
+  }
+}
+// back from Google with a sign-in: give it to Firebase
+async function syToken() {
+  const t = SY.tok; SY.tok = null; if (!t) return;
+  if (t.del) SY.del = true; else SY.fresh = true;
+  syStatus(t.del ? 'deleting' : 'signing');
+  try {
+    const fb = await syFb();
+    await fb.U.signInWithCredential(fb.auth, fb.U.GoogleAuthProvider.credential(null, t.a));
+    if (t.del) { SY.del = false; return syDelete(); }
+  } catch (e) { SY.del = false; SY.fresh = false; SY.msg = 'Sign-in didn’t work. Please try again.'; syStatus(SY.user ? 'ok' : 'off'); syRender(); }
+}
+
+/* ----- what the person sees: a row at the top of Settings and the Sync page ----- */
+function syAgo(t) {
+  if (!t) return ''; const m = Math.round((Date.now() - t) / 60000);
+  return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : new Date(t).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+function syLine() {
+  const s = SY.status;
+  if (!SY.st.on) return s === 'signing' ? 'Signing in…' : SY.st.exp ? 'Signed out. Sign in again to keep syncing.' : 'Off. Your progress is saved on this device.';
+  if (s === 'syncing' || s === 'signing') return 'Syncing…';
+  if (s === 'deleting') return 'Deleting…';
+  if (s === 'offline') return 'Offline. Your progress is saved on this device and syncs when you’re back online.';
+  if (s === 'paused') return 'Sync paused. Your progress is saved on this device; the app tries again later.';
+  if (s === 'denied') return 'Sync isn’t working right now. Your progress is saved on this device.';
+  if (s === 'big') return 'Your progress is too big to sync. It is saved on this device.';
+  return SY.st.last ? `Synced ${syAgo(SY.st.last)}.` : 'Connecting…';
+}
+const syShort = () => SY.st.on ? 'On · ' + syLine().replace(/\.$/, '').replace(/^Synced /, 'synced ') : 'Off · sign in with Google';
+function syRow() {
+  return `<div class="qs-grp"><button type="button" class="qs-card st-cat sy-row" data-stpage="sync"><span class="st-ci hzf" aria-hidden="true">云</span><span class="qs-l"><b>Sync across devices</b><small id="sy-short">${esc(syShort())}</small></span><span class="qs-go" aria-hidden="true">›</span></button></div>`;
+}
+function syPageHtml() {
+  const on = SY.st.on, msg = SY.msg ? `<p class="small bad-l" role="alert">${esc(SY.msg)}</p>` : '';
+  const top = on
+    ? `<p>Signed in as <b>${esc(SY.st.email || 'your Google account')}</b></p><p class="small" id="sy-st" aria-live="polite">${esc(syLine())}</p>${msg}
+      <div class="card-actions"><button type="button" class="btn primary" data-sy="now">Sync now</button><button type="button" class="btn" data-sy="out">Sign out</button></div>`
+    : `<p class="small">Sign in to keep your progress safe and continue on your other phone, tablet or computer. Without signing in, the app works just as before.</p>${SY.st.exp ? '<p class="small">You were signed out. Sign in again to keep syncing.</p>' : ''}${msg}
+      <div class="card-actions"><button type="button" class="btn primary" data-sy="in"${SY.status === 'signing' ? ' disabled' : ''}>${SY.status === 'signing' ? 'Signing in…' : 'Sign in with Google'}</button></div>`;
+  return `<div id="sy-page"><div class="qs-grp">${top}</div>
+    <div class="qs-grp"><h3>Privacy</h3><p class="small">Only for syncing: your progress in this app and your Google name and email are saved with Google Firebase in the EU.</p>
+      <details class="more"><summary>More ▾</summary><ul class="small">
+        <li><b>What:</b> your levels, characters, scores, favourites, Mock exam results and settings, and the name and email of the Google account you sign in with.</li>
+        <li><b>Why:</b> only to keep your progress safe and bring it to your other devices. Nothing is shared, sold or used for anything else.</li>
+        <li><b>Where:</b> Google Firebase (Authentication and Cloud Firestore), data centre in Frankfurt.</li>
+        <li><b>Your choice:</b> sync is off unless you sign in. Signing out keeps your progress on the device; you can delete the synced copy below at any time.</li></ul></details>
+      ${on ? `<div id="sy-del"><div class="card-actions"><button type="button" class="btn danger-o sm" data-sy="del">Delete my synced data…</button></div></div>` : ''}</div></div>`;
+}
+function syStatus(s) { if (!SY) return; SY.status = s; syRenderStatus(); }
+function syRenderStatus() {
+  const a = $('#sy-st'); if (a) a.textContent = syLine();
+  const b = $('#sy-short'); if (b) b.textContent = syShort();
+  const f = $('#sy-foot'); if (f) f.textContent = SY.st.on ? 'Progress is saved in this browser and synced to your account.' : 'Progress is saved in this browser only.';
+}
+function syRender() { const p = $('#sy-page'); if (p) p.outerHTML = syPageHtml(); syRenderStatus(); }
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-sy]'); if (!t) return; const a = t.dataset.sy;
+  if (a === 'in') return sySignIn().then(syRender);
+  if (a === 'now') { SY.msg = ''; SY.st.dirty = 1; clearTimeout(SY.timer); SY.timer = 0; return syRun(); }
+  if (a === 'out') return sySignOut();
+  if (a === 'del') { const d = $('#sy-del'); if (d) d.innerHTML = `<p class="small"><b>Delete your synced data?</b> This deletes the copy on the server and your sign-in. The progress on this device stays.</p><div class="card-actions"><button type="button" class="btn danger" data-sy="delyes">Delete</button><button type="button" class="btn" data-sy="delno">Cancel</button></div>`; return; }
+  if (a === 'delno') return syRender();
+  if (a === 'delyes') return syDelete();
+});
+
+/* ----- when to sync: on start, after changes (at most every 2 minutes), when the app is hidden, back online ----- */
+document.addEventListener('visibilitychange', () => {
+  if (!SY.user) return;
+  if (document.visibilityState === 'hidden') { if (SY.st.dirty) { clearTimeout(SY.timer); SY.timer = 0; syRun(); } }
+  else if (Date.now() - (SY.st.last || 0) > SY_GAP) syRun();
+});
+window.addEventListener('online', () => { if (SY.user && (SY.st.dirty || SY.status === 'offline')) syRun(); });
+window.addEventListener('offline', () => { if (SY.st.on) syStatus('offline'); });
+setTimeout(() => {
+  syRenderStatus();
+  if (SY.tok) { syToken(); return; }
+  if (SY.msg) toast(SY.msg);
+  if (SY.st.on) syFb().catch(() => syStatus('offline'));
+}, 600);
 
 renderVoice();
 let rT; window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { if (view === 'writing') { const b = $('#w-box'); if (b && Math.abs(b.clientWidth - W.size) > 8 && W.mode !== 'free') mountWriter(); } }, 200); });
