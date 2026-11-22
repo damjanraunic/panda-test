@@ -1790,6 +1790,7 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 
 /* 1.1.0 polish: short page names on phones; sheets with a handle */
 .sub-s{display:none}
+.subtab .st-tx b .sub-l,.subtab .st-tx b .sub-s{font-size:inherit;color:inherit;line-height:inherit}
 @media (max-width:720px){.subtab .st-tx b .sub-l{display:none}.subtab .st-tx b .sub-s{display:inline;font-size:inherit;color:inherit;line-height:inherit}}
 @media (max-width:760px){
   .modal.sheet:not(.st-full) .modal-box{padding-top:24px;max-height:88vh;overscroll-behavior:contain}
@@ -6972,8 +6973,10 @@ function lPath(into) {
 // another unit from the unit menu or "Unit 5 →": its levels slide in like a swipe
 function lJump(u) {
   u = +u; const cur = $('section.lp-grid'), old = lCurUnit(), us = lUnits();
-  if (u === old) return;
+  umClose(); if (u === old) return;
   if (!cur || matchMedia('(prefers-reduced-motion: reduce)').matches || SW.anim) return lSwap(u);
+  // computers: the levels sit between other columns, so the new unit fades in where it is instead of sliding
+  if (!isNarrow()) { lSwap(u); const n = $('section.lp-grid'); if (n && n.animate) n.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'ease-out' }); return; }
   const dir = us.indexOf(u) > us.indexOf(old) ? 1 : -1, P = swPart(cur, u, dir);
   SW.anim = true; swPos(P.cur, -dir * P.W, 300); swPos(P.g, 0, 300); P.setH(P.hN, 300);
   setTimeout(() => { P.g.remove(); SW.anim = false; lSwap(u); }, 320);
@@ -6981,7 +6984,7 @@ function lJump(u) {
 // show another unit: only its part, the "Next lesson" card and the unit menu change; the rest of the page stays as it is
 function lSwap(u) {
   const ha = $('#lp-hero'), oh = ha ? ha.offsetHeight : 0;
-  LN.unit = u; S.lunit = u; save(); LN.justDone = null;
+  LN.unit = u; S.lunit = u; save(); LN.justDone = null; main.classList.remove('sw-noanim');
   const tmp = document.createElement('div'); lPath(tmp);
   ['section.lp-grid', '.lp-tr'].forEach(s => { const a = $(s, main), b = $(s, tmp); if (a && b) a.replaceWith(b); });
   const hb = $('#lp-hero', tmp);
@@ -7492,6 +7495,8 @@ function swPart(cur, u, dir) {
   Object.assign(g.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', margin: '0', padding: '0' });
   g.appendChild(nx); document.body.appendChild(g);
   if (isCute()) trackDraw($('.grid', g));
+  // if the page gets shorter at its bottom the browser scrolls it; the other part follows this one every frame
+  const sync = () => { if (!g.isConnected || !cur.isConnected) return; g.style.top = cur.getBoundingClientRect().top + 'px'; requestAnimationFrame(sync); }; requestAnimationFrame(sync);
   const hC = r.height, hN = nx.getBoundingClientRect().height, clip = 'inset(-60px -40px 0 -40px)';
   [cur, g].forEach(e => { e.style.clipPath = clip; e.style.overflow = 'visible'; });
   const setH = (h, ms) => [cur, g].forEach(e => { e.style.height = Math.round(h) + 'px'; if (ms !== undefined) e.style.transition = `transform ${ms}ms cubic-bezier(.2,.7,.2,1), height ${ms}ms cubic-bezier(.2,.7,.2,1)`; });
@@ -10354,7 +10359,7 @@ new MutationObserver(() => {
 }).observe($('#modal'), { childList: true, attributes: true, attributeFilter: ['hidden'] });
 const SD = { y: 0, dy: 0, t: 0, box: null, on: false };
 document.addEventListener('touchstart', e => {
-  const m = $('#modal'), box = e.target.closest && e.target.closest('.modal.sheet:not(.st-full) .modal-box');
+  const m = $('#modal'), box = e.target.closest && e.target.closest('.modal.sheet:not(.st-full) .modal-box:not(.wl-ed)');   // not the list editor: pulling it down would lose the words
   SD.box = null; if (!box || m.hidden || e.touches.length !== 1) return;
   if (e.target.closest('input,textarea,select,canvas,svg.hw-svg,.hw,.w-box,#wl-pick')) return;
   if (box.scrollTop > 0) return;
