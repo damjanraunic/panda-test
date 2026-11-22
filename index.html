@@ -1833,6 +1833,19 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
   .lp-arr:disabled{opacity:0;pointer-events:none}
   [data-style="cute"] .lp-arr{border-width:2px;background:var(--card);color:var(--pri-ink)}
 }
+
+/* 1.1.0: Pick your style fits a laptop screen (three looks in one row, Continue next to Colours) */
+.sp-foot{display:flex;flex-direction:column;gap:14px;align-items:stretch}
+.sp-later{margin:10px 0 0}
+@media (min-width:721px){
+  .sp-box{max-width:820px}
+  .sp-cards{grid-template-columns:repeat(3,1fr);margin:14px 0 16px}
+  .sp-foot{flex-direction:row;align-items:flex-end;justify-content:space-between}
+}
+.st-msgs .msg-item{padding:12px 0;border-bottom:1px solid var(--line)}
+.st-msgs .msg-item h3{font-size:16px;margin:0 0 4px}
+.st-msgs .msg-item.new h3::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:8px;vertical-align:2px}
+.st-ret>.st-back{display:inline-block;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -5222,7 +5235,7 @@ function openHelp() {
       <li><b>Words</b>: flashcards and quizzes for the vocabulary; <b>Characters</b>, how well you know each character, with practice for your weakest ones; <b>Writing</b>, stroke order and writing characters; <b>Favourites</b>, everything you saved with ☆.</li>
       <li><b>Tests</b>: <b>Practice test</b>, harder questions in exam style; <b>Mock exam</b>, a full 50-question exam.</li>
       <li><b>Games</b>: <b>Panda Run</b>, run through the wall with the right answer. More games are on their way.</li>
-      <li><b>Settings</b> has the quick switches (listening, pinyin, tones, voice speed, theme). Under <b>More</b> you find Favourites, Messages, the Tutorial and all settings.</li>
+      <li><b>Settings</b>: search for any setting, <b>My account</b> (your name and Sync), Favourites, Backup, Messages, the most used switches and all other settings.</li>
     </ul>
     <h2>Favourites</h2>
     <ul class="hl">
@@ -7736,9 +7749,8 @@ function openStylePick(after) {
     <h1 class="view-title" id="sp-h">Pick your style</h1>
     <p class="muted">Same lessons, same buttons. Only the look changes.</p>
     <div class="sp-cards" id="sp-cards">${spCards()}</div>
-    <h2 class="cap">Colours</h2>${themeSeg()}
-    <p class="small muted">You can always change this later in Settings.</p>
-    <div class="card-actions"><button type="button" class="btn primary big" data-spgo>Continue</button></div></div>`;
+    <div class="sp-foot"><div class="sp-col"><h2 class="cap">Colours</h2>${themeSeg()}</div><button type="button" class="btn primary big" data-spgo>Continue</button></div>
+    <p class="small muted sp-later">You can always change this later in Settings.</p></div>`;
   m.hidden = false; document.body.classList.add('modal-open');
   const f = $('.sp-card[aria-pressed="true"]', m); if (f) f.focus();
 }
@@ -8306,7 +8318,7 @@ const MSGS = [
   { id: 'install-1', when: () => !isStandalone(), title: 'Install the app', html: () => `<p>Panda Chinese can now be installed on your phone. It opens like an app and works without internet.</p><p><button type="button" class="btn sm" data-install>How to install</button></p>${msgMore(`<p><b>iPhone and Safari:</b> ${SAFARI_WHY}</p>`)}` },
   { id: 'voice-1', title: 'The voice is still improving', html: () => `<p>The recorded voice is still being fine-tuned and gets better with every update.</p>${msgMore('<p>Some words or tones may not sound perfect yet. No sound right now? Turn off listening exercises in Settings.</p><p><button type="button" class="btn sm" data-settings>Open Settings</button></p>')}` },
   { id: 'refresh-1', title: 'Getting the newest version', html: () => `<p>If the app looks old, refresh the page.</p>${msgMore(`<ul><li><b>Computer:</b> Ctrl+F5 (Mac: Cmd+Shift+R)</li><li><b>Phone:</b> pull the page down, or close the tab and open the app again</li></ul><p class="small muted">This also applies when you open the app from a bookmark or your Home Screen. You’re on version ${APP_VERSION}.</p>`)}` },
-  { id: 'safari-1', title: 'Keep your progress safe', html: () => `<p>Your progress is saved only in this browser. Save a backup now and then.</p><p><button type="button" class="btn sm" data-settings>Save a backup</button></p>${msgMore('<p><b>iPhone, iPad or Mac with Safari?</b> Safari deletes saved progress after 7 days without opening the app.</p><ul><li><b>iPhone and iPad:</b> Share → Add to Home Screen, and open the app from there.</li><li><b>Mac:</b> use Chrome, Edge or Firefox.</li></ul>')}` }
+  { id: 'safari-1', title: 'Keep your progress safe', html: () => `<p>Your progress is saved in this browser. Turn on Sync in Settings (My account), or save a backup now and then.</p><p><button type="button" class="btn sm" data-settings>Save a backup</button></p>${msgMore('<p><b>iPhone, iPad or Mac with Safari?</b> Safari deletes saved progress after 7 days without opening the app.</p><ul><li><b>iPhone and iPad:</b> Share → Add to Home Screen, and open the app from there.</li><li><b>Mac:</b> use Chrome, Edge or Firefox.</li></ul>')}` }
 ];
 function msgMore(html) { return `<details class="msg-more"><summary>More</summary>${html}</details>`; }
 const msgList = () => MSGS.filter(m => !m.when || m.when());
@@ -9593,7 +9605,8 @@ const ST_PAGES = [
   ['learning', '学', 'Learning', 'Tones, tone colours, character size, course'],
   ['voice', '声', 'Voice and sound', 'Recorded voice, speed, offline, sound effects'],
   ['progress', '存', 'Backup and reset', 'Save, load, start over'],
-  ['help', '问', 'Help and info', 'Info, tutorial, install, report a mistake']
+  ['help', '问', 'Help and info', 'Info, tutorial, install, report a mistake'],
+  ['msgs', '信', 'Messages', 'News and tips from the app']
 ];
 const ST = { page: '', q: '' };
 const stAgo = t => { if (!t) return 'Not yet'; const d = Math.floor((Date.now() - t) / 864e5); return d < 1 ? 'Today' : d === 1 ? 'Yesterday' : `${d} days ago`; };
@@ -9605,14 +9618,14 @@ function stMain() {
     <div class="st-tiles" style="--n:${stInstTile() ? 4 : 3}">
       <button type="button" class="st-tile" data-favs><span class="st-ti" aria-hidden="true">★</span><b>Favourites</b><small>${favN} saved</small></button>
       <button type="button" class="st-tile" data-stpage="progress"><span class="st-ti hzf" aria-hidden="true">存</span><b>Backup</b><small>${SY.st && SY.st.on ? 'Synced' : stAgo(S.lastBackup)}</small></button>
-      <button type="button" class="st-tile" data-stpage="help"><span class="st-ti" aria-hidden="true">?</span><b>Help</b><small>${unread ? `${unread} new` : 'Info, tour'}</small>${unread ? `<span class="st-n">${unread}</span>` : ''}</button>${stInstTile()}</div>
+      <button type="button" class="st-tile" data-stpage="msgs"><span class="st-ti hzf" aria-hidden="true">信</span><b>Messages</b><small>${unread ? `${unread} new` : 'News, tips'}</small>${unread ? `<span class="st-n">${unread}</span>` : ''}</button>${stInstTile()}</div>
     <div class="qs-grp"><h3>Most used</h3>
       ${qsw('listen', !noListenOn(), 'Listening exercises', 'Questions where you listen')}
       ${qsw('pinyin', !!S.settings.pinyin, 'Pinyin under characters', 'In exercises, tests and grammar')}
       <div class="qs-line"><b>Voice speed</b><div class="seg" role="group" aria-label="Voice speed">${VOICE_RATES.map(([l, r]) => `<button type="button" aria-pressed="${rate === r}" data-rate="${r}">${l}</button>`).join('')}</div></div>
       <div class="qs-line"><b>Style</b>${styleSeg()}</div>
       <div class="qs-line"><b>Colours</b>${themeSeg()}</div></div>
-    <div class="qs-grp"><h3>More settings</h3><div class="st-cats">${ST_PAGES.filter(p => p[0] !== 'account').map(([k, hz, l, sub]) => stRow(`data-stpage="${k}"`, hz, l, sub, k === 'help' && unread ? `<span class="st-n">${unread}</span>` : '')).join('')}</div></div>
+    <div class="qs-grp"><h3>More settings</h3><div class="st-cats">${ST_PAGES.filter(p => p[0] !== 'account' && p[0] !== 'msgs').map(([k, hz, l, sub]) => stRow(`data-stpage="${k}"`, hz, l, sub, k === 'help' && unread ? `<span class="st-n">${unread}</span>` : '')).join('')}</div></div>
     <p class="qs-ver"><button type="button" class="link" data-notes>Version ${APP_VERSION} beta: what’s new</button><button type="button" class="link" data-about>About</button></p>`;
 }
 // the fourth shortcut: install the app (in the installed app: the voice for offline use, until it is downloaded)
@@ -9646,7 +9659,7 @@ function stIndex() {
     ['Help and info', 'help info tutorial tour guide how', () => stRow('data-help', '?', 'Info', 'What is where in the app') + stRow('data-tutorial', '看', 'Tutorial', 'The quick tour again')],
     ['Help and info', 'report mistake error bug wrong contact email', () => stRow('data-report', '错', 'Report a mistake', 'Found something wrong? Tell us')],
     ['Help and info', 'install app home screen phone offline', () => isStandalone() ? '' : stRow('data-install', '装', 'Install the app', 'On your phone it opens like an app')],
-    ['Help and info', 'messages news bell notifications', () => msgList().length ? stRow('data-msgs', '信', 'Messages', 'News and tips from the app') : ''],
+    ['Help and info', 'messages news bell notifications', () => msgList().length ? stRow('data-stpage="msgs"', '信', 'Messages', 'News and tips from the app') : ''],
     ['Help and info', 'version what’s new whats new changes update about', () => stRow('data-notes', '新', 'What’s new', `Version ${APP_VERSION}`) + stRow('data-about', '熊', 'About', 'Who made the app')]
   ];
 }
@@ -9666,6 +9679,12 @@ function stPage(k) {
       <div class="qs-line"><b>Course</b>${courseSelect('set')}</div>
       <p class="small muted">HSK is coming later.</p></div>`;
   if (k === 'voice') return stVoice();
+  if (k === 'msgs') {   // the same messages as the red button, here inside Settings (they count as read)
+    const list = msgList(), seen = S.msgSeen || [];
+    const html = list.length ? list.map(m => `<section class="msg-item${seen.includes(m.id) ? '' : ' new'}"><h3>${esc(m.title)}</h3>${m.html()}</section>`).join('') : '<p class="muted">No messages.</p>';
+    S.msgSeen = [...new Set([...seen, ...list.map(m => m.id)])]; save(); setTimeout(renderMsgBtn);
+    return `<div class="st-msgs">${html}</div>`;
+  }
   if (k === 'account') { const n = userName(); return `<div class="qs-grp"><div class="st-me">${pandaSvg('happy', 'st-av', '', true)}<div class="st-me-t">
       <button type="button" class="st-name" data-stname aria-label="Change your name">${n ? esc(n) : 'Add your name'} <span class="st-pen" aria-hidden="true">✎</span></button>
       <small>The name the panda uses. Only you see it.</small></div></div></div><h2 class="st-h2">Sync across devices</h2>${syPageHtml()}`; }
@@ -9691,7 +9710,7 @@ function stPage(k) {
   const row = stRow;
   return `<div class="qs-grp"><div class="qs-more st-rows">
       ${row('data-help', '?', 'Info', 'What is where in the app')}${row('data-tutorial', '看', 'Tutorial', 'The quick tour again')}
-      ${msgList().length ? row('data-msgs', '信', 'Messages', 'News and tips from the app', n ? `<span class="st-n">${n}</span>` : '') : ''}${row('data-report', '错', 'Report a mistake', 'Found something wrong? Tell us')}
+      ${msgList().length ? row('data-stpage="msgs"', '信', 'Messages', 'News and tips from the app', n ? `<span class="st-n">${n}</span>` : '') : ''}${row('data-report', '错', 'Report a mistake', 'Found something wrong? Tell us')}
       ${isStandalone() ? '' : row('data-install', '装', 'Install the app', 'On your phone it opens like an app')}</div></div>`;
 }
 // Voice and sound: the same switches and rows as the rest of Settings
@@ -9747,6 +9766,21 @@ document.addEventListener('click', e => {
   if (e.target.closest('[data-stnameok]')) { const i = $('#opt-name'); if (i) { setName(i.value); if (view === 'learn' && LN.phase === 'path') lPath(); } openSettings(ST.page); }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'opt-name' && e.target.closest('.st-box')) { e.preventDefault(); const ok = $('[data-stnameok]'); if (ok) ok.click(); } });
+
+// Info, Report a mistake, Install, What's new and About opened from Settings: "← back" (and the phone's back button) return to Settings
+const ST_RET = '[data-help],[data-report],[data-install],[data-notes],[data-about]';
+document.addEventListener('click', e => {
+  const t = e.target.closest && e.target.closest(ST_RET); if (!t || !t.closest('.st-box')) return;
+  ST.ret = ST.page;
+  setTimeout(() => {
+    const m = $('#modal'), b = $('.modal-box', m); if (m.hidden || !b || b.classList.contains('st-box')) return;
+    const pg = ST_PAGES.find(x => x[0] === ST.ret);
+    b.classList.add('st-ret');
+    const x = $('.modal-x', b), html = `<button type="button" class="link st-back" data-stret>← ${pg ? pg[2] : 'Settings'}</button>`;
+    if (x) x.insertAdjacentHTML('afterend', html); else b.insertAdjacentHTML('afterbegin', html);
+  });
+}, true);
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-stret]')) openSettings(ST.ret || ''); });
 
 /* ----- Sync across devices (from 1.1.0): sign in with Google (Firebase Authentication), the progress goes to Cloud Firestore.
    The progress on the device stays the main copy: everything is saved on the device first, the server copy only carries it to other devices.
@@ -10469,7 +10503,7 @@ window.addEventListener('popstate', e => {
   const lvl = st.ov || 0;
   let have = nbLayers();
   if (lvl < have) {
-    if (!$('#msg-panel').hidden) toggleMsgs(false); else if (!$('#modal').hidden) { if ($('#modal .st-sub')) openSettings(); else closeModal(); } else nbSessExit();
+    if (!$('#msg-panel').hidden) toggleMsgs(false); else if (!$('#modal').hidden) { if ($('#modal .st-sub')) openSettings(); else if ($('#modal .st-ret')) openSettings(ST.ret || ''); else closeModal(); } else nbSessExit();
     have = nbLayers();
     if (have > lvl) nbPush(lvl, have);   // it asks first (e.g. leaving the Mock exam) or could not close: the step comes back
     return;
