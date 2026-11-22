@@ -1523,7 +1523,7 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 @keyframes conf{to{transform:translate(var(--dx,0),105vh) rotate(var(--rt,540deg))}}
 @media (prefers-reduced-motion:reduce){.confetti{display:none}}
 /* Cute bamboo: the level path is a little railway with gold coins */
-[data-style="cute"] #lp-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:22px 6px;position:relative;grid-auto-rows:auto;padding:4px 0}
+[data-style="cute"] .lp-car .grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:22px 6px;position:relative;grid-auto-rows:auto;padding:4px 0}
 [data-style="cute"] .trk{position:absolute;left:0;top:0;pointer-events:none;z-index:0;overflow:visible}
 [data-style="cute"] .tl,[data-style="cute"] .tl.done,[data-style="cute"] .tl.next,[data-style="cute"] .tl:hover,[data-style="cute"] .tl.done:hover,[data-style="cute"] .tl.next:hover{background:none;border:0;padding:0;align-items:center;text-align:center;gap:15px;color:var(--ink);position:relative;z-index:1;opacity:1;aspect-ratio:auto}
 [data-style="cute"] .tl .hzf{width:clamp(52px,58%,84px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:var(--card);border:2.5px solid var(--line-2);font-size:clamp(24px,2.6vw,36px);color:var(--ink);transition:transform .15s}
@@ -1539,7 +1539,7 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 [data-style="cute"] .tl-s{font-weight:800}
 [data-style="cute"] .tl-pd{position:absolute;top:-14px;right:calc(50% - 46px);width:28px;height:28px;z-index:2;pointer-events:none}
 @media (max-width:760px){
-  [data-style="cute"] #lp-grid{gap:20px 6px}
+  [data-style="cute"] .lp-car .grid{gap:20px 6px}
   [data-style="cute"] .tl .hzf{width:52px;font-size:24px}
   [data-style="cute"] .tl b{display:none}
   [data-style="cute"] .tl-pd{right:calc(50% - 40px);top:-16px;width:26px;height:26px}
@@ -1808,6 +1808,30 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
   .icon-btn.sm{min-width:40px;min-height:40px}
   .wl .fav{min-width:40px;min-height:40px}
   .wl-hz{min-width:44px}
+}
+
+/* 1.1.0: the units are a strip the browser scrolls sideways (snapping to a unit); as tall as the tallest unit on phones */
+.lp-ctl{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 2px}
+.lp-dots{display:flex;gap:7px;align-items:center;min-height:24px}
+.lp-dot{position:relative;width:9px;height:9px;border-radius:5px;border:0;padding:0;background:var(--line-2);cursor:pointer;transition:width .2s,background .2s}
+.lp-dot::after{content:"";position:absolute;inset:-9px -5px}
+.lp-dot[aria-current="true"]{width:22px;background:var(--pri,var(--ink))}
+:root:not([data-style="cute"]) .lp-dot[aria-current="true"]{background:var(--red)}
+.lp-car{position:relative;display:flex;align-items:stretch;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;margin:-20px -16px 0;-webkit-overflow-scrolling:touch}
+.lp-car::-webkit-scrollbar{display:none}
+.lp-slide{position:relative;overflow:hidden;flex:0 0 100%;min-width:0;box-sizing:border-box;scroll-snap-align:start;padding:20px 16px 4px;display:flex;flex-direction:column}
+.lp-slide>.grid{flex:none}
+.lp-slide>.lp-end{margin-top:auto;padding-top:14px}
+@media (min-width:721px){.lp-car{align-items:flex-start}}
+
+.lp-carw{position:relative}
+.lp-arr{display:none}
+@media (min-width:721px){
+  .lp-arr{display:grid;place-items:center;position:absolute;top:calc(50% + 6px);z-index:2;width:38px;height:38px;margin-top:-19px;border-radius:50%;border:1.5px solid var(--line-2);background:var(--surface);color:var(--ink);font:700 24px/1 var(--ui);padding:0 0 3px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.12);transition:opacity .2s,transform .15s}
+  .lp-arr.prev{left:-30px}.lp-arr.next{right:-30px}
+  .lp-arr:hover{border-color:var(--ink);transform:scale(1.06)}
+  .lp-arr:disabled{opacity:0;pointer-events:none}
+  [data-style="cute"] .lp-arr{border-width:2px;background:var(--card);color:var(--pri-ink)}
 }
 </style>
 </head>
@@ -6922,17 +6946,24 @@ function streakHtml() {
   const st = dailyState(); if (!st.streak) return '';
   return `<button type="button" class="streak${st.doneToday ? ' done' : ''}" data-view="learn" title="Daily practice: ${st.streak} day${st.streak === 1 ? '' : 's'} in a row${st.doneToday ? '' : '. Not done yet today'}"><b data-cnt="streak">${st.streak}</b><span>day${st.streak === 1 ? '' : 's'}<em> in a row</em></span></button>`;
 }
-// into: draw the page into another element (a unit's part for a swipe), without the effects on the page
-function lPath(into) {
-  LN.phase = 'path'; setLesson(false);
-  const prog = S.learn || {}, us = lUnits(), u = lCurUnit(), lvs = LEVELS.filter(l => l.unit === u), rec = lRec();
-  const next = lvs.find(l => !prog[l.id]) || null, h = next || rec || lvs[lvs.length - 1], hk = LEVELS.filter(l => l.unit === h.unit);
-  const doneN = LEVELS.filter(l => prog[l.id]).length, starsN = LEVELS.reduce((s, l) => s + ((prog[l.id] || {}).stars || 0), 0);
-  const all = us.flatMap(x => ZI_UNIT[x] || []), known = all.filter(ziKnown).length, weakN = all.filter(c => ziBand(c) === 1).length, seenZi = all.some(c => ziLevel(c) >= 0);
-  const n = userName(), nextU = us[us.indexOf(u) + 1];
+// one unit: which level is next, and the "Next lesson" card for it
+function lUnitNext(u) { const prog = S.learn || {}, lvs = LEVELS.filter(l => l.unit === u), next = lvs.find(l => !prog[l.id]) || null; return { lvs, next, h: next || lRec() || lvs[lvs.length - 1] }; }
+function lHeroInner(u) {
+  const prog = S.learn || {}, { lvs, next, h } = lUnitNext(u), rec = lRec();
   const cap = next ? `${LEVELS.indexOf(h) ? 'Next lesson' : 'Start here'} · level ${lvs.indexOf(h) + 1} of ${lvs.length}` : rec ? `Unit ${u} complete · next lesson in Unit ${rec.unit}` : 'All levels done';
-  const b = gmRec().best || {}, top = RUN_DIFFS.filter(d => b[d.id]).sort((x, y) => b[y.id] - b[x.id])[0];
-  const cute = isCute();
+  const html = `<span class="hero-z">${isCute() ? `<span class="hero-pd" aria-hidden="true">${pandaHero()}</span>` : ''}<span class="bigz hzf wipe" aria-hidden="true">${esc(h.icon)}</span></span><div class="hero-tx">
+        <div class="cap red">${String(cap).split(' · ').map(s => `<span class="nw">${s}</span>`).join(' · ')}</div><div class="hero-t">${esc(h.title)}</div>
+        <div class="hero-s">Unit ${h.unit}: ${esc(LUNITS[h.unit] || '')}. About ${lvMins(h)} minutes.</div>
+        <button type="button" class="btn primary big" data-lstart="${h.id}">${prog[h.id] ? 'Play again' : beginWord()}</button></div>`;
+  return { h, html, k: h.id + '|' + cap + '|' + styleOf() };
+}
+function lTopRight(u) {
+  const prog = S.learn || {};
+  return `${streakHtml()}${unitMenu('l', `Unit ${u}`, lUnits().map(x => { const ls = LEVELS.filter(l => l.unit === x), dn = ls.filter(l => prog[l.id]).length; return { label: `Unit ${x}`, sub: `${esc(LUNITS[x] || '')} · ${dn}/${ls.length} · ★ ${unitStars(x)}`, on: x === u, attrs: `data-lunit="${x}"` }; }), { right: true })}${msgBtnHtml('only-m')}<button type="button" class="ico only-m" data-search aria-label="Search" title="Search">${IC.search}</button><button type="button" class="ico line only-m" data-qs aria-label="Settings" title="Settings">${IC.set}</button>`;
+}
+// a slide of the strip: the unit's name and stars, its levels, and the links under them
+function lSlide(u, cur) {
+  const prog = S.learn || {}, cute = isCute(), { lvs, h } = lUnitNext(u), us = lUnits(), nextU = us[us.indexOf(u) + 1];
   const tiles = lvs.map((lv, k) => {
     const st = prog[lv.id], stars = st ? st.stars : 0, cls = st ? 'done' : lv === h ? 'next' : '';
     // Cute bamboo: rows of five like a railway; every second row runs back (only the picture: the order for keys and screen readers stays)
@@ -6941,20 +6972,93 @@ function lPath(into) {
     const fr = LN.justDone === lv.id && st ? ' fresh' : '', nf = LN.justDone && cls === 'next' ? ' nfresh' : '';
     return `<button type="button" class="tl ${cls}${lv.zi ? ' zi' : ''}${ud}${fr}${nf}" style="animation-delay:${k * 22}ms;${pos}" data-lopen="${lv.id}" aria-label="Level ${k + 1}: ${esc(lv.title)}${st ? `, done, ${stars} of 3 stars` : lv === h ? ', next up' : ''}">${cute && cls === 'next' ? `<span class="tl-pd" aria-hidden="true">${pandaSvg('yay', '', '', true)}</span>` : ''}<span class="hzf" aria-hidden="true">${esc(lv.icon)}${lv.zi ? '<span class="tl-zb">字</span>' : ''}<span class="tl-nc">${k + 1}</span></span><span class="tl-st" aria-hidden="true">${st ? st3(stars) : ''}</span><b><span class="tl-no">${k + 1}</span>${esc(lv.title)}</b><small>${st ? st3(stars) + 'Done' : lv === h ? 'Next up' : lv.zi ? 'Characters' : lv.checkpoint ? 'Checkpoint' : 'New'}</small><i class="tl-s" aria-hidden="true"><span class="tl-no">${k + 1}</span>${esc(lvShort(lv))}</i></button>`;
   }).join('');
+  const cp = lvs.find(l => l.checkpoint), dn = lvs.filter(l => prog[l.id]).length;
+  const end = (cp && dn < lvs.length - 1 ? `<button type="button" class="link" data-lknow="${u}">Already know Unit ${u}? Take the checkpoint</button>` : '') + (dn === lvs.length ? `<button type="button" class="link" data-share="diploma" data-unit="${u}">Your Unit ${u} diploma</button>` : '')
+    + (nextU !== undefined ? `<button type="button" class="link" data-lunit="${nextU}">Unit ${nextU} →</button>` : '<span>More units are coming. <span class="hzf">敬请期待</span> jìng qǐng qīdài: stay tuned!</span>');
+  return `<div class="lp-slide" data-u="${u}"${cur ? '' : ' inert'}><div class="lp-gh"><div class="cap">Unit ${u} · ${esc(LUNITS[u] || '')}</div><span class="lp-stars" title="Stars in this unit"><span aria-hidden="true">★</span> ${unitStars(u)}<span class="muted"> / ${lvs.length * 3}</span><span class="sr-only"> stars</span></span></div>
+    <div class="grid"${cur ? ' id="lp-grid"' : ''}>${tiles}</div><p class="lp-end">${end}</p></div>`;
+}
+/* ----- the strip of units: the browser itself scrolls it sideways (with the finger, momentum and snapping), so it
+   follows the finger at once and fast flicks go through several units. When it stops, the unit is saved and the
+   "Next lesson" card and the unit menu follow; nothing else on the page changes. ----- */
+const LCAR = { t: 0, quiet: false };
+function lCarIdx(car) { const us = lUnits(); return us[Math.max(0, Math.min(us.length - 1, Math.round(car.scrollLeft / Math.max(1, car.clientWidth))))]; }
+function lCarInit() {
+  const car = $('#lp-car'); if (!car) return;
+  const us = lUnits(), i = Math.max(0, us.indexOf(lCurUnit()));
+  LCAR.quiet = true; car.scrollLeft = i * car.clientWidth; requestAnimationFrame(() => { LCAR.quiet = false; });
+  lCarFit();
+  car.addEventListener('scroll', () => {
+    if (LCAR.quiet) return;
+    const u = lCarIdx(car); lCarMarks(u);
+    clearTimeout(LCAR.t); LCAR.t = setTimeout(() => lSettle(lCarIdx(car)), 200);
+  }, { passive: true });
+  car.addEventListener('scrollend', () => { if (!LCAR.quiet) { clearTimeout(LCAR.t); lSettle(lCarIdx(car)); } });
+}
+// computers: the strip is as tall as the unit shown (nothing is under it but the footer); phones: as tall as the tallest unit, so nothing below moves
+function lCarFit() {
+  const car = $('#lp-car'); if (!car) return;
+  if (isNarrow()) { car.style.height = ''; return; }
+  const sl = $(`.lp-slide[data-u="${lCurUnit()}"]`, car); if (sl) car.style.height = sl.offsetHeight + 'px';
+}
+function lSettle(u) {
+  if (u === undefined || u === lCurUnit()) return;
+  LN.unit = u; S.lunit = u; save();
+  $$('.lp-slide').forEach(sl => { const on = +sl.dataset.u === u, g = $('.grid', sl); sl.toggleAttribute('inert', !on); if (on) g.id = 'lp-grid'; else g.removeAttribute('id'); });
+  const ha = $('#lp-hero'), H = lHeroInner(u);
+  if (ha && ha.dataset.k !== H.k) {
+    const oh = ha.offsetHeight; ha.innerHTML = H.html; ha.dataset.k = H.k; swSmooth(ha, oh);
+    const z = $('.bigz', ha); if (z && HERO_INK !== H.h.id + styleOf()) { HERO_INK = H.h.id + styleOf(); z.classList.remove('wipe'); inkWrite(z, { delay: 350 }); }
+  }
+  const tr = $('.lp-tr'); if (tr) tr.innerHTML = lTopRight(u);
+  lCarMarks(u); lCarFit();
+}
+// another unit from the unit menu, a dot or "Unit 5 →": the next one slides over, a farther one is shown at once
+function lJump(u) {
+  u = +u; umClose(); const car = $('#lp-car'), us = lUnits();
+  if (!car) { LN.unit = u; S.lunit = u; save(); return lPath(); }
+  const i = us.indexOf(u), near = Math.abs(i - us.indexOf(lCarIdx(car))) === 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  car.scrollTo({ left: i * car.clientWidth, behavior: near ? 'smooth' : 'auto' });
+  if (!near) lSettle(u);
+}
+// the dots and the arrows (computers) show where you are; at the ends an arrow is off
+function lCarMarks(u) {
+  const us = lUnits(), i = us.indexOf(u);
+  $$('.lp-dot').forEach(d => d.setAttribute('aria-current', String(+d.dataset.ldot === u)));
+  const p = $('.lp-arr.prev'), n = $('.lp-arr.next'); if (p) p.disabled = i <= 0; if (n) n.disabled = i >= us.length - 1;
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest && e.target.closest('[data-ldot],[data-larr]'); if (!t) return;
+  if (t.dataset.ldot !== undefined) return lJump(t.dataset.ldot);
+  const car = $('#lp-car'), us = lUnits(); if (!car) return;
+  const v = us[us.indexOf(lCarIdx(car)) + +t.dataset.larr]; if (v !== undefined) lJump(v);
+});
+// computers: ← and → on the Learn page go to the previous or next unit
+document.addEventListener('keydown', e => {
+  if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || view !== 'learn' || LN.phase !== 'path' || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (!$('#modal').hidden || TUT.on || /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;
+  const b = $(`.lp-arr.${e.key === 'ArrowLeft' ? 'prev' : 'next'}`); if (b && !b.disabled) { e.preventDefault(); b.click(); }
+});
+// into: draw the page into another element (a unit's part for a swipe), without the effects on the page
+function lPath(into) {
+  LN.phase = 'path'; setLesson(false);
+  const prog = S.learn || {}, us = lUnits(), u = lCurUnit(), lvs = LEVELS.filter(l => l.unit === u), rec = lRec();
+  const H = lHeroInner(u), h = H.h;
+  const doneN = LEVELS.filter(l => prog[l.id]).length, starsN = LEVELS.reduce((s, l) => s + ((prog[l.id] || {}).stars || 0), 0);
+  const all = us.flatMap(x => ZI_UNIT[x] || []), known = all.filter(ziKnown).length, weakN = all.filter(c => ziBand(c) === 1).length, seenZi = all.some(c => ziLevel(c) >= 0);
+  const n = userName();
+  const b = gmRec().best || {}, top = RUN_DIFFS.filter(d => b[d.id]).sort((x, y) => b[y.id] - b[x.id])[0];
+  const cute = isCute();
   (into || main).innerHTML = `<div class="lp-top"><div class="lp-hi"><div class="cap">Contemporary Chinese 1</div><h1><span class="hzf">你好</span>${n ? `<span class="lp-c">, </span><span class="lp-nm">${esc(n)}</span>` : ''}</h1></div>
-      <div class="lp-tr">${streakHtml()}${unitMenu('l', `Unit ${u}`, us.map(x => { const ls = LEVELS.filter(l => l.unit === x), dn = ls.filter(l => prog[l.id]).length; return { label: `Unit ${x}`, sub: `${esc(LUNITS[x] || '')} · ${dn}/${ls.length} · ★ ${unitStars(x)}`, on: x === u, attrs: `data-lunit="${x}"` }; }), { right: true })}${msgBtnHtml('only-m')}<button type="button" class="ico only-m" data-search aria-label="Search" title="Search">${IC.search}</button><button type="button" class="ico line only-m" data-qs aria-label="Settings" title="Settings">${IC.set}</button></div></div>
+      <div class="lp-tr">${lTopRight(u)}</div></div>
     <div class="lp-cols"><div class="lp-a">
       ${!n && !S.nameAsked ? `<div class="nm-card"><label for="nm-learn"><b>What should the panda call you?</b> <span class="muted small">It’s only saved in this browser.</span></label><div class="nm-row">${nameInput('nm-learn')}<button type="button" class="btn primary sm" data-nmsave="nm-learn">Save</button><button type="button" class="link" data-nmskip>No thanks</button></div></div>` : ''}
-      <section class="hero" id="lp-hero" aria-label="Next lesson"><span class="hero-z">${cute ? `<span class="hero-pd" aria-hidden="true">${pandaHero()}</span>` : ''}<span class="bigz hzf wipe" aria-hidden="true">${esc(h.icon)}</span></span><div class="hero-tx">
-        <div class="cap red">${String(cap).split(' · ').map(s => `<span class="nw">${s}</span>`).join(' · ')}</div><div class="hero-t">${esc(h.title)}</div>
-        <div class="hero-s">Unit ${h.unit}: ${esc(LUNITS[h.unit] || '')}. About ${lvMins(h)} minutes.</div>
-        <button type="button" class="btn primary big" data-lstart="${h.id}">${prog[h.id] ? 'Play again' : beginWord()}</button></div></section>
+      <section class="hero" id="lp-hero" aria-label="Next lesson" data-k="${esc(H.k)}">${H.html}</section>
       ${howto('learn', `<p>Each level has two parts. First you <b>learn</b>: a few cards show new sounds, characters or a rule, with audio and stroke animations. Then a short <b>quiz</b> checks what you just learned, plus a couple of questions from earlier levels so you don’t forget. Mistakes come back at the end of the quiz.</p>
       <p>Questions marked ${LTAG} need sound; you can skip them with “Can’t listen now”, or hide them all in Settings.</p>
       <p>You get up to three stars (the 好 seals at the end of a level): three if at least 90% is right the first time, two from 70%. On the map they show as ★ under each level, and every level has its number. All levels are open: ${tileWords()} are done, ${isPink() ? 'the bright pink one' : isCute() ? 'the green one' : 'the red one'} is the recommended next level, and ${isPink() ? 'bubbles' : isCute() ? 'coins' : 'tiles'} with a dashed line and a little 字 practise characters. Want more practice? The other tabs follow your textbook more closely.</p>`)}
-      <section class="lp-grid"><div class="lp-gh"><div class="cap">Unit ${u} · ${esc(LUNITS[u] || '')}</div><span class="lp-stars" title="Stars in this unit"><span aria-hidden="true">★</span> ${unitStars(u)}<span class="muted"> / ${lvs.length * 3}</span><span class="sr-only"> stars</span></span>${howBtn('learn')}</div>
-        <div class="grid" id="lp-grid">${tiles}</div>
-        <p class="lp-end">${(() => { const cp = lvs.find(l => l.checkpoint), dn = lvs.filter(l => prog[l.id]).length; return (cp && dn < lvs.length - 1 ? `<button type="button" class="link" data-lknow="${u}">Already know Unit ${u}? Take the checkpoint</button>` : '') + (dn === lvs.length ? `<button type="button" class="link" data-share="diploma" data-unit="${u}">Your Unit ${u} diploma</button>` : ''); })()}${nextU !== undefined ? `<button type="button" class="link" data-lunit="${nextU}">Unit ${nextU} →</button>` : '<span>More units are coming. <span class="hzf">敬请期待</span> jìng qǐng qīdài: stay tuned!</span>'}</p></section>
+      <section class="lp-grid"><div class="lp-ctl"><span class="lp-dots">${us.map(x => `<button type="button" class="lp-dot" data-ldot="${x}" aria-label="Unit ${x}" aria-current="${x === u}"></button>`).join('')}</span>${howBtn('learn')}</div>
+        <div class="lp-carw"><button type="button" class="lp-arr prev" data-larr="-1" aria-label="Previous unit"${us.indexOf(u) ? '' : ' disabled'}>‹</button><div class="lp-car" id="lp-car">${us.map(x => lSlide(x, x === u)).join('')}</div><button type="button" class="lp-arr next" data-larr="1" aria-label="Next unit"${us.indexOf(u) < us.length - 1 ? '' : ' disabled'}>›</button></div></section>
     </div><div class="lp-b">
       ${dailyCardHtml()}
       <section class="box zi-box2"><div class="cap">Your characters</div>
@@ -6965,34 +7069,11 @@ function lPath(into) {
       <section class="box run-box"><div class="cap">Panda Run</div><p class="box-t">${top ? `Best score ${b[top.id]}` : 'Run through the right wall'}</p><p class="box-s">${top ? esc(top.label) : 'A game with your characters.'}</p><button type="button" class="btn" data-railrun>Play</button></section>
     </div></div>`;
   if (into) return;
+  lCarInit();
   if (cute) trackWatch();
   lpFitName(); lpHeroFix();
   const hb = $('#lp-hero .bigz'); if (hb && HERO_INK !== h.id + styleOf()) { HERO_INK = h.id + styleOf(); hb.classList.remove('wipe'); inkWrite(hb, { delay: 350 }); }
   LN.justDone = null; countUp();
-}
-// another unit from the unit menu or "Unit 5 →": its levels slide in like a swipe
-function lJump(u) {
-  u = +u; const cur = $('section.lp-grid'), old = lCurUnit(), us = lUnits();
-  umClose(); if (u === old) return;
-  if (!cur || matchMedia('(prefers-reduced-motion: reduce)').matches || SW.anim) return lSwap(u);
-  // computers: the levels sit between other columns, so the new unit fades in where it is instead of sliding
-  if (!isNarrow()) { lSwap(u); const n = $('section.lp-grid'); if (n && n.animate) n.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'ease-out' }); return; }
-  const dir = us.indexOf(u) > us.indexOf(old) ? 1 : -1, P = swPart(cur, u, dir);
-  SW.anim = true; swPos(P.cur, -dir * P.W, 300); swPos(P.g, 0, 300); P.setH(P.hN, 300);
-  setTimeout(() => { P.g.remove(); SW.anim = false; lSwap(u); }, 320);
-}
-// show another unit: only its part, the "Next lesson" card and the unit menu change; the rest of the page stays as it is
-function lSwap(u) {
-  const ha = $('#lp-hero'), oh = ha ? ha.offsetHeight : 0;
-  LN.unit = u; S.lunit = u; save(); LN.justDone = null; main.classList.remove('sw-noanim');
-  const tmp = document.createElement('div'); lPath(tmp);
-  ['section.lp-grid', '.lp-tr'].forEach(s => { const a = $(s, main), b = $(s, tmp); if (a && b) a.replaceWith(b); });
-  const hb = $('#lp-hero', tmp);
-  if (ha && hb && ha.innerHTML !== hb.innerHTML) {
-    ha.innerHTML = hb.innerHTML; swSmooth(ha, oh);
-    const z = $('.bigz', ha), id = ($('[data-lstart]', ha) || {}).dataset; if (z && id && HERO_INK !== id.lstart + styleOf()) { HERO_INK = id.lstart + styleOf(); z.classList.remove('wipe'); inkWrite(z, { delay: 350 }); }
-  }
-  if (isCute()) { trackDraw(); trackWatch(); }
 }
 const beginWord = () => isCute() ? 'Let’s go!' : 'Begin';
 const tileWords = () => isPink() ? 'pink bubbles' : isCute() ? 'gold coins' : 'filled tiles';
@@ -7006,26 +7087,24 @@ const LV_SHORT = {
   'u5-1': '会, 一点儿', 'u5-2': 'Shopping', 'u5-3': 'How much?', 'u5-z1': '字 Money', 'u5-4': 'Too pricey!', 'u5-5': 'Try it on', 'u5-z2': '字 Clothes', 'u5-6': 'Restaurant', 'u5-7': '最', 'u5-z3': '字 Food', 'u5-8': 'Tastes', 'u5-9': 'The bill', 'u5-z4': '字 The bill', 'u5-10': '和, 也, 还', 'u5-11': 'Reading', 'u5-zr': '字 Review', 'u5-12': 'Checkpoint'
 };
 const lvShort = lv => lv.short || LV_SHORT[lv.id] || (lv.zi ? '字' : lv.checkpoint ? 'Checkpoint' : lv.title.split(/[:?]/)[0]);
-// Cute bamboo: the rails run through the middle of every row and turn at the end of it (drawn after the layout, again when it changes)
+// Cute bamboo: the rails run through the middle of every row and turn at the end of it (drawn after the layout, again when it changes).
+// All slides are measured first and drawn after, so the browser lays the page out once.
 let TRK_RO = null;
 function trackWatch() {
-  const g = $('#lp-grid'); if (!g) return;
-  if (!TRK_RO && window.ResizeObserver) TRK_RO = new ResizeObserver(() => requestAnimationFrame(() => trackDraw()));
-  if (TRK_RO) { TRK_RO.disconnect(); TRK_RO.observe(g); }
-  requestAnimationFrame(() => trackDraw());
+  const c = $('#lp-car'); if (!c) return;
+  if (!TRK_RO && window.ResizeObserver) TRK_RO = new ResizeObserver(() => requestAnimationFrame(() => { trackDraw(); lCarFit(); }));
+  if (TRK_RO) { TRK_RO.disconnect(); TRK_RO.observe(c); }
+  trackDraw();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => requestAnimationFrame(() => trackDraw()));
 }
-function trackDraw(g0) {
-  const g = g0 || $('#lp-grid'); if (!g) return;
-  const old = $('.trk', g); if (old) old.remove();
-  if (!isCute()) return;
+function trackPath(g) {
   const rows = {};
   $$('.tl', g).forEach(t => {
     const z = $('.hzf', t); if (!z) return;
     const r = parseInt(t.style.gridRowStart, 10) || 1;
     (rows[r] = rows[r] || []).push({ x: t.offsetLeft + z.offsetLeft + z.offsetWidth / 2, y: t.offsetTop + z.offsetTop + z.offsetHeight / 2, w: z.offsetWidth });
   });
-  const rs = Object.keys(rows).map(Number).sort((a, b) => a - b); if (!rs.length) return;
+  const rs = Object.keys(rows).map(Number).sort((a, b) => a - b); if (!rs.length) return null;
   const W = g.clientWidth, H = g.clientHeight;
   let d = '', prev = null;
   rs.forEach((r, i) => {
@@ -7037,10 +7116,19 @@ function trackDraw(g0) {
     if (i === rs.length - 1) d += `L${(fwd ? b + ext : b - ext).toFixed(1)} ${y.toFixed(1)}`;
     prev = { x: b, y, fwd };
   });
-  const ns = 'http://www.w3.org/2000/svg', sv = document.createElementNS(ns, 'svg');
-  sv.setAttribute('class', 'trk'); sv.setAttribute('width', W); sv.setAttribute('height', H); sv.setAttribute('aria-hidden', 'true');
-  sv.innerHTML = `<path d="${d}" fill="none" style="stroke:var(--rail)" stroke-width="13" stroke-linecap="round"/><path d="${d}" fill="none" style="stroke:var(--paper)" stroke-width="7.5"/><path d="${d}" fill="none" style="stroke:var(--rail)" stroke-opacity=".55" stroke-width="20" stroke-dasharray="3 10"/>`;
-  g.insertBefore(sv, g.firstChild);
+  return { d, W, H };
+}
+function trackDraw() {
+  const gs = $$('.lp-car .grid'); gs.forEach(g => { const o = $('.trk', g); if (o) o.remove(); });
+  if (!isCute() || !gs.length) return;
+  const ps = gs.map(trackPath), ns = 'http://www.w3.org/2000/svg';
+  gs.forEach((g, i) => {
+    const p = ps[i]; if (!p) return;
+    const sv = document.createElementNS(ns, 'svg');
+    sv.setAttribute('class', 'trk'); sv.setAttribute('width', p.W); sv.setAttribute('height', p.H); sv.setAttribute('aria-hidden', 'true');
+    sv.innerHTML = `<path d="${p.d}" fill="none" style="stroke:var(--rail)" stroke-width="13" stroke-linecap="round"/><path d="${p.d}" fill="none" style="stroke:var(--paper)" stroke-width="7.5"/><path d="${p.d}" fill="none" style="stroke:var(--rail)" stroke-opacity=".55" stroke-width="20" stroke-dasharray="3 10"/>`;
+    g.insertBefore(sv, g.firstChild);
+  });
 }
 // a tile opens a small window about the level, with Start
 function lOpen(id) {
@@ -7464,13 +7552,7 @@ function swOk(t) {
 }
 // what a swipe in this direction would show: { show() renders it into main, undo() goes back, commit() keeps it }, or null
 function swTarget(dir) {
-  if (view === 'learn') {
-    // only the unit's own part moves (its title and levels); the rest of the page is updated when the swipe ends
-    if (!SW.el.closest('section.lp-grid')) return null;
-    const us = lUnits(), old = lCurUnit(), n = us[us.indexOf(old) + dir]; if (n === undefined) return null;
-    return { part: true,
-      unit: n, commit: () => lSwap(n) };
-  }
+  if (view === 'learn') return null;   // the units are a strip the browser scrolls itself (see lCarInit)
   const sec = secOf(view); if (!sec || sec.pages.length < 2) return null;
   const p = sec.pages[sec.pages.findIndex(x => x[0] === view) + dir]; if (!p) return null;
   const old = view;
@@ -7485,37 +7567,12 @@ function swSmooth(el, oh) {
   s.transition = 'height .28s ease, opacity .28s ease'; if (nh !== oh) s.height = nh + 'px'; s.opacity = '1';
   setTimeout(() => { s.transition = ''; s.height = ''; s.overflow = ''; s.opacity = ''; }, 320);
 }
-// a unit's part for a swipe: the other unit is made off-screen and placed next to this one; while it slides, the height of
-// the place goes from this unit's to the other's, so what is below moves along with the finger instead of jumping at the end
-function swPart(cur, u, dir) {
-  const r = cur.getBoundingClientRect(), tmp = document.createElement('div'), old = LN.unit;
-  LN.unit = u; lPath(tmp); LN.unit = old;
-  const nx = $('section.lp-grid', tmp); nx.querySelectorAll('[id]').forEach(x => x.removeAttribute('id'));
-  const g = document.createElement(main.tagName); g.className = main.className + ' sw-ghost sw-part';
-  Object.assign(g.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', margin: '0', padding: '0' });
-  g.appendChild(nx); document.body.appendChild(g);
-  if (isCute()) trackDraw($('.grid', g));
-  // if the page gets shorter at its bottom the browser scrolls it; the other part follows this one every frame
-  const sync = () => { if (!g.isConnected || !cur.isConnected) return; g.style.top = cur.getBoundingClientRect().top + 'px'; requestAnimationFrame(sync); }; requestAnimationFrame(sync);
-  const hC = r.height, hN = nx.getBoundingClientRect().height, clip = 'inset(-60px -40px 0 -40px)';
-  [cur, g].forEach(e => { e.style.clipPath = clip; e.style.overflow = 'visible'; });
-  const setH = (h, ms) => [cur, g].forEach(e => { e.style.height = Math.round(h) + 'px'; if (ms !== undefined) e.style.transition = `transform ${ms}ms cubic-bezier(.2,.7,.2,1), height ${ms}ms cubic-bezier(.2,.7,.2,1)`; });
-  const reset = () => { ['height', 'clipPath', 'overflow', 'transition', 'transform'].forEach(k => { cur.style[k] = ''; }); };
-  return { cur, g, hC, hN, W: r.width + 24, setH, reset };
-}
 const swPos = (el, x, ms) => { el.style.transition = ms ? `transform ${ms}ms cubic-bezier(.2,.7,.2,1)` : 'none'; el.style.transform = x ? `translateX(${x}px)` : ''; };
 function swStart(dir) {
   SW.dir = dir; SW.W = main.getBoundingClientRect().width + 24;
   const tg = swTarget(dir);
   document.documentElement.classList.add('sw-drag');
   if (!tg) { SW.st = 3; SW.cur = view === 'learn' ? SW.el.closest('section.lp-grid') || main : main; return; }   // nothing on that side: it only gives a little
-  if (tg.part) {
-    main.classList.add('sw-noanim');
-    const P = swPart(SW.el.closest('section.lp-grid'), tg.unit, SW.dir);
-    Object.assign(SW, { ghost: P.g, cur: P.cur, W: P.W, tg, st: 4, P });
-    swPos(P.cur, SW.dx); swPos(P.g, SW.dir * SW.W + SW.dx);
-    return;
-  }
   SW.cur = main;
   // the current page moves into a holder that follows the finger; the page itself already shows the next one.
   // (The page's own elements are moved, not copied: the finger's touch belongs to one of them, and a removed
@@ -7532,13 +7589,6 @@ function swEnd(cancelled) {
   const st = SW.st; SW.st = 0; if (st < 2) return;
   const g = SW.ghost, done = () => { document.documentElement.classList.remove('sw-drag'); SW.anim = false; };
   if (st === 3) { const c = SW.cur; swPos(c, 0, 220); setTimeout(() => { c.style.transition = ''; done(); }, 240); return; }
-  if (st === 4) {
-    const c = SW.cur, ok = !cancelled && (Math.abs(SW.dx) > SW.W * 0.18 || (Math.abs(SW.vx) > 0.35 && Math.abs(SW.dx) > 24 && Math.sign(SW.vx) === -SW.dir)) && Math.sign(SW.dx) === -SW.dir;
-    SW.anim = true;
-    swPos(c, ok ? -SW.dir * SW.W : 0, 230); swPos(g, ok ? 0 : SW.dir * SW.W, 230); SW.P.setH(ok ? SW.P.hN : SW.P.hC, 230);
-    setTimeout(() => { if (ok) { SW.tg.commit(); buzz(8); } else { swPos(c, 0); SW.P.reset(); } g.remove(); SW.ghost = null; done(); }, 250);
-    return;
-  }
   const go = !cancelled && (Math.abs(SW.dx) > SW.W * 0.18 || (Math.abs(SW.vx) > 0.35 && Math.abs(SW.dx) > 24 && Math.sign(SW.vx) === -SW.dir)) && Math.sign(SW.dx) === -SW.dir;
   SW.anim = true;
   if (go) {
@@ -7566,7 +7616,6 @@ document.addEventListener('touchmove', e => {
   // only towards the side it started; the other way it stops at the start
   SW.dx = SW.dir > 0 ? Math.min(0, dx) : Math.max(0, dx);
   if (SW.st === 3) { swPos(SW.cur, SW.dx * 0.25); return; }
-  if (SW.st === 4) { swPos(SW.cur, SW.dx); swPos(SW.ghost, SW.dir * SW.W + SW.dx); const P = SW.P, k = Math.min(1, Math.abs(SW.dx) / SW.W); P.setH(P.hC + (P.hN - P.hC) * k); return; }
   swPos(SW.ghost, SW.dx); swPos(main, SW.dir * SW.W + SW.dx);
 }, { passive: false });
 document.addEventListener('touchend', () => swEnd(false), { passive: true });
