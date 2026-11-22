@@ -843,10 +843,11 @@ details.howto>summary,details.more>summary,.ln-ctx>summary,.msg-more summary,.pa
 @media (max-width:760px){.modal.sheet{padding:0}.modal.sheet .modal-box{border-radius:14px 14px 0 0;border-width:2px 0 0;max-width:none;animation:up .32s cubic-bezier(.2,.8,.2,1);padding-bottom:calc(18px + var(--safe-b))}}
 #toast{background:var(--ink);color:var(--paper);bottom:calc(var(--bot) + var(--safe-b) + 18px);border-radius:var(--r);font-weight:600}
 .qs-row{min-height:48px;border-bottom:1px solid var(--line)}
-.qs-sw{flex:none;width:52px;height:30px;border-radius:999px;border:1.5px solid var(--edge);background:none;position:relative;transition:background .2s}
-.qs-sw::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:var(--edge);transition:transform .25s cubic-bezier(.3,1.4,.5,1),background .2s}
+/* switches (1.1.0): the whole track always shows, off is a grey track with the knob left and ✕, on is the style colour with the knob right and ✓ */
+.qs-sw{flex:none;width:54px;height:32px;border-radius:999px;border:2px solid var(--edge);background:var(--line);background:color-mix(in srgb,var(--ink) 16%,transparent);position:relative;transition:background .2s,border-color .2s;box-sizing:border-box}
+.qs-sw::after{content:"✕";position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:var(--muted);border:1.5px solid var(--muted);box-sizing:border-box;color:var(--paper);font:800 12px/21px var(--ui);text-align:center;transition:transform .25s cubic-bezier(.3,1.4,.5,1),background .2s,color .2s}
 .qs-row[aria-checked="true"] .qs-sw{background:var(--pri);border-color:var(--pri)}
-.qs-row[aria-checked="true"] .qs-sw::after{transform:translateX(22px);background:var(--onpri)}
+.qs-row[aria-checked="true"] .qs-sw::after{content:"✓";transform:translateX(22px);background:var(--onpri);border-color:var(--onpri);color:var(--pri)}
 /* while audio plays, its button says Stop (a tap stops it) */
 .btn.playing>span{display:none}.btn.playing::after{content:'Stop';margin-left:6px}
 [data-say].playing:not(.btn){outline:2px solid var(--red);outline-offset:2px;border-radius:var(--r)}
@@ -1037,8 +1038,8 @@ select option:disabled{color:var(--muted)}
 .tl.done:hover{background:var(--done);opacity:.88}
 .tl.next:hover{background:var(--nxt);opacity:.9}
 .st3{display:inline-flex;gap:3px}
-.st3 i{width:8px;height:8px;border:1.5px solid currentColor;border-radius:2px;opacity:.5}
-.st3 i.on{background:currentColor;opacity:1}
+.st3 i{font-style:normal;font-size:12px;line-height:1;opacity:.35}
+.st3 i.on{opacity:1}
 .lp-end{margin:14px 0 0;font-size:14px;color:var(--muted);display:flex;gap:8px 16px;flex-wrap:wrap;align-items:center}
 .box{border-top:2px solid var(--rule);padding-top:14px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .box p{margin:0}
@@ -1597,7 +1598,7 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 [data-tone="pink"]{--bow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 32'%3E%3Cpath d='M18 15L13 29L17.5 26.5L19.5 30ZM22 15L27 29L22.5 26.5L20.5 30Z' fill='%23FF7EB3' stroke='%234A2C3A' stroke-width='1.4' stroke-linejoin='round'/%3E%3Cpath d='M20 14C12 2 2 4 3 13C4 22 14 20 20 14ZM20 14C28 2 38 4 37 13C36 22 26 20 20 14Z' fill='%23FF7EB3' stroke='%234A2C3A' stroke-width='1.6' stroke-linejoin='round'/%3E%3Ccircle cx='9' cy='10' r='1.6' fill='white'/%3E%3Ccircle cx='31' cy='10' r='1.6' fill='white'/%3E%3Cellipse cx='20' cy='14' rx='4.2' ry='4.6' fill='%23E8559A' stroke='%234A2C3A' stroke-width='1.6'/%3E%3C/svg%3E");--spark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 0C11 7 13 9 20 10C13 11 11 13 10 20C9 13 7 11 0 10C7 9 9 7 10 0Z' fill='%23FFC93C'/%3E%3C/svg%3E")}
 [data-tone="pink"] body{background-image:radial-gradient(var(--dot) 1.7px,transparent 2.1px);background-size:22px 22px}
 [data-tone="pink"] .lp-top h1 .hzf{font-family:"ZCOOL KuaiLe",var(--hz);font-weight:400;color:var(--pri-ink)}
-[data-tone="pink"] :is(.hero,.box,.mcard,.gm-hero,.nm-card,.zi-practise,.qs-card,.gm-card){box-shadow:0 5px 0 var(--line)}
+[data-tone="pink"] :is(.hero,.box,.mcard,.gm-hero,.nm-card,.zi-practise,.qs-card,.st-tile,.gm-card){box-shadow:0 5px 0 var(--line)}
 [data-tone="pink"] .hero{position:relative;overflow:visible}
 [data-tone="pink"] .hero::before{content:"";position:absolute;inset:7px;border:2px dashed var(--stitch);border-radius:18px;pointer-events:none}
 [data-tone="pink"] .hero::after{content:"";position:absolute;top:-15px;left:16px;width:44px;height:35px;background:var(--bow) center/contain no-repeat;transform:rotate(-14deg);pointer-events:none}
@@ -1616,7 +1617,7 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 :root[data-style="cute"][data-theme="dark"]:not([data-tone="pink"]){--paper:#1B2421;--paper2:#232E2A;--surface:#232E2A;--sunk:#202A26;--line:#33413B;--line-2:#3E4E47;--card:#232E2A;--pri-soft:#2A3A33;--outline:#33413B}
 :root[data-style="cute"][data-tone="pink"][data-theme="dark"]{--paper:#261C21;--paper2:#30242A;--surface:#30242A;--sunk:#2B2025;--line:#46343D;--line-2:#56414C;--card:#30242A;--pri-soft:#3A2A33;--coin:#F3B5CF;--coinline:#D98FB0;--coinink:#4A2C3A;--dot:#30242A;--outline:#46343D}
 /* the islands: each style's light palette, a little dimmer than the light mode */
-:root[data-theme="dark"]:not([data-style="cute"]) :is(.hero,.box,.mcard,.gm-hero,.gm-card,.nm-card,.zi-practise,.ln-opt,.ln-tile,.ln-bub,.qs-card){color-scheme:light;
+:root[data-theme="dark"]:not([data-style="cute"]) :is(.hero,.box,.mcard,.gm-hero,.gm-card,.nm-card,.zi-practise,.ln-opt,.ln-tile,.ln-bub,.qs-card,.st-tile){color-scheme:light;
   --paper:#EFE8D8;--paper2:#E4DCC9;--surface:#EFE8D8;--sunk:#E4DCC9;--ink:#1B1A17;--muted:#5E584C;--line:#CFC6B3;--line-2:#B9AF9B;
   --red:#A8281C;--redbg:#F6E2D9;--redink:#7C1B12;--onred:#FFF6E8;--onink:#EFE8D8;--jade:var(--ink);--jade-ink:var(--onink);--jade-soft:var(--paper2);
   --ok:#2F5D46;--ok-soft:#DCE6D8;--bad:#A8281C;--bad-soft:#F6E2D9;--warn:#7A5A12;--warn-soft:#ECDDB8;
@@ -1624,9 +1625,9 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
   --pri:var(--ink);--onpri:var(--onink);--done:var(--ink);--ondone:var(--onink);--doneline:var(--ink);--nxt:var(--red);--onnxt:var(--onred);--rule:var(--ink);--edge:var(--ink);
   color:var(--ink)}
 :root[data-theme="dark"]:not([data-style="cute"]) :is(.hero,.box,.mcard,.gm-hero,.nm-card,.zi-practise){background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
-:root[data-theme="dark"]:not([data-style="cute"]) :is(.ln-opt,.ln-tile,.ln-bub,.gm-card,.qs-card){background:var(--paper);border-color:var(--line-2)}
+:root[data-theme="dark"]:not([data-style="cute"]) :is(.ln-opt,.ln-tile,.ln-bub,.gm-card,.qs-card,.st-tile){background:var(--paper);border-color:var(--line-2)}
 :root[data-theme="dark"]:not([data-style="cute"]) .ln-bub{border-radius:8px;padding:10px 16px;border-left-width:3px}
-:root[data-style="cute"][data-theme="dark"]:not([data-tone="pink"]) :is(:is(.hero,.box,.mcard,.gm-hero,.gm-card,.nm-card,.zi-practise,.ln-opt,.ln-tile,.ln-bub,.qs-card),.cat>.set-row){color-scheme:light;
+:root[data-style="cute"][data-theme="dark"]:not([data-tone="pink"]) :is(:is(.hero,.box,.mcard,.gm-hero,.gm-card,.nm-card,.zi-practise,.ln-opt,.ln-tile,.ln-bub,.qs-card,.st-tile),.cat>.set-row){color-scheme:light;
   --paper:#F3EADB;--paper2:#ECDFCA;--surface:#F7EFE3;--sunk:#EEE2CF;--ink:#3B2F2A;--muted:#6E5F55;--line:#E6D4BB;--line-2:#DCC3A2;
   --red:#C8443F;--redbg:#FADDDA;--redink:#8E2B27;--onred:#FFFFFF;--onink:#FFF6EA;
   --ok:#2F7D4F;--ok-soft:#D7EBDD;--bad:#C8443F;--bad-soft:#FADDDA;--warn:#8A5A08;--warn-soft:#F7E8C0;
@@ -1634,7 +1635,7 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
   --pri:#2F7D4F;--onpri:#FFFFFF;--pri-sh:#215C39;--pri-soft:#D7EBDD;--pri-ink:#215C39;--done:#F4C451;--ondone:#3B2F2A;--doneline:#D9A21B;--nxt:#2F7D4F;--onnxt:#FFFFFF;
   --rule:var(--line);--edge:var(--line-2);--card:#F7EFE3;--pink:#F9D4DB;--pinkbg:#FAE6EA;--onpink:#7A2E3E;--coin:#F4C451;--coinline:#D9A21B;--coinink:#3B2F2A;
   color:var(--ink)}
-:root[data-style="cute"][data-tone="pink"][data-theme="dark"] :is(:is(.hero,.box,.mcard,.gm-hero,.gm-card,.nm-card,.zi-practise,.ln-opt,.ln-tile,.ln-bub,.qs-card),.cat>.set-row){color-scheme:light;
+:root[data-style="cute"][data-tone="pink"][data-theme="dark"] :is(:is(.hero,.box,.mcard,.gm-hero,.gm-card,.nm-card,.zi-practise,.ln-opt,.ln-tile,.ln-bub,.qs-card,.st-tile),.cat>.set-row){color-scheme:light;
   --paper:#F4E2E9;--paper2:#EED4DF;--surface:#F7E6EC;--sunk:#F0DAE3;--ink:#4A2C3A;--muted:#7A4D62;--line:#EBC6D6;--line-2:#E0AFC5;
   --red:#B8322F;--redbg:#FADCDB;--redink:#8E2522;--onred:#FFFFFF;--onink:#FFF0F5;
   --ok:#237A55;--ok-soft:#D3F0E2;--bad:#B8322F;--bad-soft:#FADCDB;--warn:#7A4B00;--warn-soft:#FBEBC0;
@@ -1660,6 +1661,130 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 @media (prefers-reduced-motion:reduce){.hero-pd{animation:none}}
 [data-tone="pink"] .hero::after{display:none}
 [data-tone="pink"] .hero .bigz::after{top:auto;left:auto;bottom:0;right:-8px}
+
+/* 1.1.0: level numbers and stars on the Learn map */
+.sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tl-no{font-weight:800;margin-right:.3em}
+.tl b .tl-no{color:inherit;opacity:.75}
+.tl-st{display:none}
+.lp-stars{margin-left:auto;font:700 13px/1 var(--ui);color:var(--ink);white-space:nowrap;--star:var(--red)}
+.lp-stars>span[aria-hidden]{color:var(--star)}
+.lp-stars .muted{font-weight:500}
+[data-style="cute"] .lp-stars{--star:var(--coinline)}
+[data-tone="pink"] .lp-stars{--star:var(--pri)}
+.tl-st .st3 i{color:var(--star,var(--red))}
+.tl-st .st3 i:not(.on){color:var(--line-2);opacity:1}
+.tl-nc{display:none}
+@media (max-width:760px){
+  :root:not([data-style="cute"]) .tl-s .tl-no{display:none}
+  :root:not([data-style="cute"]) .tl-nc{display:block;position:absolute;top:3px;left:5px;font:700 10px/1 var(--ui);opacity:.7}
+  .tl-st{display:flex;justify-content:center;min-height:13px;margin:-1px 0 -2px}
+  .tl-st .st3{gap:1px}.tl-st .st3 i{font-size:11.5px}
+}
+[data-style="cute"] .tl-st{display:flex;justify-content:center;min-height:14px;margin:2px 0 -3px;--star:var(--coinline)}
+[data-tone="pink"] .tl-st{--star:var(--pri)}
+[data-style="cute"] .tl-st .st3 i{font-size:13px;-webkit-text-stroke:.4px rgba(0,0,0,.12)}
+[data-style="cute"] .tl.up .tl-st,[data-style="cute"] .tl.dn .tl-st{transform:translateY(var(--ty))}
+
+/* 1.1.0: Words and Writing menus on phones: short rows */
+.mc-ic,.fmore{display:none}
+.mc-tx{display:contents}
+@media (max-width:720px){
+  .mc-dk{display:none}
+  .menu-grid:has(.mc-r){gap:0;margin:4px 0 8px;border:1.5px solid var(--line-2);border-radius:var(--r);overflow:hidden}
+  .mcard.mc-r{flex-direction:row;align-items:center;gap:12px;padding:10px 12px;border:0;border-radius:0;background:var(--surface);box-shadow:none;cursor:pointer;min-height:60px}
+  .mcard.mc-r+.mcard.mc-r{border-top:1px solid var(--line)}
+  .mc-ic{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:10px;background:var(--pri-soft,var(--paper2));color:var(--pri-ink,var(--ink));font-size:20px}
+  .mc-tx{display:block;flex:1;min-width:0;line-height:1.35}
+  .mc-r h2{font-size:15.5px;line-height:1.25}
+  .mc-r p{font-size:13px;color:var(--muted);line-height:1.35}
+  .mc-r details.more{font-size:13px;margin-top:2px}
+  .mc-r details.more summary{font-size:12.5px}
+  .mc-r details.more:not([open]){display:inline}
+  .mc-r .mc-tx>p{display:inline;margin-right:6px}
+  .mc-r details.more:not([open]) summary{display:inline}
+  .mcard.mc-r,[data-theme] .mcard.mc-r{padding:10px 12px!important;border:0!important;border-radius:0!important;margin:0!important}
+  .mcard.mc-r+.mcard.mc-r{border-top:1px solid var(--line)!important}
+  .mcard.mc-r .btn{margin:0;align-self:center;flex:none;padding:8px 14px;min-height:40px;font-size:14px}
+  .mg-h{margin:18px 0 6px}
+  .fcomp .frow{gap:6px;margin:6px 0}
+  .fline{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin:2px 0 4px}
+  .fmore{display:block}.fmore[open]{flex-basis:100%}
+  .fmore summary{font-size:13.5px;font-weight:600;color:var(--pri-ink,var(--red));cursor:pointer;padding:6px 0;list-style:revert}
+  .zi-practise .zi-modes{flex-wrap:nowrap;gap:6px}
+  .zi-practise .zi-modes .btn{padding:8px 12px;font-size:14px}
+}
+
+/* 1.1.0: Settings with search, My account and three shortcuts */
+.st-sr{position:relative;margin:2px 0 12px}
+.st-sr .in{width:100%;padding-left:38px;box-sizing:border-box;font-family:var(--ui);font-size:16px}
+.st-sr-i{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted);display:grid;place-items:center;pointer-events:none}
+.st-sr-i svg{width:18px;height:18px}
+.st-acct{padding:12px}
+.st-acct .st-av{width:56px;height:56px}
+.st-acct .st-nm{font-size:17px}
+.st-acc-l{display:block;margin-top:6px;padding-top:6px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.st-acc-l b{color:var(--ink);font-size:13px}
+.st-acc-l .hzf{color:var(--ink)}
+.st-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 14px}
+.st-tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;background:var(--surface);color:var(--ink);border:1.5px solid var(--line-2);border-radius:var(--r);cursor:pointer;font:inherit;min-height:84px;justify-content:center}
+.st-tile:hover{border-color:var(--ink)}
+.st-tile b{font-size:14px;font-weight:700}.st-tile small{font-size:12px;color:var(--muted)}
+.st-ti{font-size:20px;line-height:1.1;font-weight:700;color:var(--ink)}
+.st-tile .st-n{position:absolute;top:6px;right:6px}
+[data-style="cute"] .st-tile{border-width:2px;background:var(--card)}
+[data-style="cute"] .st-ti{color:var(--pri-ink)}
+.st-box .st-h2{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin:16px 0 4px}
+#st-res .qs-card{margin:0 0 6px}
+
+/* 1.1.0: how well you know each word, word lists, dictation */
+.w-stat{margin:6px 0 4px}
+.w-stat-t{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.w-stat-t .btn{margin-left:auto;align-self:center}
+.w-stat .bn{font-size:26px}
+.w-bar{margin:6px 0 2px}
+.wl-ls{display:grid;gap:8px;margin:10px 0}
+.wl-li{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1.5px solid var(--line-2);border-radius:var(--r);padding:10px 12px;background:var(--surface)}
+.wl-li.on{border-color:var(--pri,var(--ink))}
+.wl-lt{display:flex;flex-direction:column;min-width:0;flex:1 1 180px}.wl-lt small{color:var(--muted);font-size:12.5px}
+.wl-prev{font-size:15px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wl-la{display:flex;gap:6px;flex-wrap:wrap}
+.wl-nm{width:100%;box-sizing:border-box;font-family:var(--ui)}
+.wl-ta{width:100%;box-sizing:border-box;font-family:var(--hz),var(--ui)}
+.wl-ed .cap{margin:14px 0 4px}
+#wl-find{width:100%;box-sizing:border-box;margin:4px 0 6px;font-family:var(--ui)}
+#wl-units{margin:4px 0 6px}
+#wl-pick{max-height:min(46vh,420px);overflow:auto;border:1px solid var(--line);border-radius:var(--r);padding:4px 8px}
+.wl-all{padding:6px 0;border-bottom:1px solid var(--line)}
+.wl-rows{display:grid}
+.wl-row{display:grid;grid-template-columns:22px auto auto 1fr;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px}
+.wl-row input{width:18px;height:18px;accent-color:var(--pri,var(--ink))}
+.wl-h{font-size:19px}.wl-e{color:var(--muted);font-size:13px;min-width:0}
+.wl-chips{display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 8px}
+.wl-foot{position:sticky;bottom:-1px;display:flex;align-items:center;gap:8px;justify-content:flex-end;padding:10px 0 2px;background:var(--paper);border-top:1px solid var(--line);margin-top:10px}
+.wl-foot #wl-n{margin-right:auto;font-weight:700}
+.wl-on .link{font-size:14px}
+.wm-lists{margin:8px 0}
+.dc-box{max-width:620px;margin:8px auto;display:flex;flex-direction:column;gap:6px}
+.dc-run{align-items:center;text-align:center;padding:18px 0}
+.dc-n b{font:800 64px/1 var(--ui)}.dc-n span{font-size:22px;color:var(--muted)}
+.dc-st{font-size:20px;font-weight:700;min-height:30px}
+.dc-bar{width:min(420px,90%);height:8px;border-radius:9px;background:var(--line);overflow:hidden}
+.dc-bar i{display:block;height:100%;width:0;background:var(--pri,var(--ink))}
+.dc-act{justify-content:center}
+.dc-h{font-size:20px;margin:0}
+.dc-ans{list-style:none;padding:0;margin:6px 0;display:grid}
+.dc-ans li{display:grid;grid-template-columns:28px auto 1fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.dc-i{color:var(--muted);font-size:13px;text-align:right}.dc-hz{font-size:24px}
+.dc-pe{display:flex;flex-direction:column;min-width:0;font-size:14px}.dc-pe small{color:var(--muted)}
+.dc-mk{display:flex;gap:6px}
+.dc-mk button{width:42px;height:42px;border-radius:50%;border:2px solid var(--line-2);background:var(--surface);color:var(--muted);font:800 18px/1 var(--ui);cursor:pointer}
+.dc-mk .dc-ok[aria-pressed="true"]{background:var(--ok,#2F7D4F);border-color:var(--ok,#2F7D4F);color:#fff}
+.dc-mk .dc-no[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:var(--onred)}
+.dc-done{align-items:center;text-align:center}.dc-done svg.panda{width:110px;height:110px}
+.seg.wrap{flex-wrap:wrap}
+.wdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0;background:var(--line);border:1px solid var(--line-2)}
+.wdot.wb1{background:var(--red);border-color:var(--red)}.wdot.wb2{background:var(--muted);border-color:var(--muted)}.wdot.wb3{background:var(--ink);border-color:var(--ink)}
 </style>
 </head>
 <body>
@@ -1946,7 +2071,7 @@ const SETS = [
       { q: '不 in 不说', o: ['bù', 'bú', 'bu'], c: 0, x: '说 is 1st tone, so 不 stays bù.' },
       { q: '不 in 是不是', o: ['bu (neutral)', 'bú', 'bù'], c: 0, x: 'In X不X questions 不 is neutral.' }
     ] },
-  { id: 'u0-listen', u: 0, cat: 'listen', src: 'Exercise book Unit 0 (sound discrimination)', title: 'Listen and choose the pinyin you hear. Uses your browser’s speech voice.', type: 'listen', noshuffle: true,
+  { id: 'u0-listen', u: 0, cat: 'listen', src: 'Exercise book Unit 0 (sound discrimination)', title: 'Listen and choose the pinyin you hear.', type: 'listen', noshuffle: true,
     items: [
       { say: '妈', o: ['mā', 'má', 'mǎ', 'mà'], c: 0 }, { say: '马', o: ['mā', 'má', 'mǎ', 'mà'], c: 2 },
       { say: '学', o: ['xuē', 'xué', 'xuě', 'xuè'], c: 1 }, { say: '汉', o: ['hān', 'hán', 'hǎn', 'hàn'], c: 3 },
@@ -4211,10 +4336,11 @@ document.addEventListener('keydown', e => {
 
 /* ================= Characters tab ================= */
 const C = { mode: 'flash', screen: 'menu', units: new Set([0, 1, 2, 3, 4, 5]), core: true, ext: false, ph: false, names: false, weak: false, pyHint: false, queue: [], pos: 0, flipped: false, answered: null, right: 0, wrong: 0, missed: [], search: '' };
-const C_GROUPS = [['Look and review', ['list', 'flash']], ['Quiz yourself', ['mean', 'py']], ['Write and listen', ['hz', 'listen']]];
+const C_GROUPS = [['Look and review', ['list', 'flash']], ['Quiz yourself', ['mean', 'py']], ['Write and listen', ['hz', 'listen', 'dict']]];
 const CMODES = [['list', 'Word list'],['flash', 'Flashcards'], ['py', 'Pinyin quiz'], ['mean', 'Meaning quiz'], ['hz', 'Type the characters'], ['listen', 'Listen and type']];
 function deck() {
-  const seen = new Set(), out = [];
+  const seen = new Set(), out = [], L = wlActive();
+  if (L) return wlWords(L).filter(v => !C.weak || ((st => st && st.bad && st.streak < 2)(S.cards[v.h])));
   for (const v of VOCAB) {
     if (!C.units.has(v.unit)) continue;
     const ok = C.fav ? isFav('w:' + v.h) : (v.tag === '' || v.tag === 'sup') ? C.core : v.tag === 'ext' ? C.ext : v.tag === 'ph' ? C.ph : v.tag === 'name' ? C.names : false;
@@ -4224,7 +4350,12 @@ function deck() {
   }
   return out;
 }
-function rec(v, ok) { const st = S.cards[v.h] || (S.cards[v.h] = { ok: 0, bad: 0, streak: 0 }); if (ok) { st.ok++; st.streak++; } else { st.bad++; st.streak = 0; } save(); }
+// a word's record: right/wrong counts, the streak, and its strength 0–5 with the time (see wlists.js)
+function rec(v, ok) {
+  const st = S.cards[v.h] || (S.cards[v.h] = { ok: 0, bad: 0, streak: 0 }), s0 = st.s !== undefined ? st.s : Math.min(5, st.streak || 0);
+  if (ok) { st.ok++; st.streak++; } else { st.bad++; st.streak = 0; }
+  st.s = ok ? Math.min(5, s0 + 1) : Math.max(0, s0 - 2); st.at = Date.now(); save();
+}
 const chip = (label, on, attrs) => `<button type="button" class="chip" aria-pressed="${on}" ${attrs}>${label}</button>`;
 const CDESC = {
   flash: { t: 'Flashcards', short: 'Recall pinyin and meaning, then flip the card.',
@@ -4242,12 +4373,35 @@ const CDESC = {
   listen: { t: 'Listen and type', short: 'Hear a word, type it in characters.',
     p: 'The app says a word and you type it in characters. Listen as often as you like. It trains the link between sound and characters, like the listening part of the exam.',
     s: 'On screen: “Play again”, an answer box and Check / Next (Enter).' },
+  dict: { t: 'Dictation on paper', short: 'The app says the words, you write them by hand.',
+    p: 'Like a dictation in class: get a pen and paper. The app says each word (once or twice), then gives you a few seconds to write it in characters. Pause, repeat or skip whenever you like. At the end you see all the answers and mark which ones you got right; your marks count for how well you know each word.',
+    s: 'On screen: the word number, Pause, Say it again, Next, and at the end the answers with ✓ and ✕.' },
   list: { t: 'Word list', short: 'All selected words in one table. Tap a word to see how it’s written.',
     p: 'Every word of your selection in one table with pinyin, meaning, where it comes from in the book and an audio button. It also shows how often you got each word right or wrong in the other modes, so you can see your weak spots. Tap any word to open it: each character is written stroke by stroke as an animation, and “Practise writing” takes you straight to the Writing tab.',
     s: 'On screen: a search box (characters, pinyin or English) and the table.' }
 };
+// phones: the Words and Writing menus are short rows (a character, the name, one line, Start) instead of big cards
+const MC_HZ = { dict: '默', list: '表', flash: '卡', mean: '意', py: '拼', hz: '写', listen: '听', watch: '看', trace: '描', memory: '记', free: '画' };
+const isNarrow = () => window.matchMedia('(max-width:720px)').matches;
+const CF_OPEN = { on: false };
+document.addEventListener('toggle', e => { if (e.target.classList && e.target.classList.contains('fmore')) CF_OPEN.on = e.target.open; }, true);
+// on a phone the whole row starts it (not the More text)
+document.addEventListener('click', e => {
+  const r = e.target.closest('.mc-r'); if (!r || !isNarrow() || e.target.closest('button,a,details,input,select')) return;
+  const b = $(':scope > .btn', r); if (b && !b.disabled) b.click();
+});
 function charFilters() {
+  if (isNarrow()) {
+    const more = [C.fav, C.ph, C.names, C.weak].filter(Boolean).length, L = wlActive();
+    if (L) return wlFilterHtml(L);
+    return `<div class="filters fcomp">
+      <div class="frow">${unitMenu('c', unitsText(C.units, [0, 1, 2, 3, 4, 5]), unitOpts([0, 1, 2, 3, 4, 5], u => C.units.has(u), 'cunit'), { multi: true })}${chip('Core', C.core, 'data-cf="core"')}${chip('Extension', C.ext, 'data-cf="ext"')}</div>
+      <div class="fline">${chip('My lists', false, 'data-wlopen')}<details class="fmore"${CF_OPEN.on ? ' open' : ''}><summary>More filters${more ? ` (${more} on)` : ''}</summary><div class="frow">${chip('★ Only favourites', C.fav, 'data-cf="fav"')}${chip('Unit 0 phrases', C.ph, 'data-cf="ph"')}${chip('Names', C.names, 'data-cf="names"')}${chip('Words I missed', C.weak, 'data-cf="weak"')}</div></details></div>
+    </div>`;
+  }
+  if (wlActive()) return wlFilterHtml(wlActive());
   return `<div class="filters">
+      <div class="frow"><span class="flabel">List</span>${chip('My word lists…', false, 'data-wlopen')}</div>
       <div class="frow"><span class="flabel">Units</span>${unitMenu('c', unitsText(C.units, [0, 1, 2, 3, 4, 5]), unitOpts([0, 1, 2, 3, 4, 5], u => C.units.has(u), 'cunit'), { multi: true })}</div>
       <div class="frow"><span class="flabel">Include</span>${chip('★ Only favourites', C.fav, 'data-cf="fav"')}${chip('Core vocabulary', C.core, 'data-cf="core"')}${chip('Vocabulary extension', C.ext, 'data-cf="ext"')}${chip('Unit 0 phrases', C.ph, 'data-cf="ph"')}${chip('Names', C.names, 'data-cf="names"')}</div>
       <div class="frow"><span class="flabel">Only</span>${chip('Words I missed', C.weak, 'data-cf="weak"')}</div>
@@ -4260,13 +4414,14 @@ function renderChars() {
       ${howto('h0', `<p>Here you learn what every word from your units means and how it’s read. First choose which words to practise, then start one of the six ways of practising below.</p><p>Every round goes through your selection in random order. Words you get wrong come back later in the same round, and your record for each word is saved, so “Words I missed” can later give you only your weak words.</p>`)}
       ${charFilters()}
       <p class="sel-count">${n} words selected.</p>
-      ${C_GROUPS.map(([h, ks]) => { const cs = ks.filter(k => !(k === 'listen' && noListenOn())); return cs.length ? `<h2 class="mg-h">${esc(h)}</h2><div class="menu-grid">${cs.map(k => { const d = CDESC[k]; return `<div class="mcard"><h2>${k === 'listen' ? LTAG : ''}${esc(d.t)}</h2><p>${esc(d.short)}</p><details class="more"><summary>More</summary><p>${esc(d.p)}</p><p class="onscreen">${esc(d.s)}</p></details><button type="button" class="btn primary" data-cstart="${k}" ${n ? '' : 'disabled'}>${k === 'list' ? 'Open' : 'Start'}</button></div>`; }).join('')}</div>` : ''; }).join('')}`;
+      ${wStatHtml(deck())}
+      ${C_GROUPS.map(([h, ks]) => { const cs = ks.filter(k => !(k === 'listen' && noListenOn())); return cs.length ? `<h2 class="mg-h">${esc(h)}</h2><div class="menu-grid">${cs.map(k => { const d = CDESC[k]; return `<div class="mcard mc-r"><span class="mc-ic hzf" aria-hidden="true">${MC_HZ[k] || ''}</span><div class="mc-tx"><h2>${k === 'listen' ? LTAG : ''}${esc(d.t)}</h2><p>${esc(d.short)}</p><details class="more"><summary>More</summary><p>${esc(d.p)}</p><p class="onscreen">${esc(d.s)}</p></details></div><button type="button" class="btn primary" data-cstart="${k}" ${n ? '' : 'disabled'}>${k === 'list' ? 'Open' : 'Start'}</button></div>`; }).join('')}</div>` : ''; }).join('')}`;
     return;
   }
   const d = CDESC[C.mode];
   main.innerHTML = `<div class="sess-head"><button type="button" class="link" data-cmenu>← Menu</button><b>${esc(d.t)}</b><span class="muted small">${esc(d.short)}</span>${C.mode === 'hz' ? chip('Show pinyin hint', C.pyHint, 'data-cpyhint') : ''}</div>
     <div id="c-stage" class="c-stage"></div>`;
-  if (C.mode === 'list') renderList(); else startSession();
+  if (C.mode === 'list') renderList(); else if (C.mode === 'dict') dcSetup(); else startSession();
 }
 function startSession(list) { C.queue = shuffle(list || deck()); C.pos = 0; C.flipped = false; C.answered = null; C.right = 0; C.wrong = 0; C.missed = []; renderCard(); }
 function hzBlock(v) {
@@ -4352,7 +4507,7 @@ function renderList() {
   const rows = list.filter(v => !q || v.h.includes(q) || v.e.toLowerCase().includes(q) || normPy(v.p, false).includes(normPy(q, false)));
   st.innerHTML = `<div class="list-head"><input id="c-search" class="in" type="search" placeholder="Search characters, pinyin or English" value="${esc(C.search)}" aria-label="Search"><span class="muted">${rows.length} items</span></div>
     <div class="table-wrap"><table class="wl"><thead><tr><th><span class="sr">Favourite</span></th><th>Chinese</th><th>Pinyin</th><th>English</th><th>Where</th><th><span class="sr">Audio</span></th><th>Your record</th></tr></thead><tbody>
-    ${rows.map(v => { const s = S.cards[v.h]; return `<tr><td class="favc">${favBtn(wordFav(v))}</td><td class="hz"><button type="button" class="wl-hz" data-wordopen="${esc(v.h)}" title="Show how it’s written">${esc(v.h)}</button></td><td class="pyc">${colorPy(v.p)}</td><td>${esc(v.e)}</td><td class="muted small">${metaLine(v)}</td><td>${sayBtn(v.h, 'sm')}</td><td class="small">${s ? `<span class="ok-l">${s.ok}✓</span> <span class="bad-l">${s.bad}✗</span>` : '<span class="muted">—</span>'}</td></tr>`; }).join('')}
+    ${rows.map(v => { const s = S.cards[v.h]; return `<tr><td class="favc">${favBtn(wordFav(v))}</td><td class="hz"><button type="button" class="wl-hz" data-wordopen="${esc(v.h)}" title="Show how it’s written">${esc(v.h)}</button></td><td class="pyc">${colorPy(v.p)}</td><td>${esc(v.e)}</td><td class="muted small">${metaLine(v)}</td><td>${sayBtn(v.h, 'sm')}</td><td class="small"><span class="wdot wb${wBand(v.h)}" title="${W_BAND[wBand(v.h)]}"></span>${s ? `<span class="ok-l">${s.ok}✓</span> <span class="bad-l">${s.bad}✗</span>` : '<span class="muted">—</span>'}</td></tr>`; }).join('')}
     </tbody></table></div>`;
   const si = $('#c-search');
   si.addEventListener('input', () => { C.search = si.value; const pos = si.selectionStart; renderList(); const n = $('#c-search'); n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) { /* noop */ } });
@@ -4530,7 +4685,7 @@ function wGroups() {
   WG = [...WGROUPS, { id: 'ext', label: 'Vocabulary extension', chars: ext.join('') }].map(g => ({ ...g, list: [...g.chars].filter(c => STROKES[c]) }));
   return WG;
 }
-const wList = () => { if (W.fav) { const fc = []; VOCAB.forEach(v => { if (isFav('w:' + v.h)) [...v.h].forEach(c => { if (STROKES[c] && !fc.includes(c)) fc.push(c); }); }); return fc; } const out = [], seen = new Set(); wGroups().forEach(g => { if (W.sel.has(g.id)) g.list.forEach(c => { if (!seen.has(c)) { seen.add(c); out.push(c); } }); }); return out; };
+const wList = () => { const L = W.list && wlActive(); if (L) { const fc = []; wlWords(L).forEach(v => [...v.h].forEach(c => { if (STROKES[c] && !fc.includes(c)) fc.push(c); })); return fc; } if (W.fav) { const fc = []; VOCAB.forEach(v => { if (isFav('w:' + v.h)) [...v.h].forEach(c => { if (STROKES[c] && !fc.includes(c)) fc.push(c); }); }); return fc; } const out = [], seen = new Set(); wGroups().forEach(g => { if (W.sel.has(g.id)) g.list.forEach(c => { if (!seen.has(c)) { seen.add(c); out.push(c); } }); }); return out; };
 const WMODES = [['watch', 'Watch'], ['trace', 'Trace the outline'], ['memory', 'Write from memory'], ['free', 'Free drawing']];
 const GRID_SVG = '<svg class="grid" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect x="0.75" y="0.75" width="98.5" height="98.5" fill="none" stroke="currentColor" stroke-width="1.5"/><g stroke="currentColor" stroke-width="0.6" stroke-dasharray="2.5 2.5" opacity=".75"><line x1="50" y1="0" x2="50" y2="100"/><line x1="0" y1="50" x2="100" y2="50"/><line x1="0" y1="0" x2="100" y2="100"/><line x1="100" y1="0" x2="0" y2="100"/></g></svg>';
 function wordsWith(c) { return VOCAB.filter(v => v.tag !== 'ph' && v.h.includes(c) && v.h.length > 1).slice(0, 5); }
@@ -4557,9 +4712,9 @@ function renderWriting() {
     const all = groups.every(g => W.sel.has(g.id));
     main.innerHTML = `${pageHead('Writing', { cap: 'Stroke order', how: 'h4' })}
       ${howto('h4', `<p>Learn to write every character from your units in the correct stroke order. First choose which characters to practise (pick as many groups as you like, or All), then start one of the four modes below. A good order is: Watch, then Trace the outline, then Write from memory.</p><p>In every mode you move with Previous, Random and Next, or tap any character in the strip above the drawing box, and you can switch mode without going back. “Colour the radical” shows the radical in red, and “Relaxed checking” makes the stroke check more tolerant of shaky lines. It works best with a finger or stylus.</p>`)}
-      <div class="frow wrap"><span class="flabel">Characters</span>${unitMenu('w', all ? 'All groups' : `${groups.filter(g => W.sel.has(g.id)).length} of ${groups.length} groups`, [{ label: 'All', on: all, attrs: 'data-wall' }, ...groups.map(g => ({ label: esc(g.label), sub: `${g.list.length} characters`, on: W.sel.has(g.id), attrs: `data-wgroup="${g.id}"` }))], { multi: true, label: 'Character groups' })}${chip('★ Only favourite words', !!W.fav, 'data-wfav')}</div>
-      <p class="sel-count">${list.length} characters selected${W.fav ? ' from your favourite words' : ''}.${W.fav && !list.length ? ' Star some words in Words first.' : ''}</p>
-      <div class="menu-grid">${WMODES.map(([k, l]) => `<div class="mcard"><h2>${esc(l)}</h2><p>${esc(WDESC[k].short)}</p><details class="more"><summary>More</summary><p>${esc(WDESC[k].p)}</p><p class="onscreen">${esc(WDESC[k].s)}</p></details><button type="button" class="btn primary" data-wstart="${k}" ${list.length ? '' : 'disabled'}>Start</button></div>`).join('')}<div class="mcard"><h2>Practice sheets</h2><p>Print a unit’s characters with their stroke order and boxes to write in, or its word list.</p><button type="button" class="btn" data-printopen>Print practice sheets</button></div></div>`;
+      <div class="frow wrap"><span class="flabel">Characters</span>${unitMenu('w', all ? 'All groups' : `${groups.filter(g => W.sel.has(g.id)).length} of ${groups.length} groups`, [{ label: 'All', on: all, attrs: 'data-wall' }, ...groups.map(g => ({ label: esc(g.label), sub: `${g.list.length} characters`, on: W.sel.has(g.id), attrs: `data-wgroup="${g.id}"` }))], { multi: true, label: 'Character groups' })}${chip('★ Only favourite words', !!W.fav, 'data-wfav')}${wlActive() ? chip(`Only “${esc(wlActive().n)}”`, !!W.list, 'data-wlist') : chip('My lists', false, 'data-wlopen')}</div>
+      <p class="sel-count">${list.length} characters selected${W.list && wlActive() ? ` from “${esc(wlActive().n)}”` : W.fav ? ' from your favourite words' : ''}.${W.fav && !list.length ? ' Star some words in Words first.' : ''}</p>
+      <div class="menu-grid">${WMODES.map(([k, l]) => `<div class="mcard mc-r"><span class="mc-ic hzf" aria-hidden="true">${MC_HZ[k] || ''}</span><div class="mc-tx"><h2>${esc(l)}</h2><p>${esc(WDESC[k].short)}</p><details class="more"><summary>More</summary><p>${esc(WDESC[k].p)}</p><p class="onscreen">${esc(WDESC[k].s)}</p></details></div><button type="button" class="btn primary" data-wstart="${k}" ${list.length ? '' : 'disabled'}>Start</button></div>`).join('')}<div class="mcard mc-r"><span class="mc-ic hzf" aria-hidden="true">印</span><div class="mc-tx"><h2>Practice sheets</h2><p>Print a unit’s characters with their stroke order and boxes to write in, or its word list.</p></div><button type="button" class="btn" data-printopen>Print<span class="mc-dk"> practice sheets</span></button></div></div>`;
     return;
   }
   if (W.i >= list.length) W.i = 0;
@@ -5016,7 +5171,7 @@ function openHelp() {
     <ul class="hl">
       <li><b>Learn</b>: step-by-step levels. Each shows you something new, then a short quiz.</li>
       <li><b>Practice</b>: <b>Quick challenge</b>, a short mixed round with the panda; <b>Grammar</b>, every grammar point with a drill; <b>Book exercises</b>, the exercises from your textbooks.</li>
-      <li><b>Words</b>: flashcards and quizzes for the vocabulary; <b>Characters</b>, how well you know each character, with practice for your weakest ones; <b>Writing</b>, stroke order and writing characters.</li>
+      <li><b>Words</b>: flashcards and quizzes for the vocabulary; <b>Characters</b>, how well you know each character, with practice for your weakest ones; <b>Writing</b>, stroke order and writing characters; <b>Favourites</b>, everything you saved with ☆.</li>
       <li><b>Tests</b>: <b>Practice test</b>, harder questions in exam style; <b>Mock exam</b>, a full 50-question exam.</li>
       <li><b>Games</b>: <b>Panda Run</b>, run through the wall with the right answer. More games are on their way.</li>
       <li><b>Settings</b> has the quick switches (listening, pinyin, tones, voice speed, theme). Under <b>More</b> you find Favourites, Messages, the Tutorial and all settings.</li>
@@ -5066,50 +5221,6 @@ function applyBackup() {
   closeModal(); toast('Backup loaded.'); go();
 }
 
-// (old Settings window, replaced by settings.js; kept only until the new one has been used for a while)
-function openSettingsOld() {
-  const m = $('#modal'); m.classList.remove('sheet');
-  m.innerHTML = `<div class="modal-box help-box set-box" role="dialog" aria-modal="true" aria-label="Settings">
-    <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
-    <h1 class="view-title">Settings</h1>
-    <label class="set-line"><span>Your name</span>${nameInput('opt-name', 'Your name')}</label>
-    <label class="set-line"><span>Course</span>${courseSelect('set')}</label>
-    <h2>Learning</h2>
-    <label class="set-opt"><input type="checkbox" id="opt-py" ${S.settings.pinyin ? 'checked' : ''}><span><b>Pinyin under characters</b><small>In exercises, tests and grammar.</small></span></label>
-    <label class="set-opt"><input type="checkbox" id="opt-strict" ${S.settings.strict ? 'checked' : ''}><span><b>Tones must be right</b><small>When this is on, a pinyin answer with a wrong tone counts as a mistake.</small></span></label>
-    <label class="set-opt"><input type="checkbox" id="opt-nolisten" ${S.settings.noListen ? 'checked' : ''}><span><b>No listening exercises</b><small>Hides the exercises where you have to listen. Useful when you can’t use sound right now.</small></span></label>
-    <label class="set-opt"><input type="checkbox" id="opt-tc" ${S.settings.toneCol ? 'checked' : ''}><span><b>Tone colours</b><small>Pinyin in four colours, one for each tone. Off: all pinyin in the normal text colour.</small></span></label>
-    <div class="set-line"><span>Character size</span>${zhSeg()}</div>
-    ${voiceSettingsHtml()}
-    <h2>App</h2>
-    <label class="set-opt"><input type="checkbox" id="opt-sfx" ${sfxOn() ? 'checked' : ''}><span><b>Sound effects</b><small>Short sounds for right and wrong answers, finished levels and games. The Chinese voice is not affected.</small></span></label>
-    <div class="set-line"><span>Style</span>${styleSeg()}</div>
-    <div class="set-line"><span>Colours</span>${themeSeg()}</div>
-    ${isStandalone() ? '' : '<div class="set-line"><span>Use it like an app</span><button type="button" class="btn sm" data-install>Install the app</button></div>'}
-
-    <h2>Your progress</h2>
-    <p>Your progress and favourites are saved <b>in this browser, on this device</b>. A backup lets you keep them safe or move them to another device.</p>
-    <div class="bk-panel">
-      <div class="card-actions"><button type="button" class="btn primary" data-bksave>Save backup file</button><button type="button" class="btn" data-bkload>Load backup file</button><input type="file" id="bk-file" accept=".json,application/json" hidden></div>
-      <div id="bk-msg" aria-live="polite"></div>
-      <div id="bk-code" hidden><p class="small">Saving a file isn’t possible here, so the app shows a <b>backup code</b> instead. Copy all of it and keep it in a note or an email to yourself.</p><textarea class="in bk-ta" readonly rows="3"></textarea></div>
-      <details class="more"><summary>Restore from a backup code</summary><textarea class="in bk-ta" id="bk-paste" rows="3" placeholder="Paste your backup code here"></textarea><button type="button" class="btn sm" data-bkpaste>Load from code</button></details>
-    </div>
-    <details class="more"><summary>Learn more</summary>
-      <ul>
-        <li>Always open the app in the <b>same browser</b> on the same device. Your phone and your laptop each keep their own progress.</li>
-        <li><b>New device:</b> on the old one press <b>Save backup file</b>, send the file to yourself (for example by email), and on the new one press <b>Load backup file</b>.</li>
-        <li>Updates arrive by themselves through the link, and your progress stays.</li>
-        <li>Your progress is lost if you clear your browser’s data or use a private (incognito) window. Safari (on iPhone, iPad and Mac) deletes it if you don’t open the app for 7 days of using Safari. On iPhone and iPad, add the app to your Home Screen (Share → Add to Home Screen) to avoid this, and save a backup now and then.</li>
-        <li>Nobody else can see your progress.</li>
-      </ul>
-    </details>
-    <h2>Start over</h2>
-    <p class="small muted">Deletes all your progress in this browser. You can’t undo it, so save a backup first.</p>
-    <div class="card-actions"><button type="button" class="btn danger-o" data-reset>Reset progress…</button></div>
-  </div>`;
-  m.hidden = false; document.body.classList.add('modal-open'); $('.modal-x', m).focus();
-}
 // Reset gets its own window: it deletes everything, so it explains what goes and offers a backup first.
 function openReset() {
   const m = $('#modal');
@@ -5302,12 +5413,12 @@ function qcBuild() {
     if (total + t.est > budget * 1.1 && tasks.length) { if (total >= budget * 0.85) break; continue; }
     tasks.push(t); total += t.est; if (total >= budget * 0.97) break;
   }
-  return { tasks, total };
+  return { tasks, total, budget };
 }
 function qcEstText() {
   const P = QC.preview; const over = parseInt(QC.custom, 10) > 60 ? ' (60 min is the maximum)' : '';
   if (!P.tasks.length) return QC.fav ? 'No favourites match these settings yet. Star some words or tasks first, or switch to “Everything”.' : 'Nothing matches these settings.';
-  return `≈ ${P.tasks.length} tasks, about ${Math.max(1, Math.round(P.total / 60))} min${over}`;
+  return `≈ ${P.tasks.length} tasks, about ${Math.max(1, Math.round((P.budget && P.total >= P.budget * 0.9 ? P.budget : P.total) / 60))} min${over}`;
 }
 function renderQC() {
   if (QC.phase === 'run') return qcRenderRun(true);
@@ -5443,7 +5554,8 @@ document.addEventListener('click', e => {
   if (d.mkfavs !== undefined) { F.open = null; location.hash = 'favourites'; return; }
   if (d.bfav !== undefined) { B.fav = !B.fav; return renderBook(); }
   if (d.gfav !== undefined) { G.fav = !G.fav; return renderGrammar(); }
-  if (d.wfav !== undefined) { W.fav = !W.fav; W.i = 0; return renderWriting(); }
+  if (d.wfav !== undefined) { W.fav = !W.fav; W.list = false; W.i = 0; return renderWriting(); }
+  if (d.wlist !== undefined) { W.list = !W.list; W.fav = false; W.i = 0; return renderWriting(); }
   if (d.sayseq) return playSeq([{ t: d.sayseq, gap: 2200 }, { t: d.sayseq, gap: 0 }], t);
   if (d.bksave !== undefined) return saveBackup();
   if (d.bkload !== undefined) { const f = $('#bk-file'); if (f) f.click(); return; }
@@ -6742,7 +6854,7 @@ function renderMyChars() {
     <p class="small">${seen ? 'Tap a character to see it.' : 'Play a 字 level in Learn to start.'}</p>
     <p class="zi-legend small"><span class="lv0">not practised</span><span class="lv1">weak</span><span class="lv2">getting there</span><span class="lv3">known</span></p>
     <div class="zi-practise"><b>Practise my weakest characters</b>
-      <div class="zi-modes"><button type="button" class="btn primary" data-zistart="10"${seen ? '' : ' disabled'}>10 characters</button><button type="button" class="btn" data-zistart="20"${seen ? '' : ' disabled'}>20 characters</button><button type="button" class="btn" data-zistart="all"${seen ? '' : ' disabled'}>Until I get them all</button></div>
+      <div class="zi-modes"><button type="button" class="btn primary" data-zistart="10"${seen ? '' : ' disabled'}>10<span class="mc-dk"> characters</span></button><button type="button" class="btn" data-zistart="20"${seen ? '' : ' disabled'}>20<span class="mc-dk"> characters</span></button><button type="button" class="btn" data-zistart="all"${seen ? '' : ' disabled'}>Until I get them all</button></div>
       <p class="small muted">“Until I get them all”: 10 characters, and each one comes back until you get it right twice in a row.</p></div>
     <div id="zi-detail" class="zi-detail" hidden></div>
     ${us.map(u => `<h3 class="zi-uh">Unit ${u}</h3><div class="zi-mine">${(ZI_UNIT[u] || []).map(c => `<button type="button" class="zi-m hzf lv${ziBand(c)}" data-zipick="${esc(c)}">${esc(c)}</button>`).join('')}</div>`).join('')}</div>`;
@@ -6776,7 +6888,10 @@ const lUnits = () => [...new Set(LEVELS.map(l => l.unit))];
 function lCurUnit() { const us = lUnits(); if (us.includes(LN.unit)) return LN.unit; if (us.includes(S.lunit)) return S.lunit; const r = lRec(); return r ? r.unit : us[us.length - 1]; }
 const lvNq = lv => lv.checkpoint ? 12 : lv.zi ? ziN(lv) : lv.quiz.length + (LEVELS.indexOf(lv) ? 2 : 0);
 const lvMins = lv => Math.max(2, Math.round(((lv.cards || []).length * 30 + lvNq(lv) * 14) / 60));
-const st3 = n => `<span class="st3" aria-hidden="true">${[1, 2, 3].map(k => `<i class="${k <= n ? 'on' : ''}"></i>`).join('')}</span>`;
+const st3 = n => `<span class="st3" aria-hidden="true">${[1, 2, 3].map(k => `<i class="${k <= n ? 'on' : ''}">★</i>`).join('')}</span>`;
+// the level's number in its unit (1, 2, 3 …) and the stars of a unit
+const lvNo = lv => LEVELS.filter(l => l.unit === lv.unit).indexOf(lv) + 1;
+const unitStars = u => LEVELS.filter(l => l.unit === u).reduce((s, l) => s + (((S.learn || {})[l.id] || {}).stars || 0), 0);
 const stampsSm = n => `<span class="stamps sm" role="img" aria-label="${n} of 3 stamps">${[1, 2, 3].map(k => `<span class="stamp hzf${k <= n ? '' : ' off'}">好</span>`).join('')}</span>`;
 // the streak, next to the greeting (and in the top bar on phones)
 function streakHtml() {
@@ -6799,10 +6914,10 @@ function lPath() {
     const row = Math.floor(k / 5), col = row % 2 ? 4 - k % 5 : k % 5;
     const pos = cute ? `grid-row:${row + 1};grid-column:${col + 1};` : '', ud = cute ? (col % 2 ? ' dn' : ' up') : '';
     const fr = LN.justDone === lv.id && st ? ' fresh' : '', nf = LN.justDone && cls === 'next' ? ' nfresh' : '';
-    return `<button type="button" class="tl ${cls}${lv.zi ? ' zi' : ''}${ud}${fr}${nf}" style="animation-delay:${k * 22}ms;${pos}" data-lopen="${lv.id}" aria-label="Level ${k + 1}: ${esc(lv.title)}${st ? `, done, ${stars} of 3 stamps` : lv === h ? ', next up' : ''}">${cute && cls === 'next' ? `<span class="tl-pd" aria-hidden="true">${pandaSvg('yay', '', '', true)}</span>` : ''}<span class="hzf" aria-hidden="true">${esc(lv.icon)}${lv.zi ? '<span class="tl-zb">字</span>' : ''}</span><b>${esc(lv.title)}</b><small>${st ? st3(stars) + 'Done' : lv === h ? 'Next up' : lv.zi ? 'Characters' : lv.checkpoint ? 'Checkpoint' : 'New'}</small><i class="tl-s" aria-hidden="true">${esc(lvShort(lv))}</i></button>`;
+    return `<button type="button" class="tl ${cls}${lv.zi ? ' zi' : ''}${ud}${fr}${nf}" style="animation-delay:${k * 22}ms;${pos}" data-lopen="${lv.id}" aria-label="Level ${k + 1}: ${esc(lv.title)}${st ? `, done, ${stars} of 3 stamps` : lv === h ? ', next up' : ''}">${cute && cls === 'next' ? `<span class="tl-pd" aria-hidden="true">${pandaSvg('yay', '', '', true)}</span>` : ''}<span class="hzf" aria-hidden="true">${esc(lv.icon)}${lv.zi ? '<span class="tl-zb">字</span>' : ''}<span class="tl-nc">${k + 1}</span></span><span class="tl-st" aria-hidden="true">${st ? st3(stars) : ''}</span><b><span class="tl-no">${k + 1}</span>${esc(lv.title)}</b><small>${st ? st3(stars) + 'Done' : lv === h ? 'Next up' : lv.zi ? 'Characters' : lv.checkpoint ? 'Checkpoint' : 'New'}</small><i class="tl-s" aria-hidden="true"><span class="tl-no">${k + 1}</span>${esc(lvShort(lv))}</i></button>`;
   }).join('');
   main.innerHTML = `<div class="lp-top"><div class="lp-hi"><div class="cap">Contemporary Chinese 1</div><h1><span class="hzf">你好</span>${n ? `<span class="lp-c">, </span><span class="lp-nm">${esc(n)}</span>` : ''}</h1></div>
-      <div class="lp-tr">${streakHtml()}${unitMenu('l', `Unit ${u}`, us.map(x => { const ls = LEVELS.filter(l => l.unit === x), dn = ls.filter(l => prog[l.id]).length; return { label: `Unit ${x}`, sub: `${esc(LUNITS[x] || '')} · ${dn}/${ls.length}`, on: x === u, attrs: `data-lunit="${x}"` }; }), { right: true })}${msgBtnHtml('only-m')}<button type="button" class="ico only-m" data-search aria-label="Search" title="Search">${IC.search}</button><button type="button" class="ico line only-m" data-qs aria-label="Settings" title="Settings">${IC.set}</button></div></div>
+      <div class="lp-tr">${streakHtml()}${unitMenu('l', `Unit ${u}`, us.map(x => { const ls = LEVELS.filter(l => l.unit === x), dn = ls.filter(l => prog[l.id]).length; return { label: `Unit ${x}`, sub: `${esc(LUNITS[x] || '')} · ${dn}/${ls.length} · ★ ${unitStars(x)}`, on: x === u, attrs: `data-lunit="${x}"` }; }), { right: true })}${msgBtnHtml('only-m')}<button type="button" class="ico only-m" data-search aria-label="Search" title="Search">${IC.search}</button><button type="button" class="ico line only-m" data-qs aria-label="Settings" title="Settings">${IC.set}</button></div></div>
     <div class="lp-cols"><div class="lp-a">
       ${!n && !S.nameAsked ? `<div class="nm-card"><label for="nm-learn"><b>What should the panda call you?</b> <span class="muted small">It’s only saved in this browser.</span></label><div class="nm-row">${nameInput('nm-learn')}<button type="button" class="btn primary sm" data-nmsave="nm-learn">Save</button><button type="button" class="link" data-nmskip>No thanks</button></div></div>` : ''}
       <section class="hero" id="lp-hero" aria-label="Next lesson"><span class="hero-z">${cute ? `<span class="hero-pd" aria-hidden="true">${pandaHero()}</span>` : ''}<span class="bigz hzf wipe" aria-hidden="true">${esc(h.icon)}</span></span><div class="hero-tx">
@@ -6811,8 +6926,8 @@ function lPath() {
         <button type="button" class="btn primary big" data-lstart="${h.id}">${prog[h.id] ? 'Play again' : beginWord()}</button></div></section>
       ${howto('learn', `<p>Each level has two parts. First you <b>learn</b>: a few cards show new sounds, characters or a rule, with audio and stroke animations. Then a short <b>quiz</b> checks what you just learned, plus a couple of questions from earlier levels so you don’t forget. Mistakes come back at the end of the quiz.</p>
       <p>Questions marked ${LTAG} need sound; you can skip them with “Can’t listen now”, or hide them all in Settings.</p>
-      <p>You get up to three 好 stamps: three if at least 90% is right the first time, two from 70%. All levels are open: ${tileWords()} are done, ${isPink() ? 'the bright pink one' : isCute() ? 'the green one' : 'the red one'} is the recommended next level, and ${isPink() ? 'bubbles' : isCute() ? 'coins' : 'tiles'} with a dashed line and a little 字 practise characters. Want more practice? The other tabs follow your textbook more closely.</p>`)}
-      <section class="lp-grid"><div class="lp-gh"><div class="cap">Unit ${u} · ${esc(LUNITS[u] || '')}</div>${howBtn('learn')}</div>
+      <p>You get up to three 好 stamps: three if at least 90% is right the first time, two from 70%. On the map they show as ★ under each level, and every level has its number. All levels are open: ${tileWords()} are done, ${isPink() ? 'the bright pink one' : isCute() ? 'the green one' : 'the red one'} is the recommended next level, and ${isPink() ? 'bubbles' : isCute() ? 'coins' : 'tiles'} with a dashed line and a little 字 practise characters. Want more practice? The other tabs follow your textbook more closely.</p>`)}
+      <section class="lp-grid"><div class="lp-gh"><div class="cap">Unit ${u} · ${esc(LUNITS[u] || '')}</div><span class="lp-stars" title="Stars in this unit"><span aria-hidden="true">★</span> ${unitStars(u)}<span class="muted"> / ${lvs.length * 3}</span><span class="sr-only"> stars</span></span>${howBtn('learn')}</div>
         <div class="grid" id="lp-grid">${tiles}</div>
         <p class="lp-end">${(() => { const cp = lvs.find(l => l.checkpoint), dn = lvs.filter(l => prog[l.id]).length; return (cp && dn < lvs.length - 1 ? `<button type="button" class="link" data-lknow="${u}">Already know Unit ${u}? Take the checkpoint</button>` : '') + (dn === lvs.length ? `<button type="button" class="link" data-share="diploma" data-unit="${u}">Your Unit ${u} diploma</button>` : ''); })()}${nextU !== undefined ? `<button type="button" class="link" data-lunit="${nextU}">Unit ${nextU} →</button>` : '<span>More units are coming. <span class="hzf">敬请期待</span> jìng qǐng qīdài: stay tuned!</span>'}</p></section>
     </div><div class="lp-b">
@@ -6990,7 +7105,7 @@ function lSegs() {
 function lQuiz() {
   const q = LN.queue[0]; if (!q) return lFinish();
   setLesson(true);
-  LN.sel = null; LN.answered = false; LN.tiles = []; LN.m = { l: null, done: 0, miss: 0 };
+  LN.sel = null; LN.answered = false; LN.tiles = []; LN.m = { l: null, r: null, done: 0, miss: 0 };
   const it = lItemHtml(q), pick = q.t === 'mc' || q.t === 'listen' || q.t === 'tone';
   const keys = pick ? `Keys 1–${q.oo.length} to choose, Enter to check` : q.t === 'tiles' ? 'Tap the characters in order, Enter to check' : q.t === 'py' ? 'Tone marks or numbers both work, Enter to check' : '';
   const idk = ['mc', 'listen', 'tone', 'py', 'tiles'].includes(q.t) ? '<button type="button" class="btn quiet idk" data-lidk>I don’t know</button>' : '';
@@ -7061,7 +7176,7 @@ function lResult(ok, ans, note) {
     LN.first[q.uid] = ok; if (q.zi) ziMark(q.zi, ok);
     // Daily practice remembers Learn questions you got wrong, and the words you practise there count for Words too
     if (q.qid) { S.lmiss = S.lmiss || {}; if (ok) delete S.lmiss[q.qid]; else S.lmiss[q.qid] = Date.now(); }
-    if (q.wordH) { const v = VOCAB.find(x => x.h === q.wordH); if (v) rec(v, ok); }
+    const wh = lWordOf(q); if (wh) { const v = VALL[wh] || VOCAB.find(x => x.h === wh); if (v) rec(v, ok); }
   }
   LN.queue.shift();
   if (q.ziMaster) {
@@ -7071,7 +7186,7 @@ function lResult(ok, ans, note) {
   }
   else if (ok || q.t === 'draw' || q.t === 'match') LN.doneN++;
   else { q.tries = (q.tries || 0) + 1; if (q.tries < 2) LN.queue.push(q); else LN.doneN++; }
-  $$('#ln-q button, #ln-q input').forEach(x => { if (x.tagName === 'INPUT') x.readOnly = true; else if (!x.classList.contains('say')) x.disabled = true; });
+  $$('#ln-q button, #ln-q input').forEach(x => { if (x.tagName === 'INPUT') x.readOnly = true; else if (!x.classList.contains('say') && !x.hasAttribute('data-lplay')) x.disabled = true; });
   const fb = $('#ln-fb'), foot = $('#ln-foot');
   if (foot) foot.className = 'ln-foot ' + (ok ? 'ok' : 'bad');
   fb.hidden = false;
@@ -7117,9 +7232,9 @@ function lDone() {
       <h1>${lv.virtual ? 'Round complete' : 'Level complete'}</h1>
       <div class="qc-pct">${r.pct}%</div><p class="qc-msg">${esc(MSG[band])}</p>${r.placed > 0 ? `<p><b>You know Unit ${lv.unit}!</b> Its other ${r.placed} level${r.placed === 1 ? ' is' : 's are'} marked as done.</p>` : r.placed === -1 ? `<p><b>Not yet: you need 80%.</b> Start with the first level of Unit ${lv.unit}, or try again later.</p>` : ''}${r.diploma !== undefined ? `<div class="dip-card"><span class="hzf dip-seal" aria-hidden="true">好</span><div><b>Unit ${r.diploma} complete!</b><br><span class="small muted">Here’s your diploma to keep or share.</span></div><button type="button" class="btn primary" data-share="diploma" data-unit="${r.diploma}">Get my diploma</button></div>` : ''}
       <p class="muted">${r.right} of ${r.count} right the first time in “${esc(lv.title)}”.</p>
-      ${!next && !lv.virtual ? '<p class="muted">You’ve finished all the levels for now. More are coming soon!</p>' : ''}${lv.virtual ? '<p><button type="button" class="link" data-zimine>See all characters</button></p>' : ''}
+      ${!next && !lv.virtual ? '<p class="muted">You’ve finished all the levels for now. More are coming soon!</p>' : ''}${lv.wweak ? '<p><button type="button" class="link" data-view="characters">Back to Words</button></p>' : lv.virtual ? '<p><button type="button" class="link" data-zimine>See all characters</button></p>' : ''}
       ${lv.ziMaster ? (() => { const got = lv.zi.filter(c => (LN.zst || {})[c] >= 2).length; return `<p class="muted">${got === lv.zi.length ? `You got all ${got} characters right twice in a row, in ${r.count} questions.` : `${got} of ${lv.zi.length} characters right twice in a row. The round stops after ${r.count} questions; try these characters again.`}</p>`; })() : ''}</section></div>
-    <div class="ln-foot"><div class="ln-foot-in"><div class="card-actions qc-endbtns"><button type="button" class="btn" data-lpath>Back to Learn</button>${lv.mis ? '<button type="button" class="btn" data-view="mistakes">My mistakes</button><button type="button" class="btn primary big" data-mistart>Another round →</button>' : lv.virtual ? `<button type="button" class="btn" data-ziagain>Same characters again</button><button type="button" class="btn primary big" data-zinext>Next ${lv.ziSize} →</button>` : `<button type="button" class="btn" data-lstart="${lv.id}">Play again</button>${next ? `<button type="button" class="btn primary big" data-lstart="${next.id}">Next level →</button>` : ''}`}</div></div></div>`;
+    <div class="ln-foot"><div class="ln-foot-in"><div class="card-actions qc-endbtns"><button type="button" class="btn" data-lpath>Back to Learn</button>${lv.mis ? '<button type="button" class="btn" data-view="mistakes">My mistakes</button><button type="button" class="btn primary big" data-mistart>Another round →</button>' : lv.wweak ? `<button type="button" class="btn" data-wweakagain>Same words again</button><button type="button" class="btn primary big" data-wweak="${lv.wpick.length}">Next ${lv.wpick.length} →</button>` : lv.virtual ? `<button type="button" class="btn" data-ziagain>Same characters again</button><button type="button" class="btn primary big" data-zinext>Next ${lv.ziSize} →</button>` : `<button type="button" class="btn" data-lstart="${lv.id}">Play again</button>${next ? `<button type="button" class="btn primary big" data-lstart="${next.id}">Next level →</button>` : ''}`}</div></div></div>`;
   if (isCute() && r.stars >= 2) confetti();
 }
 // Cute bamboo: a little confetti for a good result
@@ -7158,11 +7273,17 @@ function lTilesDraw() {
 }
 function lMatch(t, d) {
   const q = LN.queue[0]; if (!q || LN.answered || t.classList.contains('matched')) return;
-  if (d.lml !== undefined) { $$('[data-lml]').forEach(b => b.classList.toggle('sel', b === t)); LN.m.l = +d.lml; return; }
-  if (LN.m.l === null) { t.classList.add('nudge'); setTimeout(() => t.classList.remove('nudge'), 400); return; }
-  const L0 = q.left[LN.m.l], R0 = q.right[+d.lmr], lb = $(`[data-lml="${LN.m.l}"]`);
-  if (L0.j === R0.j) { lb.classList.remove('sel'); lb.classList.add('matched'); t.classList.add('matched'); LN.m.done++; LN.m.l = null; if (LN.m.done === q.pairs.length) lResult(LN.m.miss === 0, '', LN.m.miss ? `${LN.m.miss} slip${LN.m.miss === 1 ? '' : 's'}` : ''); }
-  else { LN.m.miss++; [lb, t].forEach(b => { b.classList.add('shake-x'); setTimeout(() => b.classList.remove('shake-x'), 450); }); }
+  // start on either side; the same word again unselects it, another word on the same side moves the selection
+  const left = d.lml !== undefined, i = left ? +d.lml : +d.lmr, mine = left ? 'l' : 'r', other = left ? 'r' : 'l';
+  if (LN.m.r === undefined) LN.m.r = null;
+  if (LN.m[other] === null) {
+    const on = LN.m[mine] !== i;
+    $$(left ? '[data-lml]' : '[data-lmr]').forEach(b => b.classList.toggle('sel', on && b === t));
+    LN.m[mine] = on ? i : null; return;
+  }
+  const li = left ? i : LN.m.l, ri = left ? LN.m.r : i, lb = $(`[data-lml="${li}"]`), rb = $(`[data-lmr="${ri}"]`);
+  if (q.left[li].j === q.right[ri].j) { [lb, rb].forEach(b => { b.classList.remove('sel'); b.classList.add('matched'); }); LN.m.done++; LN.m.l = LN.m.r = null; if (LN.m.done === q.pairs.length) lResult(LN.m.miss === 0, '', LN.m.miss ? `${LN.m.miss} slip${LN.m.miss === 1 ? '' : 's'}` : ''); }
+  else { LN.m.miss++; [lb, rb].forEach(b => { b.classList.add('shake-x'); setTimeout(() => b.classList.remove('shake-x'), 450); }); }
 }
 document.addEventListener('input', e => {
   if (e.target.id !== 'ln-in') return; const c = $('[data-lcheck]'); if (c) c.disabled = !e.target.value.trim();
@@ -7188,7 +7309,7 @@ function openAbout() {
   m.innerHTML = `<div class="modal-box help-box" role="dialog" aria-modal="true" aria-label="About this app">
     <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
     <h1 class="view-title">About this app</h1>
-    <p><b>Panda Chinese</b> is a free study app for <i>Contemporary Chinese 1</i>. Version ${APP_VERSION} beta, 19 November 2026. <button type="button" class="link" data-notes>What’s new</button></p>
+    <p><b>Panda Chinese</b> is a free study app for <i>Contemporary Chinese 1</i>. Version ${APP_VERSION} beta, 22 November 2026. <button type="button" class="link" data-notes>What’s new</button></p>
     <h2>Privacy</h2><p>The app collects no data. Your progress and favourites stay in your own browser.</p>
     <h2>Content</h2><p>The exercises in Book exercises and the vocabulary follow the textbook <i>Contemporary Chinese</i> (当代中文); all rights to the textbook belong to its authors and publisher. The Learn levels, the Test questions, the grammar explanations and the practice tests were written for this app with the help of AI (Claude by Anthropic). The Chinese voice recordings were made with Microsoft Azure text-to-speech.</p>
     <h2>Credits</h2><p>Made by <b>Damjan Raunić</b> (draunic@gmail.com). Stroke animations: <b>Hanzi Writer</b> by David Chanin (MIT License). Stroke data: <b>hanzi-writer-data</b>, based on <b>Make Me a Hanzi</b> (Arphic Public License). Fonts: <b>Inter</b> and <b>Noto Serif SC</b> (SIL Open Font License). If the recordings can’t load, the app uses your device’s built-in voice.</p>
@@ -7219,6 +7340,7 @@ function openWord(h) {
     <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
     <div class="wm-head"><span class="wm-hz hzf">${esc(h)}</span>${sayBtn(h)}${favBtn(wordFav(v))}</div>
     <div class="big-py">${colorPy(v.p)}</div><div class="mean">${esc(v.e)}</div>
+    ${wlWordHtml(h)}
     <div class="wm-boxes">${chars.map((c, i) => `<div class="w-box wm-box">${GRID_SVG}<div class="hw" id="wm${i}"></div></div>`).join('')}</div>
     ${typeof HanziWriter === 'undefined' ? '<p class="hw-missing">The stroke-order library couldn’t load. Check your connection.</p>' : ''}
     <div class="card-actions">${chars.length ? `<button type="button" class="btn" data-wmreplay>Replay</button><button type="button" class="btn primary" data-wmpractise="${esc(chars[0])}">Practise writing</button>` : ''}</div></div>`;
@@ -7266,14 +7388,14 @@ const MONK_SVG = `<svg class="monk" viewBox="0 0 64 56" aria-hidden="true"><defs
 const SECTIONS = [
   { id: 'learn', hz: '学', label: 'Learn', pages: [['learn', 'Learn']] },
   { id: 'practice', hz: '练', label: 'Practice', pages: [['challenge', 'Quick challenge'], ['grammar', 'Grammar'], ['exercises', 'Book exercises'], ['mistakes', 'My mistakes']] },
-  { id: 'words', hz: '词', label: 'Words', pages: [['characters', 'Words'], ['mychars', 'Characters'], ['writing', 'Writing']] },
+  { id: 'words', hz: '词', label: 'Words', pages: [['characters', 'Words'], ['mychars', 'Characters'], ['writing', 'Writing'], ['favourites', 'Favourites']] },
   { id: 'tests', hz: '考', label: 'Tests', pages: [['test', 'Practice test'], ['mock', 'Mock exam']] },
   { id: 'games', hz: '玩', label: 'Games', pages: [['games', 'Games']] }
 ];
 // the page buttons of a section: a character and a short line for every page
 const PAGE_INFO = {
   challenge: ['快', 'A mixed round with the panda'], mistakes: ['错', 'Everything you got wrong'], grammar: ['法', 'Every rule with a drill'], exercises: ['书', 'The exercises from your textbook'],
-  characters: ['词', 'Flashcards and word quizzes'], mychars: ['字', 'How well you know each one'], writing: ['写', 'Stroke order, step by step'],
+  characters: ['词', 'Flashcards and word quizzes'], mychars: ['字', 'How well you know each one'], writing: ['写', 'Stroke order, step by step'], favourites: ['藏', 'Words and tasks you saved'],
   test: ['测', 'Harder, exam-style questions'], mock: ['模', '50 questions like the midterm']
 };
 const secOf = v => SECTIONS.find(s => s.pages.some(p => p[0] === v));
@@ -7422,7 +7544,7 @@ function renderNav() {
 }
 /* ----- patch notes and welcome ----- */
 const NOTES = [
-  { v: '1.1.0', date: '19 November 2026', items: ['Sync your progress across devices: sign in with Google in Settings.'] },
+  { v: '1.1.0', date: '22 November 2026', items: ['Sync your progress across devices: sign in with Google in Settings.', 'New Settings with search and My account.', 'Level numbers and stars on the Learn map.', 'Your own word lists, dictation on paper, and Favourites in Words.', 'See how well you know each word; your weakest words come back.', 'Small fixes.'] },
   { v: '1.0.0', date: '17 November 2026', items: ['New look: three styles (Classic, Bamboo green, Sweet pink), light or dark.', 'A new Learn page and tabs.', 'New units: family, maps and books, shopping.', 'My mistakes, search, diplomas and practice sheets.', 'Install the app on your phone. It works without internet.', 'Small fixes.'] },
   { v: '0.8.0', date: '16 November 2026', items: ['New game: Panda Run in the Games tab. Challenge your friends!', 'Daily practice with a streak on the Learn page.', 'Dark mode and sound effects.', 'New Words tab and quick settings.', 'Small fixes.'] },
   { v: '0.7.9', date: '14 November 2026', items: ['New 字 levels in Learn for reading characters: what they mean, how they sound, and how to tell look-alike characters apart.', 'Every unit now has a character review that brings back the characters you know least.', 'New on the Learn page: “My characters” shows every character and how well you know it, and lets you practise your weakest ones: 10 or 20 at a time, or until you get them all right.', 'Pinyin is hidden for characters you already know well. Tap a word to show it.'] },
@@ -8185,7 +8307,7 @@ document.addEventListener('click', e => {
   if (d.ziopen) return openZiModal(d.ziopen);
   if (d.search !== undefined) return openSearch();
   if (d.printopen !== undefined) return openPrint();
-  if (d.pru !== undefined) { PR.u = +d.pru; $$('[data-pru]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.pru === PR.u))); return; }
+  if (d.pru !== undefined) { PR.u = String(d.pru).startsWith('L:') ? d.pru : +d.pru; $$('[data-pru]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pru === String(PR.u)))); return; }
   if (d.prgo !== undefined) return printGo();
 });
 
@@ -8221,7 +8343,7 @@ function srRender(raw) {
   box.innerHTML = (words.length ? `<h2 class="cap">Words</h2><div class="sr-list">${words.map(({ v }) => `<button type="button" class="sr-row" data-wordopen="${esc(v.h)}"><span class="hzf sr-h">${esc(v.h)}</span><span class="sr-p">${colorPy(v.p)}</span><span class="sr-e">${esc(v.e)}</span><span class="sr-u">Unit ${v.unit}</span></button>`).join('')}</div>` : '')
     + (chars.length ? `<h2 class="cap">Characters</h2><div class="zi-mine">${chars.map(({ c, I }) => `<button type="button" class="zi-m hzf lv${ziBand(c)}" data-ziopen="${esc(c)}" title="${esc(I.p + ' ' + I.m)}">${esc(c)}</button>`).join('')}</div>` : '')
     + (gram.length ? `<h2 class="cap">Grammar</h2><div class="sr-list">${gram.map(g => `<button type="button" class="sr-row" data-srgram="${esc(g.id)}"><span class="sr-e"><b>${esc(g.title)}</b></span><span class="sr-u">Unit ${g.u}</span></button>`).join('')}</div>` : '')
-    + (lvls.length ? `<h2 class="cap">Learn levels</h2><div class="sr-list">${lvls.map(l => `<button type="button" class="sr-row" data-srlv="${esc(l.id)}"><span class="hzf sr-h">${esc(l.icon)}</span><span class="sr-e"><b>${esc(l.title)}</b></span><span class="sr-u">Unit ${l.unit}</span></button>`).join('')}</div>` : '');
+    + (lvls.length ? `<h2 class="cap">Learn levels</h2><div class="sr-list">${lvls.map(l => `<button type="button" class="sr-row" data-srlv="${esc(l.id)}"><span class="hzf sr-h">${esc(l.icon)}</span><span class="sr-e"><b>${esc(l.title)}</b></span><span class="sr-u">Unit ${l.unit} · level ${lvNo(l)}</span></button>`).join('')}</div>` : '');
 }
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-srgram],[data-srlv]'); if (!t) return;
@@ -8240,14 +8362,15 @@ document.addEventListener('keydown', e => {
 /* ----- practice sheets to print: a unit's characters (stroke order + boxes) and its word list ----- */
 const PR = { u: null, chars: true, words: true, hide: 'none' };
 function openPrint() {
-  const us = lUnits(); if (PR.u === null) PR.u = lCurUnit();
+  const us = lUnits(), ls = wlAll(); if (PR.u === null || (String(PR.u).startsWith('L:') && !(S.wlists || {})[PR.u.slice(2)])) PR.u = lCurUnit();
   const m = $('#modal'); m.classList.remove('sheet');
   m.innerHTML = `<div class="modal-box help-box pr-box" role="dialog" aria-modal="true" aria-label="Practice sheets"><button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
     <h1 class="view-title">Practice sheets</h1><p class="muted">A page to print or save as PDF.</p>
     <div class="set-line"><span>Unit</span><div class="seg" role="group" aria-label="Unit">${us.map(u => `<button type="button" aria-pressed="${u === PR.u}" data-pru="${u}">${u}</button>`).join('')}</div></div>
+    ${ls.length ? `<div class="set-line"><span>Or a list</span><div class="seg wrap" role="group" aria-label="Word list">${ls.map(([id, l]) => `<button type="button" aria-pressed="${PR.u === 'L:' + id}" data-pru="L:${id}">${esc(l.n)}</button>`).join('')}</div></div>` : ''}
     <label class="set-opt"><input type="checkbox" id="pr-chars" ${PR.chars ? 'checked' : ''}><span><b>Characters</b><small>Stroke order, two boxes to trace and six to write in, for every new character of the unit.</small></span></label>
     <label class="set-opt"><input type="checkbox" id="pr-words" ${PR.words ? 'checked' : ''}><span><b>Word list</b><small>Characters, pinyin and English.</small></span></label>
-    <label class="set-line"><span>Test yourself</span><select class="course-sel" id="pr-hide"><option value="none">Show everything</option><option value="h">Hide the characters</option><option value="p">Hide the pinyin</option><option value="e">Hide the English</option></select></label>
+    <label class="set-line"><span>Test yourself</span><select class="course-sel" id="pr-hide"><option value="none">Show everything</option><option value="h">Hide the characters</option><option value="p">Hide the pinyin</option><option value="e">Hide the English</option><option value="all">Dictation: only numbered empty lines</option></select></label>
     <div class="card-actions"><button type="button" class="btn primary" data-prgo>Open the sheets</button></div><div id="pr-link"></div></div>`;
   $('#pr-hide').value = PR.hide;
   m.hidden = false; document.body.classList.add('modal-open');
@@ -8261,25 +8384,27 @@ function prCharSvg(c, upto, cls) {
 function printGo() {
   PR.chars = $('#pr-chars').checked; PR.words = $('#pr-words').checked; PR.hide = $('#pr-hide').value;
   if (!PR.chars && !PR.words) { toast('Choose characters, the word list or both.'); return; }
-  const u = PR.u, chars = (ZI_UNIT[u] || []).filter(c => STROKES[c]);
-  const seen = new Set(), words = VOCAB.filter(v => v.unit === u && (v.tag === '' || v.tag === 'ext') && !seen.has(v.h) && seen.add(v.h));
-  const H = PR.hide, cell = (k, html) => `<td class="${k}">${H === k ? '' : html}</td>`;
+  const u = PR.u, L = String(u).startsWith('L:') ? (S.wlists || {})[u.slice(2)] : null;
+  const seen = new Set(), words = L ? wlWords(L) : VOCAB.filter(v => v.unit === u && (v.tag === '' || v.tag === 'ext') && !seen.has(v.h) && seen.add(v.h));
+  const chars = L ? [...new Set(words.flatMap(v => [...v.h]))].filter(c => STROKES[c]) : (ZI_UNIT[u] || []).filter(c => STROKES[c]);
+  const H = PR.hide, cell = (k, html) => `<td class="${k}">${H === k || H === 'all' ? '' : html}</td>`;
+  const title = L ? esc(L.n) : `Unit ${u}: ${esc(LUNITS[u] || '')}`;
   const rows = chars.map(c => { const I = ziInfo(c), n = STROKES[c].strokes.length;
     return `<div class="row"><div class="info"><b>${esc(c)}</b><span>${esc(I.p)}</span><small>${esc(I.m)}</small><small>${n} stroke${n === 1 ? '' : 's'}</small></div><div class="right"><div class="seq">${STROKES[c].strokes.map((_, i) => prCharSvg(c, i, 's')).join('')}</div>
       <div class="boxes">${[0, 1].map(() => `<div class="box">${prGridSvg}${prCharSvg(c, Infinity, 't')}</div>`).join('')}${[0, 1, 2, 3, 4, 5].map(() => `<div class="box">${prGridSvg}</div>`).join('')}</div></div></div>`; }).join('');
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Panda Chinese · Unit ${u} practice sheets</title>
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Panda Chinese · ${L ? esc(L.n) : `Unit ${u}`} practice sheets</title>
 <style>${'\x40'}page{size:A4;margin:12mm}*{box-sizing:border-box}body{margin:0;padding:16px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#1B1A17;background:#fff}
 .bar{display:flex;gap:12px;align-items:center;margin:0 0 14px}.bar button{font:600 15px system-ui;padding:9px 18px;border:1.5px solid #1B1A17;background:#1B1A17;color:#fff;border-radius:6px;cursor:pointer}
 ${'\x40'}media print{.bar{display:none}body{padding:0}}h1{font-size:20px;margin:0 0 2px}.sub{font-size:13px;color:#5E584C;margin:0 0 14px}h2{font-size:15px;margin:18px 0 8px;border-bottom:2px solid #1B1A17;padding-bottom:4px}
 .row{display:flex;gap:10px;break-inside:avoid;page-break-inside:avoid;padding:8px 0;border-bottom:1px solid #E4DCCB}.info{width:24mm;flex:none;display:flex;flex-direction:column;font-size:12px;line-height:1.3}
 .info b{font:700 30px "Noto Serif SC","Songti SC","SimSun",serif;line-height:1.1}.info small{color:#5E584C}.right{flex:1;min-width:0}.seq{display:flex;flex-wrap:wrap;gap:2px;margin:0 0 5px}.seq .s{width:7mm;height:7mm;border:1px solid #E4DCCB}
 .boxes{display:flex}.box{width:17mm;height:17mm;position:relative;flex:none}.box svg{position:absolute;inset:0;width:100%;height:100%}
-table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#5E584C;border-bottom:2px solid #1B1A17;padding:4px 6px}td{border-bottom:1px solid #E4DCCB;padding:7px 6px;height:30px}td.h{font:22px "Noto Serif SC","Songti SC","SimSun",serif;width:28%}td.p{width:28%}
+table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#5E584C;border-bottom:2px solid #1B1A17;padding:4px 6px}td{border-bottom:1px solid #E4DCCB;padding:7px 6px;height:30px}td.n,th.n{width:7%;color:#8A8270;font-size:12px}td.h{font:22px "Noto Serif SC","Songti SC","SimSun",serif;width:28%}td.p{width:28%}
 .foot{font-size:11px;color:#8A8270;margin-top:14px}</style></head><body>
 <div class="bar"><button type="button" onclick="window.print()">Print or save as PDF</button><span style="font-size:13px;color:#5E584C">Tip: choose “Save as PDF” as the printer to keep a file.</span></div>
-<h1>Unit ${u}: ${esc(LUNITS[u] || '')}</h1><p class="sub">Contemporary Chinese 1 · Panda Chinese practice sheets</p>
+<h1>${title}</h1><p class="sub">Contemporary Chinese 1 · Panda Chinese practice sheets</p>
 ${PR.chars ? `<h2>Characters (${chars.length})</h2>${rows}` : ''}
-${PR.words ? `<h2>Words (${words.length})</h2><table><thead><tr><th>Character</th><th>Pinyin</th><th>English</th></tr></thead><tbody>${words.map(v => `<tr>${cell('h', esc(v.h))}${cell('p', esc(v.p))}${cell('e', esc(v.e))}</tr>`).join('')}</tbody></table>` : ''}
+${PR.words ? `<h2>Words (${words.length})</h2><table><thead><tr><th class="n">#</th><th>Character</th><th>Pinyin</th><th>English</th></tr></thead><tbody>${words.map((v, i) => `<tr><td class="n">${i + 1}</td>${cell('h', esc(v.h))}${cell('p', esc(v.p))}${cell('e', esc(v.e))}</tr>`).join('')}</tbody></table>` : ''}
 <p class="foot">panda-chinese.github.io · stroke order data: Make Me a Hanzi</p></body></html>`;
   const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
   const w = window.open(url, '_blank');
@@ -9035,8 +9160,8 @@ function dailyItems() {
     if (!q || q.t === 'draw' || q.t === 'match' || (noL && (q.t === 'listen' || q.t === 'tone'))) return null;
     return { ...q };
   }).filter(Boolean).slice(0, 3);
-  const words = Object.entries(S.cards || {}).filter(([, st]) => st && st.bad && (st.streak || 0) < 2).map(([h]) => VOCAB.find(v => v.h === h && (v.tag === '' || v.tag === 'ext'))).filter(Boolean);
-  const wq = shuffle(words).slice(0, 3).map(dailyWordQ).filter(Boolean);
+  // words whose time has come (weakest first), like the characters
+  const wq = wDueWords().slice(0, 3).map(h => wordQ(VMAP[h])).filter(Boolean);
   let items = [...chars, ...lq, ...wq].slice(0, 12);
   // fewer than 6 due: top up with your weakest characters
   if (items.length < 6) {
@@ -9048,7 +9173,7 @@ function dailyItems() {
 }
 // a quick estimate of the round size (no questions built), for the cards
 function dailyCount() {
-  const due = dailyDueChars().length, lm = Object.keys(S.lmiss || {}).length, wd = Object.values(S.cards || {}).filter(st => st && st.bad && (st.streak || 0) < 2).length;
+  const due = dailyDueChars().length, lm = Object.keys(S.lmiss || {}).length, wd = wDueWords().length;
   const seen = Object.keys(S.zi || {}).length;
   const n = Math.min(8, due) + Math.min(3, lm) + Math.min(3, wd);
   return Math.min(12, Math.max(n, Math.min(6, seen + Math.min(3, lm) + Math.min(3, wd))));
@@ -9354,28 +9479,69 @@ setTimeout(() => { const b = document.getElementById('boot'); if (b) { b.classLi
    On top: the panda and your name, then the settings used most, the install card and the categories.
    A category opens its own page (← back to Settings). Phones: full screen. ----- */
 const ST_PAGES = [
+  ['account', '人', 'My account', 'Your name and sync across devices'],
   ['learning', '学', 'Learning', 'Tones, tone colours, character size, course'],
   ['voice', '声', 'Voice and sound', 'Recorded voice, speed, offline, sound effects'],
-  ['progress', '存', 'Your progress and favourites', 'Favourites, backup, start over'],
-  ['help', '问', 'Help and info', 'Info, tutorial, messages, report a mistake'],
-  ['sync', '云', 'Sync across devices', 'Sign in with Google to keep your progress on all your devices']
+  ['progress', '存', 'Backup and reset', 'Save, load, start over'],
+  ['help', '问', 'Help and info', 'Info, tutorial, install, report a mistake']
 ];
+const ST = { page: '', q: '' };
+const stAgo = t => { if (!t) return 'Not yet'; const d = Math.floor((Date.now() - t) / 864e5); return d < 1 ? 'Today' : d === 1 ? 'Yesterday' : `${d} days ago`; };
 function stMain() {
   const n = userName(), done = Object.keys(S.learn || {}).length, course = (COURSES.find(c => c[0] === (S.settings.course || 'cc1')) || COURSES[0])[1];
-  const unread = msgUnread(), rate = (S.settings && S.settings.rate) || 0.6;
-  return `<div class="st-me">${pandaSvg('happy', 'st-av', '', true)}<div class="st-me-t">
-      <button type="button" class="st-name" data-stname aria-label="Change your name">${n ? esc(n) : 'Add your name'} <span class="st-pen" aria-hidden="true">✎</span></button>
-      <small>${esc(course)} · ${done} level${done === 1 ? '' : 's'} done</small></div></div>
-    ${syRow()}
+  const unread = msgUnread(), rate = (S.settings && S.settings.rate) || 0.6, favN = Object.keys(S.favs || {}).length;
+  return `<button type="button" class="qs-card st-acct" data-stpage="account">${pandaSvg('happy', 'st-av', '', true)}<span class="qs-l"><b class="st-nm">${n ? esc(n) : 'Add your name'}</b><small>${esc(course)} · ${done} level${done === 1 ? '' : 's'} done</small>
+      <span class="st-acc-l"><span class="hzf" aria-hidden="true">云</span> <b>My account</b> · <span id="sy-short">${esc(syShort())}</span></span></span><span class="qs-go" aria-hidden="true">›</span></button>
+    <div class="st-tiles">
+      <button type="button" class="st-tile" data-favs><span class="st-ti" aria-hidden="true">★</span><b>Favourites</b><small>${favN} saved</small></button>
+      <button type="button" class="st-tile" data-stpage="progress"><span class="st-ti hzf" aria-hidden="true">存</span><b>Backup</b><small>${SY.st && SY.st.on ? 'Synced' : stAgo(S.lastBackup)}</small></button>
+      <button type="button" class="st-tile" data-stpage="help"><span class="st-ti" aria-hidden="true">?</span><b>Help</b><small>${unread ? `${unread} new` : 'Info, tutorial'}</small>${unread ? `<span class="st-n">${unread}</span>` : ''}</button></div>
     <div class="qs-grp"><h3>Most used</h3>
       ${qsw('listen', !noListenOn(), 'Listening exercises', 'Questions where you listen')}
       ${qsw('pinyin', !!S.settings.pinyin, 'Pinyin under characters', 'In exercises, tests and grammar')}
       <div class="qs-line"><b>Voice speed</b><div class="seg" role="group" aria-label="Voice speed">${VOICE_RATES.map(([l, r]) => `<button type="button" aria-pressed="${rate === r}" data-rate="${r}">${l}</button>`).join('')}</div></div>
       <div class="qs-line"><b>Style</b>${styleSeg()}</div>
       <div class="qs-line"><b>Colours</b>${themeSeg()}</div></div>
-    ${qsInstallHtml()}
-    <div class="qs-grp"><h3>More settings</h3><div class="st-cats">${ST_PAGES.filter(p => p[0] !== 'sync').map(([k, hz, l, sub]) => `<button type="button" class="qs-card st-cat" data-stpage="${k}"><span class="st-ci hzf" aria-hidden="true">${hz}</span><span class="qs-l"><b>${l}</b><small>${sub}</small></span>${k === 'help' && unread ? `<span class="st-n">${unread}</span>` : ''}<span class="qs-go" aria-hidden="true">›</span></button>`).join('')}</div></div>
+    <div class="qs-grp"><h3>More settings</h3><div class="st-cats">${ST_PAGES.filter(p => p[0] !== 'account').map(([k, hz, l, sub]) => stRow(`data-stpage="${k}"`, hz, l, sub, k === 'help' && unread ? `<span class="st-n">${unread}</span>` : '')).join('')}</div></div>
     <p class="qs-ver"><button type="button" class="link" data-notes>Version ${APP_VERSION} beta: what’s new</button><button type="button" class="link" data-about>About</button></p>`;
+}
+const stRow = (attr, hz, l, sub, extra = '') => `<button type="button" class="qs-card st-cat" ${attr}><span class="st-ci hzf" aria-hidden="true">${hz}</span><span class="qs-l"><b>${l}</b><small>${sub}</small></span>${extra}<span class="qs-go" aria-hidden="true">›</span></button>`;
+// Search in Settings: every setting, with its real switch (it works right there), and the pages that hold the rest
+function stIndex() {
+  const rate = (S.settings && S.settings.rate) || 0.6, line = (l, c) => `<div class="qs-line"><b>${l}</b>${c}</div>`;
+  const rates = `<div class="seg" role="group" aria-label="Voice speed">${VOICE_RATES.map(([l, r]) => `<button type="button" aria-pressed="${rate === r}" data-rate="${r}">${l}</button>`).join('')}</div>`;
+  return [
+    ['Most used', 'listening listen audio sound hear exercises questions ears', () => qsw('listen', !noListenOn(), 'Listening exercises', 'Questions where you listen')],
+    ['Most used', 'pinyin under characters romanization letters reading help', () => qsw('pinyin', !!S.settings.pinyin, 'Pinyin under characters', 'In exercises, tests and grammar')],
+    ['Voice and sound', 'voice speed slow fast rate audio speak', () => line('Voice speed', rates)],
+    ['Look', 'style classic bamboo green sweet pink look design theme', () => line('Style', styleSeg())],
+    ['Look', 'colours colors dark light night mode theme device auto', () => line('Colours', themeSeg())],
+    ['Learning', 'tones must be right strict tone mistake', () => qsw('strict', !!S.settings.strict, 'Tones must be right', 'A wrong tone counts as a mistake')],
+    ['Learning', 'tone colours colors pinyin colour', () => qsw('tc', !!S.settings.toneCol, 'Tone colours', 'Pinyin in one colour per tone')],
+    ['Learning', 'character size larger bigger font text zoom', () => line('Character size', zhSeg())],
+    ['Learning', 'course book contemporary chinese hsk', () => line('Course', courseSelect('set'))],
+    ['Voice and sound', 'recorded voice natural audio', () => qsw('rec', recWanted(), 'Recorded voice', 'A natural voice recorded for this app')],
+    ['Voice and sound', 'sound effects ding bonk sfx beep', () => qsw('sfx', sfxOn(), 'Sound effects', 'Ding for right, bonk for wrong')],
+    ['Voice and sound', 'device voice offline download without internet test voice', () => stRow('data-stpage="voice"', '声', 'Voice and sound', 'Test the voice, offline voice, device voice')],
+    ['My account', 'name panda call me account profile', () => stRow('data-stpage="account"', '人', 'Your name', userName() ? esc(userName()) : 'Add your name')],
+    ['My account', 'sync devices sign in google account login cloud phone computer sign out delete privacy', () => stRow('data-stpage="account"', '云', 'Sync across devices', esc(syShort()))],
+    ['Backup and reset', 'backup save load file code move device restore export import', () => stRow('data-stpage="progress"', '存', 'Backup', 'Save or load a backup file')],
+    ['Backup and reset', 'reset start over delete progress erase', () => stRow('data-stpage="progress"', '存', 'Start over', 'Reset progress')],
+    ['Favourites', 'favourites favorites star saved', () => stRow('data-favs', '★', 'Favourites', 'Words and tasks you saved')],
+    ['Help and info', 'help info tutorial tour guide how', () => stRow('data-help', '?', 'Info', 'What is where in the app') + stRow('data-tutorial', '看', 'Tutorial', 'The quick tour again')],
+    ['Help and info', 'report mistake error bug wrong contact email', () => stRow('data-report', '错', 'Report a mistake', 'Found something wrong? Tell us')],
+    ['Help and info', 'install app home screen phone offline', () => isStandalone() ? '' : stRow('data-install', '装', 'Install the app', 'On your phone it opens like an app')],
+    ['Help and info', 'messages news bell notifications', () => msgList().length ? stRow('data-msgs', '信', 'Messages', 'News and tips from the app') : ''],
+    ['Help and info', 'version what’s new whats new changes update about', () => stRow('data-notes', '新', 'What’s new', `Version ${APP_VERSION}`) + stRow('data-about', '熊', 'About', 'Who made the app')]
+  ];
+}
+function stFind(raw) {
+  const q = String(raw || '').trim().toLowerCase(); ST.q = raw || '';
+  const main = $('#st-main'), res = $('#st-res'); if (!main || !res) return;
+  main.hidden = !!q; res.hidden = !q; if (!q) { res.innerHTML = ''; return; }
+  const ws = q.split(/\s+/), hits = stIndex().filter(([cat, kw]) => { const h = (cat + ' ' + kw).toLowerCase(); return ws.every(w => h.includes(w)); }).map(x => x[2]()).filter(Boolean);
+  res.innerHTML = (hits.length ? `<div class="qs-grp"><h3>Settings</h3>${hits.join('')}</div>` : `<p class="small muted">No setting matches “${esc(raw.trim())}”.</p>`)
+    + `<div class="qs-grp"><h3>In the app</h3>${stRow('data-stfind', '找', `Search words, characters and levels for “${esc(raw.trim())}”`, 'Opens the search')}</div>`;
 }
 function stPage(k) {
   if (k === 'learning') return `<div class="qs-grp">
@@ -9385,10 +9551,12 @@ function stPage(k) {
       <div class="qs-line"><b>Course</b>${courseSelect('set')}</div>
       <p class="small muted">HSK is coming later.</p></div>`;
   if (k === 'voice') return stVoice();
-  if (k === 'sync') return syPageHtml();
+  if (k === 'account') { const n = userName(); return `<div class="qs-grp"><div class="st-me">${pandaSvg('happy', 'st-av', '', true)}<div class="st-me-t">
+      <button type="button" class="st-name" data-stname aria-label="Change your name">${n ? esc(n) : 'Add your name'} <span class="st-pen" aria-hidden="true">✎</span></button>
+      <small>The name the panda uses. Only you see it.</small></div></div></div><h2 class="st-h2">Sync across devices</h2>${syPageHtml()}`; }
   if (k === 'progress') return `<div class="qs-grp"><h3>Favourites</h3><div class="qs-more"><button type="button" class="btn" data-favs>★ Your favourites</button></div></div>
     <div class="qs-grp"><h3>Backup</h3>
-    <p class="small">Your progress and favourites are saved <b>in this browser, on this device</b>. A backup lets you keep them safe or move them to another device. Or turn on <button type="button" class="link" data-stpage="sync">Sync</button> to have them on all your devices.</p>
+    <p class="small">Your progress and favourites are saved <b>in this browser, on this device</b>. A backup lets you keep them safe or move them to another device. Or turn on <button type="button" class="link" data-stpage="account">Sync</button> to have them on all your devices.</p>
     <div class="bk-panel">
       <div class="card-actions"><button type="button" class="btn primary" data-bksave>Save backup file</button><button type="button" class="btn" data-bkload>Load backup file</button><input type="file" id="bk-file" accept=".json,application/json" hidden></div>
       <div id="bk-msg" aria-live="polite"></div>
@@ -9405,11 +9573,11 @@ function stPage(k) {
     <div class="card-actions"><button type="button" class="btn danger-o" data-reset>Reset progress…</button></div></div>`;
   const n = msgUnread();
   // the same rows as the categories; What’s new and About are at the bottom of Settings
-  const row = (attr, hz, l, sub, extra = '') => `<button type="button" class="qs-card st-cat" ${attr}><span class="st-ci hzf" aria-hidden="true">${hz}</span><span class="qs-l"><b>${l}</b><small>${sub}</small></span>${extra}<span class="qs-go" aria-hidden="true">›</span></button>`;
+  const row = stRow;
   return `<div class="qs-grp"><div class="qs-more st-rows">
       ${row('data-help', '?', 'Info', 'What is where in the app')}${row('data-tutorial', '看', 'Tutorial', 'The quick tour again')}
       ${msgList().length ? row('data-msgs', '信', 'Messages', 'News and tips from the app', n ? `<span class="st-n">${n}</span>` : '') : ''}${row('data-report', '错', 'Report a mistake', 'Found something wrong? Tell us')}
-      ${isStandalone() ? '' : row('data-install', '装', 'Install the app', 'On your phone it opens like an app')}</div></div>`;
+      ${isStandalone() ? '' : row('data-install', '装', 'Install the app', 'On your phone it opens like an app')}</div></div>${qsInstallHtml()}`;
 }
 // Voice and sound: the same switches and rows as the rest of Settings
 function stVoice() {
@@ -9433,22 +9601,35 @@ function stVoice() {
 // back on Settings, you are where you were
 const STN = { y: 0 };
 function openSettings(page) {
+  if (page === 'sync') page = 'account';
   const m = $('#modal'), pg = ST_PAGES.find(p => p[0] === page);
   const old = !m.hidden && $('.st-box', m);
   if (old && !old.classList.contains('st-sub') && pg) STN.y = old.scrollTop;
-  if (!old) STN.y = 0;
+  if (!old) { STN.y = 0; ST.q = ''; }
+  ST.page = pg ? pg[0] : '';
   m.innerHTML = `<div class="modal-box help-box qs-box set-box st-box${pg ? ' st-sub' : ''}" role="dialog" aria-modal="true" aria-label="${pg ? pg[2] : 'Settings'}">
     <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
-    ${pg ? `<button type="button" class="link st-back" data-stpage="">← Settings</button><h1 class="view-title">${pg[2]}</h1>${stPage(pg[0])}` : `<h1 class="view-title">Settings</h1>${stMain()}`}</div>`;
+    ${pg ? `<button type="button" class="link st-back" data-stpage="">← Settings</button><h1 class="view-title">${pg[2]}</h1>${stPage(pg[0])}` : `<h1 class="view-title">Settings</h1>
+    <div class="st-sr"><span class="st-sr-i" aria-hidden="true">${IC.search}</span><input class="in" id="st-q" type="search" placeholder="Search settings" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Search settings" value="${esc(ST.q)}"></div>
+    <div id="st-main">${stMain()}</div><div id="st-res" hidden></div>`}</div>`;
   m.classList.add('sheet', 'st-full'); m.hidden = false; document.body.classList.add('modal-open');
   const box = $('.modal-box', m);
   if (box) { if (old) box.classList.add('st-nav', pg ? 'st-fwd' : 'st-bk'); box.scrollTop = !pg && old ? STN.y : 0; }
+  if (!pg && ST.q) stFind(ST.q);
 }
+document.addEventListener('input', e => { if (e.target.id === 'st-q') stFind(e.target.value); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && e.target.id === 'st-q' && e.target.value) { e.preventDefault(); e.stopPropagation(); e.target.value = ''; stFind(''); } }, true);
+// Favourites and the app search leave Settings
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.st-box [data-favs]')) closeModal(); }, true);
+document.addEventListener('click', e => {
+  const f = e.target.closest('[data-stfind]'); if (!f) return;
+  const q = ST.q.trim(); closeModal(); openSearch(); const i = $('#sr-in'); if (i) { i.value = q; srRender(q); }
+});
 document.addEventListener('click', e => {
   const p = e.target.closest('[data-stpage]'); if (p) { openSettings(p.dataset.stpage); return; }
   const nm = e.target.closest('[data-stname]');
   if (nm) { nm.outerHTML = `<span class="st-edit">${nameInput('opt-name', 'Your name')}<button type="button" class="btn sm primary" data-stnameok>Done</button></span>`; const i = $('#opt-name'); if (i) { i.focus(); i.select(); } return; }
-  if (e.target.closest('[data-stnameok]')) { const i = $('#opt-name'); if (i) { setName(i.value); if (view === 'learn' && LN.phase === 'path') lPath(); } openSettings(); }
+  if (e.target.closest('[data-stnameok]')) { const i = $('#opt-name'); if (i) { setName(i.value); if (view === 'learn' && LN.phase === 'path') lPath(); } openSettings(ST.page); }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'opt-name' && e.target.closest('.st-box')) { e.preventDefault(); const ok = $('[data-stnameok]'); if (ok) ok.click(); } });
 
@@ -9503,7 +9684,8 @@ const SY_RULES = {
   // Learn levels: the most stars and the best score; a "known" mark (placement) only if both copies have only that
   learn: (b, l, r, lN) => syMap(b, l, r, syOne((bb, x, y) => { const o = { ...y, ...x, stars: syMax(x.stars, y.stars), best: syMax(x.best, y.best), at: syMax(x.at, y.at) }; if (!(x.known && y.known)) delete o.known; return o; })),
   sets: (b, l, r, lN) => syMap(b, l, r, syOne((bb, x, y) => ({ ...syPick(bb, x, y, lN), best: syMax(x.best, y.best) }))),
-  cards: (b, l, r, lN) => syMap(b, l, r, syOne((bb, x, y) => { bb = bb || {}; const o = { ...syPick(bb, x, y, lN) }; ['ok', 'bad'].forEach(q => { o[q] = syCnt(bb[q], x[q], y[q]); }); return o; })),
+  // words: the copy practised last wins (strength, streak), the right/wrong counts add up
+  cards: (b, l, r, lN) => syMap(b, l, r, syOne((bb, x, y) => { bb = bb || {}; const o = x.at || y.at ? { ...((+x.at || 0) >= (+y.at || 0) ? x : y) } : { ...syPick(bb, x, y, lN) }; ['ok', 'bad'].forEach(q => { o[q] = syCnt(bb[q], x[q], y[q]); }); return o; })),
   zi: (b, l, r, lN) => syMap(b, l, r, syOne((bb, x, y) => { const o = { ...((+x.at || 0) >= (+y.at || 0) ? x : y) }; o.n = syCnt((bb || {}).n, x.n, y.n); return o; })),
   chars: (b, l, r, lN) => syMap(b, l, r, syOne((bb, x, y) => {
     const o = syMap(bb, x, y, (q, a, c) => syPick(q, a, c, lN));
@@ -9779,9 +9961,6 @@ function syLine() {
   return SY.st.last ? `Synced ${syAgo(SY.st.last)}.` : 'Connecting…';
 }
 const syShort = () => SY.st.on ? 'On · ' + syLine().replace(/\.$/, '').replace(/^Synced /, 'synced ') : 'Off · sign in with Google';
-function syRow() {
-  return `<div class="qs-grp"><button type="button" class="qs-card st-cat sy-row" data-stpage="sync"><span class="st-ci hzf" aria-hidden="true">云</span><span class="qs-l"><b>Sync across devices</b><small id="sy-short">${esc(syShort())}</small></span><span class="qs-go" aria-hidden="true">›</span></button></div>`;
-}
 function syPageHtml() {
   const on = SY.st.on, msg = SY.msg ? `<p class="small bad-l" role="alert">${esc(SY.msg)}</p>` : '';
   const top = on
@@ -9829,6 +10008,282 @@ setTimeout(() => {
   if (SY.msg) toast(SY.msg);
   if (SY.st.on) syFb().catch(() => syStatus('offline'));
 }, 600);
+
+/* ================= Words (1.1.0): how well you know each word, your own word lists, dictation on paper ================= */
+// Every word has a strength 0–5 like a character (S.cards[word].s, .at): right +1, wrong −2.
+// It comes back in Daily practice after 1, 1, 2, 4, 7 or 14 days, by strength. Old records start from their streak.
+const W_GAP = [1, 1, 2, 4, 7, 14];
+const VALL = {}; VOCAB.forEach(v => { if (!VALL[v.h] || (VALL[v.h].tag !== '' && v.tag === '')) VALL[v.h] = v; });
+const VMAP = {}; VOCAB.forEach(v => { if ((v.tag === '' || v.tag === 'sup' || v.tag === 'ext') && !VMAP[v.h]) VMAP[v.h] = v; });
+const wLevel = h => { const c = (S.cards || {})[h]; if (!c) return -1; return c.s !== undefined ? c.s : Math.min(5, c.streak || 0); };
+const wBand = h => { const s = wLevel(h); return s < 0 ? 0 : s < 2 ? 1 : s < 4 ? 2 : 3; };
+const wKnown = h => wLevel(h) >= 4;
+const wDue = h => { const c = (S.cards || {})[h]; if (!c) return false; return Date.now() - (c.at || 0) >= W_GAP[Math.max(0, Math.min(5, wLevel(h)))] * 864e5; };
+const wDueWords = () => Object.keys(S.cards || {}).filter(h => VMAP[h] && wDue(h)).sort((a, b) => wLevel(a) - wLevel(b) || ((S.cards[a].at || 0) - (S.cards[b].at || 0)));
+// the word a Learn question is about (if it is clearly about one word), so Learn counts for Words too
+const hzOnly = s => [...String(s || '').replace(/<[^>]*>/g, '')].filter(isHzC).join('');
+function lWordOf(q) {
+  if (q.wordH) return q.wordH;
+  if (q.t === 'py' && VMAP[q.h]) return q.h;
+  if (q.t === 'listen' && VMAP[q.say] && !(q.o || []).some(o => hzOnly(o))) return q.say;
+  if (q.t === 'mc' && q.o) {
+    const qh = hzOnly(q.q), ans = q.o[q.c];
+    if (qh && VMAP[qh] && !q.o.some(o => hzOnly(o))) return qh;              // What does 学生 mean?
+    if (!qh && VMAP[ans] && q.o.every(o => hzOnly(o) === o)) return ans;    // Which word means “student”?
+  }
+  return null;
+}
+const wBar = list => { const n = [0, 0, 0, 0]; list.forEach(v => n[wBand(v.h)]++);
+  return `<div class="bar4 w-bar" role="img" aria-label="${n[3]} known, ${n[2]} getting there, ${n[1]} weak, ${n[0]} not practised">${[[3, 'var(--ink)'], [2, 'var(--muted)'], [1, 'var(--red)'], [0, 'var(--line)']].map(([k, c]) => n[k] ? `<i style="flex:${n[k]};background:${c}"></i>` : '').join('')}</div>`; };
+const W_BAND = ['not practised', 'weak', 'getting there', 'known'];
+function wStatHtml(list) {
+  if (!list.length) return '';
+  const known = list.filter(v => wKnown(v.h)).length, seen = list.some(v => wLevel(v.h) >= 0);
+  return `<div class="w-stat"><div class="w-stat-t"><b class="bn">${known}</b> <span class="box-s">of ${list.length} words known</span>
+      <button type="button" class="btn sm" data-wweak="10">Practise my weakest words</button></div>${wBar(list)}
+    ${seen ? '' : '<p class="small muted">Practise a few words and they start to fill in: red is weak, yellow is getting there, dark is known.</p>'}</div>`;
+}
+// questions about one word (Daily practice and “Practise my weakest words”): weak words get the easier kinds
+function wordQ(v) {
+  const s = Math.max(0, wLevel(v.h)), pool = VOCAB.filter(x => (x.tag === '' || x.tag === 'ext') && x.e !== v.e && x.h !== v.h);
+  const others = shuffle(pool.filter(x => Math.abs([...x.h].length - [...v.h].length) <= 1)).slice(0, 3);
+  if (others.length < 3) return null;
+  const noL = noListenOn() || !canListen();
+  const kinds = s < 2 ? ['mean'] : noL ? ['which', 'mean'] : ['which', 'listen', 'mean'];
+  const k = kinds[Math.floor(Math.random() * kinds.length)];
+  if (k === 'which') return { t: 'mc', q: `Which word means <b>“${esc(v.e)}”</b>?`, o: [v.h, ...others.map(x => x.h)], c: 0, wordH: v.h, x: v.p };
+  if (k === 'listen') return { t: 'listen', say: v.h, o: [v.h, ...others.map(x => x.h)], c: 0, wordH: v.h };
+  return { t: 'mc', q: `What does <span class="hzf big-in">${esc(v.h)}</span> mean?`, o: [v.e, ...others.map(x => x.e)], c: 0, wordH: v.h, x: v.p };
+}
+// your weakest words from the words you have selected in Words: weak ones first, then new ones, then the rest
+function wWeakPick(n, pool) {
+  const t = h => ((S.cards || {})[h] || {}).at || 0;
+  const weak = pool.filter(v => wBand(v.h) === 1).sort((a, b) => wLevel(a.h) - wLevel(b.h) || t(a.h) - t(b.h));
+  const fresh = pool.filter(v => wBand(v.h) === 0);
+  const rest = pool.filter(v => wBand(v.h) >= 2).sort((a, b) => wLevel(a.h) - wLevel(b.h) || t(a.h) - t(b.h));
+  return [...weak, ...fresh, ...rest].slice(0, n);
+}
+function wWeakStart(n, again) {
+  const pick = again || wWeakPick(n, deck());
+  const items = pick.map(wordQ).filter(Boolean);
+  if (items.length < 3) { toast('Choose at least three words first.'); return; }
+  const lv = { id: 'w-weak', virtual: true, wweak: true, wpick: pick, unit: Math.max(0, ...pick.map(v => v.unit || 0)), icon: '词', title: 'Your weakest words', zi: null, cards: [], quiz: [], items: shuffle(items) };
+  closeModal(); LN.lv = lv; LN.ci = 0; setFocus(true);
+  lStartQuiz();
+  if (view !== 'learn') location.hash = 'learn';
+  window.scrollTo({ top: 0 });
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-wweak],[data-wweakagain]'); if (!t) return;
+  if (t.dataset.wweakagain !== undefined && LN.lv && LN.lv.wpick) return wWeakStart(0, LN.lv.wpick);
+  wWeakStart(+t.dataset.wweak || 10);
+});
+
+/* ----- word lists: S.wlists = { id: { n: name, w: [words], at } }, S.wlistOn = the list Words uses (or nothing) ----- */
+const wlAll = () => Object.entries(S.wlists || {}).filter(([, l]) => l && Array.isArray(l.w)).sort((a, b) => (b[1].at || 0) - (a[1].at || 0));
+const wlActive = () => { const id = S.wlistOn; const l = id && (S.wlists || {})[id]; return l && Array.isArray(l.w) ? l : null; };
+const wlWords = l => l.w.map(h => VALL[h]).filter(Boolean);
+const WLS = { edit: null, unit: null, q: '' };
+function wlUse(id) { S.wlistOn = id || null; save(); C.screen = 'menu'; W.i = 0; }
+// paste: finds the words of the app in any text (longest match first); what it doesn’t know is listed
+function wlParse(txt) {
+  const found = [], miss = [];
+  (String(txt).match(/[㐀-鿿]+/g) || []).forEach(run => {
+    const a = [...run]; let i = 0, bad = '';
+    while (i < a.length) {
+      let hit = null;
+      for (let L = Math.min(8, a.length - i); L >= 1; L--) { const s = a.slice(i, i + L).join(''); if (VALL[s] && VALL[s].tag !== 'ph') { hit = s; break; } }
+      if (hit) { if (bad) { miss.push(bad); bad = ''; } if (!found.includes(hit)) found.push(hit); i += [...hit].length; } else { bad += a[i]; i++; }
+    }
+    if (bad) miss.push(bad);
+  });
+  return { found, miss: [...new Set(miss)] };
+}
+function openLists() {
+  const ls = wlAll(), on = S.wlistOn, m = $('#modal'); m.classList.remove('sheet');
+  m.innerHTML = `<div class="modal-box help-box wl-box" role="dialog" aria-modal="true" aria-label="My word lists"><button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
+    <h1 class="view-title">My word lists</h1>
+    <p class="muted">Your own lists of words, for example the words for your next dictation. Practise them in any way in Words and Writing, or print them.</p>
+    ${ls.length ? `<div class="wl-ls">${ls.map(([id, l]) => `<div class="wl-li${id === on ? ' on' : ''}"><div class="wl-lt"><b>${esc(l.n)}</b><small>${l.w.length} word${l.w.length === 1 ? '' : 's'}${id === on ? ' · in use' : ''}</small><span class="hzf wl-prev">${esc(l.w.slice(0, 8).join(' '))}${l.w.length > 8 ? ' …' : ''}</span></div>
+      <div class="wl-la">${id === on ? `<button type="button" class="btn sm" data-wluse="">Stop using</button>` : `<button type="button" class="btn sm primary" data-wluse="${id}">Use</button>`}<button type="button" class="btn sm" data-wledit="${id}">Edit</button><button type="button" class="btn sm" data-wlprint="${id}">Print</button></div></div>`).join('')}</div>` : '<p class="empty">No lists yet.</p>'}
+    <div class="card-actions"><button type="button" class="btn primary" data-wledit="">+ New list</button></div></div>`;
+  m.hidden = false; document.body.classList.add('modal-open');
+}
+function openListEdit(id, add) {
+  const l = id && (S.wlists || {})[id];
+  WLS.edit = { id: id || null, n: l ? l.n : `My list ${wlAll().length + 1}`, w: l ? [...l.w] : [] };
+  if (add && !WLS.edit.w.includes(add)) WLS.edit.w.push(add);
+  WLS.q = ''; if (WLS.unit === null) WLS.unit = lCurUnit();
+  const m = $('#modal'); m.classList.remove('sheet');
+  m.innerHTML = `<div class="modal-box help-box wl-box wl-ed" role="dialog" aria-modal="true" aria-label="${l ? 'Edit list' : 'New list'}"><button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
+    <button type="button" class="link st-back" data-wllists>← My word lists</button>
+    <h1 class="view-title">${l ? 'Edit list' : 'New list'}</h1>
+    <h2 class="cap">Name</h2><input class="in wl-nm" id="wl-name" maxlength="40" aria-label="List name" value="${esc(WLS.edit.n)}">
+    <h2 class="cap">Paste or type words</h2>
+    <p class="small muted">For example the list for your dictation. The app finds its words in any text, with or without commas.</p>
+    <textarea class="in wl-ta" id="wl-paste" rows="3" placeholder="学生，老师，地图，一共…"></textarea>
+    <div class="card-actions"><button type="button" class="btn sm" data-wlpaste>Add these words</button></div><div id="wl-pmsg" aria-live="polite"></div>
+    <h2 class="cap">Or pick them</h2>
+    <input class="in" id="wl-find" type="search" placeholder="Find a word: 学生, xuesheng or student" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div class="frow wrap" id="wl-units">${lUnits().map(u => `<button type="button" class="chip" aria-pressed="${u === WLS.unit}" data-wlunit="${u}">Unit ${u}</button>`).join('')}</div>
+    <div id="wl-pick"></div>
+    <div class="wl-foot"><span id="wl-n"></span>${l ? `<button type="button" class="btn sm danger-o" data-wldel="${id}">Delete</button>` : ''}<button type="button" class="btn primary" data-wlsave>Save</button></div></div>`;
+  m.hidden = false; document.body.classList.add('modal-open');
+  wlPick();
+}
+function wlPick() {
+  const box = $('#wl-pick'); if (!box || !WLS.edit) return;
+  const q = WLS.q.trim().toLowerCase(), sel = new Set(WLS.edit.w), seen = new Set();
+  const ws = VOCAB.filter(v => v.tag !== 'ph' && !seen.has(v.h) && seen.add(v.h)).filter(v => q ? (v.h.includes(q) || v.e.toLowerCase().includes(q) || normPy(v.p, false).includes(normPy(q, false))) : v.unit === WLS.unit);
+  const shown = ws.slice(0, 160), unitOn = !q && shown.length && shown.every(v => sel.has(v.h));
+  box.innerHTML = `${!q && shown.length ? `<div class="wl-all"><button type="button" class="link" data-wlunitall="${unitOn ? 'off' : 'on'}">${unitOn ? `Remove all of Unit ${WLS.unit}` : `Add all of Unit ${WLS.unit} (${shown.length})`}</button></div>` : ''}
+    ${shown.length ? `<div class="wl-rows">${shown.map(v => `<label class="wl-row"><input type="checkbox" data-wlw="${esc(v.h)}"${sel.has(v.h) ? ' checked' : ''}><span class="hzf wl-h">${esc(v.h)}</span><span class="wl-p">${colorPy(v.p)}</span><span class="wl-e">${esc(v.e)}</span></label>`).join('')}</div>` : `<p class="small muted">Nothing found for “${esc(WLS.q.trim())}”.</p>`}
+    ${WLS.edit.w.length ? `<h2 class="cap">In this list (${WLS.edit.w.length})</h2><div class="wl-chips">${WLS.edit.w.map(h => `<button type="button" class="chip hzf" data-wlrm="${esc(h)}" aria-label="Remove ${esc(h)}">${esc(h)} ✕</button>`).join('')}</div>` : ''}`;
+  const n = $('#wl-n'); if (n) n.textContent = `${WLS.edit.w.length} word${WLS.edit.w.length === 1 ? '' : 's'}`;
+}
+function wlSave() {
+  const e = WLS.edit; if (!e) return;
+  const nm = (($('#wl-name') || {}).value || '').trim() || e.n;
+  if (!e.w.length) { toast('Add at least one word.'); return; }
+  S.wlists = S.wlists || {};
+  const id = e.id || ('l' + Date.now().toString(36));
+  S.wlists[id] = { n: nm.slice(0, 40), w: e.w, at: Date.now() };
+  S.wlistOn = id; save(); WLS.edit = null;
+  closeModal(); toast(`Saved. Words now uses “${nm.slice(0, 40)}”.`);
+  if (view === 'characters') { C.screen = 'menu'; renderChars(); } else if (view === 'writing') renderWriting();
+}
+document.addEventListener('input', e => {
+  if (e.target.id === 'wl-find') { WLS.q = e.target.value; wlPick(); }
+  if (e.target.id === 'wl-name' && WLS.edit) WLS.edit.n = e.target.value;
+});
+document.addEventListener('change', e => {
+  const c = e.target.closest && e.target.closest('[data-wlw]'); if (!c || !WLS.edit) return;
+  const h = c.dataset.wlw, w = WLS.edit.w;
+  if (c.checked) { if (!w.includes(h)) w.push(h); } else WLS.edit.w = w.filter(x => x !== h);
+  const y = $('#wl-pick').scrollTop; wlPick(); $('#wl-pick').scrollTop = y;
+});
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-wllists],[data-wluse],[data-wledit],[data-wlprint],[data-wlpaste],[data-wlunit],[data-wlunitall],[data-wlrm],[data-wlsave],[data-wldel],[data-wlopen],[data-wltog],[data-wlnew],[data-wloff]'); if (!t) return;
+  const d = t.dataset;
+  if (d.wllists !== undefined || d.wlopen !== undefined) return openLists();
+  if (d.wloff !== undefined) { wlUse(null); return view === 'writing' ? renderWriting() : renderChars(); }
+  if (d.wluse !== undefined) { wlUse(d.wluse); closeModal(); if (view === 'writing') renderWriting(); else if (view === 'characters') renderChars(); else location.hash = 'characters'; return; }
+  if (d.wledit !== undefined) return openListEdit(d.wledit || null);
+  if (d.wlprint !== undefined) { PR.u = 'L:' + d.wlprint; return openPrint(); }
+  if (d.wlpaste !== undefined) {
+    const r = wlParse(($('#wl-paste') || {}).value || ''), w = WLS.edit.w, before = w.length;
+    r.found.forEach(h => { if (!w.includes(h)) w.push(h); });
+    $('#wl-pmsg').innerHTML = !r.found.length && !r.miss.length ? '<p class="small muted">Type or paste some Chinese words first.</p>'
+      : `<p class="small">${w.length - before ? `<b>${w.length - before} word${w.length - before === 1 ? '' : 's'} added.</b>` : 'No new words.'}${r.miss.length ? ` Not in the app: <span class="hzf">${esc(r.miss.join('、'))}</span>` : ''}</p>`;
+    if (w.length - before) $('#wl-paste').value = '';
+    return wlPick();
+  }
+  if (d.wlunit !== undefined) { WLS.unit = +d.wlunit; WLS.q = ''; const f = $('#wl-find'); if (f) f.value = ''; $$('[data-wlunit]').forEach(b => b.setAttribute('aria-pressed', String(b === t))); return wlPick(); }
+  if (d.wlunitall !== undefined) {
+    const seen = new Set(), ws = VOCAB.filter(v => v.tag !== 'ph' && v.unit === WLS.unit && !seen.has(v.h) && seen.add(v.h)).map(v => v.h);
+    WLS.edit.w = d.wlunitall === 'on' ? [...WLS.edit.w, ...ws.filter(h => !WLS.edit.w.includes(h))] : WLS.edit.w.filter(h => !ws.includes(h));
+    return wlPick();
+  }
+  if (d.wlrm !== undefined) { WLS.edit.w = WLS.edit.w.filter(h => h !== d.wlrm); return wlPick(); }
+  if (d.wlsave !== undefined) return wlSave();
+  if (d.wldel !== undefined) {
+    if (!t.classList.contains('sure')) { t.classList.add('sure'); t.textContent = 'Delete for sure?'; return; }
+    delete S.wlists[d.wldel]; if (S.wlistOn === d.wldel) S.wlistOn = null; save(); WLS.edit = null; toast('List deleted.'); openLists();
+    if (view === 'characters') renderChars(); else if (view === 'writing') renderWriting(); return;
+  }
+  // in the word window
+  if (d.wltog !== undefined) {
+    const l = (S.wlists || {})[d.wltog], h = t.dataset.h; if (!l) return;
+    l.w = l.w.includes(h) ? l.w.filter(x => x !== h) : [...l.w, h]; l.at = Date.now(); save();
+    t.setAttribute('aria-pressed', String(l.w.includes(h)));
+    if (view === 'characters' && C.screen === 'menu') renderChars(); return;
+  }
+  if (d.wlnew !== undefined) return openListEdit(null, d.wlnew);
+});
+// the word window: add the word to your lists
+function wlWordHtml(h) {
+  if (!VALL[h]) return '';
+  const ls = wlAll(), inN = ls.filter(([, l]) => l.w.includes(h)).length;
+  return `<details class="more wm-lists"><summary>Add to a word list${inN ? ` · in ${inN}` : ''}</summary><div class="frow wrap">${ls.map(([id, l]) => `<button type="button" class="chip" data-wltog="${id}" data-h="${esc(h)}" aria-pressed="${l.w.includes(h)}">${esc(l.n)}</button>`).join('')}<button type="button" class="chip" data-wlnew="${esc(h)}">+ New list</button></div></details>`;
+}
+
+/* ----- Dictation on paper: the app says the words one by one, you write them by hand, then check them ----- */
+const DC = { order: 'list', twice: true, wait: 8, list: [], i: 0, phase: 'setup', tok: 0, paused: false, marks: {}, t0: 0, left: 0 };
+function dcSetup() {
+  const st = $('#c-stage'), list = deck(), L = wlActive();
+  DC.phase = 'setup'; DC.tok++;
+  if (!canListen() || noListenOn()) { st.innerHTML = `<div class="dc-box"><p><b>Dictation needs sound.</b> ${noListenOn() ? 'Listening is switched off in Settings.' : 'No voice is available right now (are you offline?).'}</p></div>`; return; }
+  const n = list.length, mins = Math.max(1, Math.round(n * (DC.wait + (DC.twice ? 5 : 3)) / 60));
+  const seg = (k, opts) => `<div class="seg" role="group">${opts.map(([v, l]) => `<button type="button" aria-pressed="${String(DC[k]) === String(v)}" data-dcset="${k}" data-v="${v}">${l}</button>`).join('')}</div>`;
+  st.innerHTML = `<div class="dc-box">
+    <p><b>${n} word${n === 1 ? '' : 's'}</b>${L ? ` from “${esc(L.n)}”` : ''} · about ${mins} min. Get a pen and paper: the app says each word, you write it in characters. At the end you check your answers.</p>
+    ${n > 40 ? `<p class="small">That’s a long dictation. Tip: make a word list with just the words you need (<button type="button" class="link" data-wlopen>My lists</button>).</p>` : ''}
+    <div class="qs-line"><b>Order</b>${seg('order', [['list', L ? 'List order' : 'Book order'], ['random', 'Random']])}</div>
+    <div class="qs-line"><b>Say each word</b>${seg('twice', [['false', 'Once'], ['true', 'Twice']])}</div>
+    <div class="qs-line"><b>Time to write</b>${seg('wait', [[5, '5 s'], [8, '8 s'], [12, '12 s'], [20, '20 s']])}</div>
+    <div class="card-actions"><button type="button" class="btn primary big" data-dcgo${n ? '' : ' disabled'}>Start dictation</button></div></div>`;
+}
+function dcRun() {
+  const st = $('#c-stage'), n = DC.list.length, i = DC.i;
+  if (i >= n) return dcCheck();
+  st.innerHTML = `<div class="dc-box dc-run"><div class="dc-n"><b>${i + 1}</b><span> / ${n}</span></div>
+    <div class="dc-st" id="dc-st" aria-live="polite">Listen…</div><div class="dc-bar"><i id="dc-fill"></i></div>
+    <div class="card-actions dc-act"><button type="button" class="btn" data-dcpause>${DC.paused ? '▶ Go on' : '❚❚ Pause'}</button><button type="button" class="btn" data-dcagain>↻ Say it again</button><button type="button" class="btn primary" data-dcnext>${i === n - 1 ? 'Finish' : 'Next →'}</button></div>
+    <p class="small muted"><button type="button" class="link" data-dcend>End and check now</button></p></div>`;
+  if (!DC.paused) dcWord();
+}
+const dcSleep = (ms, tok) => new Promise(r => setTimeout(() => r(tok === DC.tok && !DC.paused), ms));
+async function dcWord() {
+  const tok = ++DC.tok, v = DC.list[DC.i], stx = $('#dc-st'), fill = $('#dc-fill');
+  if (fill) { fill.style.transition = 'none'; fill.style.width = '0%'; }
+  if (stx) stx.textContent = 'Listen…';
+  for (let k = 0; k < (DC.twice ? 2 : 1); k++) {
+    stopAudio(); const at = seqTok; await Promise.race([sayOne(v.h, at), new Promise(r => setTimeout(r, 6000))]).catch(() => {});  // never wait for ever
+    if (tok !== DC.tok || DC.paused) return;
+    if (!(await dcSleep(k === 0 && DC.twice ? 1100 : 300, tok))) return;
+  }
+  if (stx) stx.textContent = 'Write it down';
+  if (fill) { void fill.offsetWidth; fill.style.transition = `width ${DC.wait}s linear`; fill.style.width = '100%'; }
+  if (!(await dcSleep(DC.wait * 1000, tok))) return;
+  DC.i++; dcRun();
+}
+function dcCheck() {
+  DC.tok++; stopAudio(); DC.phase = 'check';
+  const st = $('#c-stage'), ls = DC.list.slice(0, Math.max(DC.i, 1));
+  st.innerHTML = `<div class="dc-box"><h2 class="dc-h">Check your answers</h2><p class="small muted">Compare with your paper and mark each word. Your marks count for how well you know the words.</p>
+    <ol class="dc-ans">${ls.map((v, i) => `<li><span class="dc-i">${i + 1}</span><span class="hzf dc-hz">${esc(v.h)}</span><span class="dc-pe">${colorPy(v.p)}<small>${esc(v.e)}</small></span><span class="dc-mk"><button type="button" class="dc-ok" data-dcmark="${i}" data-v="1" aria-pressed="${DC.marks[i] === 1}" aria-label="Right">✓</button><button type="button" class="dc-no" data-dcmark="${i}" data-v="0" aria-pressed="${DC.marks[i] === 0}" aria-label="Wrong">✕</button></span></li>`).join('')}</ol>
+    <div class="card-actions"><button type="button" class="btn" data-dcallok>All right</button><button type="button" class="btn primary" data-dcsave>Save my marks</button></div></div>`;
+}
+function dcSaved() {
+  const ls = DC.list.slice(0, Math.max(DC.i, 1)), marked = ls.map((v, i) => [v, DC.marks[i]]).filter(x => x[1] !== undefined);
+  marked.forEach(([v, ok]) => rec(v, ok === 1));
+  const ok = marked.filter(x => x[1] === 1).length, bad = marked.filter(x => x[1] === 0).map(x => x[0]);
+  sfx(bad.length ? 'done' : 'star');
+  $('#c-stage').innerHTML = `<div class="dc-box dc-done">${pandaSvg(bad.length ? 'happy' : 'ecstatic', '', '', true)}<p class="qc-pct">${ok} / ${marked.length}</p><p>${bad.length ? `Practise the ${bad.length} you missed now, while they’re fresh.` : 'Every word right!'}</p>
+    <div class="card-actions">${bad.length ? `<button type="button" class="btn primary" data-dcmissed>Practise the ${bad.length} missed words</button>` : ''}<button type="button" class="btn" data-dcredo>Dictation again</button><button type="button" class="btn" data-cmenu>Back to Words</button></div></div>`;
+  DC.missed = bad;
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-dcset],[data-dcgo],[data-dcpause],[data-dcagain],[data-dcnext],[data-dcend],[data-dcmark],[data-dcallok],[data-dcsave],[data-dcmissed],[data-dcredo]'); if (!t) return;
+  const d = t.dataset;
+  if (d.dcset) { DC[d.dcset] = d.dcset === 'wait' ? +d.v : d.dcset === 'twice' ? d.v === 'true' : d.v; return dcSetup(); }
+  if (d.dcgo !== undefined || d.dcredo !== undefined) { const l = deck(); DC.list = DC.order === 'random' ? shuffle(l) : l; DC.i = 0; DC.marks = {}; DC.paused = false; DC.phase = 'run'; return dcRun(); }
+  if (d.dcpause !== undefined) { DC.paused = !DC.paused; if (DC.paused) { DC.tok++; stopAudio(); } return dcRun(); }
+  if (d.dcagain !== undefined) { DC.paused = false; return dcRun(); }
+  if (d.dcnext !== undefined) { DC.i++; DC.paused = false; return dcRun(); }
+  if (d.dcend !== undefined) { DC.i = Math.min(DC.list.length, DC.i + 1); return dcCheck(); }
+  if (d.dcmark !== undefined) { DC.marks[+d.dcmark] = +d.v; $$(`[data-dcmark="${d.dcmark}"]`).forEach(b => b.setAttribute('aria-pressed', String(b === t))); return; }
+  if (d.dcallok !== undefined) { DC.list.slice(0, Math.max(DC.i, 1)).forEach((_, i) => { if (DC.marks[i] === undefined) DC.marks[i] = 1; }); return dcCheck(); }
+  if (d.dcsave !== undefined) return dcSaved();
+  if (d.dcmissed !== undefined) { C.mode = 'flash'; const d0 = CDESC.flash; main.querySelector('.sess-head b').textContent = d0.t; return startSession(DC.missed); }
+});
+// leaving the dictation stops it
+window.addEventListener('hashchange', () => { DC.tok++; });
+// Words with a list in use: the list instead of units and groups
+function wlFilterHtml(L) {
+  return `<div class="filters"><div class="frow wl-on"><span class="flabel">List</span><button type="button" class="chip" aria-pressed="true" data-wlopen>${esc(L.n)} · ${L.w.length}</button><button type="button" class="link" data-wloff>Show all words</button></div>
+    <div class="frow"><span class="flabel">Only</span>${chip('Words I missed', C.weak, 'data-cf="weak"')}</div></div>`;
+}
 
 renderVoice();
 let rT; window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { if (view === 'writing') { const b = $('#w-box'); if (b && Math.abs(b.clientWidth - W.size) > 8 && W.mode !== 'free') mountWriter(); } }, 200); });
