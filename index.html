@@ -1696,7 +1696,8 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
   .mcard.mc-r+.mcard.mc-r{border-top:1px solid var(--line)}
   .mc-ic{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:10px;background:var(--pri-soft,var(--paper2));color:var(--pri-ink,var(--ink));font-size:20px}
   .mc-tx{display:block;flex:1;min-width:0;line-height:1.35}
-  .mc-r h2{font-size:15.5px;line-height:1.25}
+  .mc-r h2{font-size:15.5px;line-height:1.25;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
+  .mc-r h2 .ltag{order:2}
   .mc-r p{font-size:13px;color:var(--muted);line-height:1.35}
   .mc-r details.more{font-size:13px;margin-top:2px}
   .mc-r details.more summary{font-size:12.5px}
@@ -1726,10 +1727,11 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 .st-acc-l{display:block;margin-top:6px;padding-top:6px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
 .st-acc-l b{color:var(--ink);font-size:13px}
 .st-acc-l .hzf{color:var(--ink)}
-.st-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 14px}
+.st-tiles{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:8px;margin:4px 0 14px}
 .st-tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;background:var(--surface);color:var(--ink);border:1.5px solid var(--line-2);border-radius:var(--r);cursor:pointer;font:inherit;min-height:84px;justify-content:center}
 .st-tile:hover{border-color:var(--ink)}
-.st-tile b{font-size:14px;font-weight:700}.st-tile small{font-size:12px;color:var(--muted)}
+.st-tile b{font-size:14px;font-weight:700}.st-tile small{font-size:12px;color:var(--muted);text-align:center;line-height:1.25}
+@media (max-width:420px){.st-tiles{gap:6px}.st-tile{padding:10px 2px}.st-tile b{font-size:13px;letter-spacing:-.1px}.st-tile small{font-size:11.5px}}
 .st-ti{font-size:20px;line-height:1.1;font-weight:700;color:var(--ink)}
 .st-tile .st-n{position:absolute;top:6px;right:6px}
 [data-style="cute"] .st-tile{border-width:2px;background:var(--card)}
@@ -4505,7 +4507,7 @@ function renderList() {
   const st = $('#c-stage'); const list = deck();
   const q = C.search.trim().toLowerCase();
   const rows = list.filter(v => !q || v.h.includes(q) || v.e.toLowerCase().includes(q) || normPy(v.p, false).includes(normPy(q, false)));
-  st.innerHTML = `<div class="list-head"><input id="c-search" class="in" type="search" placeholder="Search characters, pinyin or English" value="${esc(C.search)}" aria-label="Search"><span class="muted">${rows.length} items</span></div>
+  st.innerHTML = `<div class="list-head"><input id="c-search" class="in" type="search" placeholder="Search: 学, xue or study" value="${esc(C.search)}" aria-label="Search"><span class="muted">${rows.length} items</span></div>
     <div class="table-wrap"><table class="wl"><thead><tr><th><span class="sr">Favourite</span></th><th>Chinese</th><th>Pinyin</th><th>English</th><th>Where</th><th><span class="sr">Audio</span></th><th>Your record</th></tr></thead><tbody>
     ${rows.map(v => { const s = S.cards[v.h]; return `<tr><td class="favc">${favBtn(wordFav(v))}</td><td class="hz"><button type="button" class="wl-hz" data-wordopen="${esc(v.h)}" title="Show how it’s written">${esc(v.h)}</button></td><td class="pyc">${colorPy(v.p)}</td><td>${esc(v.e)}</td><td class="muted small">${metaLine(v)}</td><td>${sayBtn(v.h, 'sm')}</td><td class="small"><span class="wdot wb${wBand(v.h)}" title="${W_BAND[wBand(v.h)]}"></span>${s ? `<span class="ok-l">${s.ok}✓</span> <span class="bad-l">${s.bad}✗</span>` : '<span class="muted">—</span>'}</td></tr>`; }).join('')}
     </tbody></table></div>`;
@@ -9490,12 +9492,12 @@ const stAgo = t => { if (!t) return 'Not yet'; const d = Math.floor((Date.now() 
 function stMain() {
   const n = userName(), done = Object.keys(S.learn || {}).length, course = (COURSES.find(c => c[0] === (S.settings.course || 'cc1')) || COURSES[0])[1];
   const unread = msgUnread(), rate = (S.settings && S.settings.rate) || 0.6, favN = Object.keys(S.favs || {}).length;
-  return `<button type="button" class="qs-card st-acct" data-stpage="account">${pandaSvg('happy', 'st-av', '', true)}<span class="qs-l"><b class="st-nm">${n ? esc(n) : 'Add your name'}</b><small>${esc(course)} · ${done} level${done === 1 ? '' : 's'} done</small>
+  return `<button type="button" class="qs-card st-acct" data-stpage="account">${pandaSvg('happy', 'st-av', '', true)}<span class="qs-l"><b class="st-nm">${n ? esc(n) : 'Add your name'}</b><small>${done} level${done === 1 ? '' : 's'} done</small>
       <span class="st-acc-l"><span class="hzf" aria-hidden="true">云</span> <b>My account</b> · <span id="sy-short">${esc(syShort())}</span></span></span><span class="qs-go" aria-hidden="true">›</span></button>
-    <div class="st-tiles">
+    <div class="st-tiles" style="--n:${stInstTile() ? 4 : 3}">
       <button type="button" class="st-tile" data-favs><span class="st-ti" aria-hidden="true">★</span><b>Favourites</b><small>${favN} saved</small></button>
       <button type="button" class="st-tile" data-stpage="progress"><span class="st-ti hzf" aria-hidden="true">存</span><b>Backup</b><small>${SY.st && SY.st.on ? 'Synced' : stAgo(S.lastBackup)}</small></button>
-      <button type="button" class="st-tile" data-stpage="help"><span class="st-ti" aria-hidden="true">?</span><b>Help</b><small>${unread ? `${unread} new` : 'Info, tutorial'}</small>${unread ? `<span class="st-n">${unread}</span>` : ''}</button></div>
+      <button type="button" class="st-tile" data-stpage="help"><span class="st-ti" aria-hidden="true">?</span><b>Help</b><small>${unread ? `${unread} new` : 'Info, tour'}</small>${unread ? `<span class="st-n">${unread}</span>` : ''}</button>${stInstTile()}</div>
     <div class="qs-grp"><h3>Most used</h3>
       ${qsw('listen', !noListenOn(), 'Listening exercises', 'Questions where you listen')}
       ${qsw('pinyin', !!S.settings.pinyin, 'Pinyin under characters', 'In exercises, tests and grammar')}
@@ -9504,6 +9506,11 @@ function stMain() {
       <div class="qs-line"><b>Colours</b>${themeSeg()}</div></div>
     <div class="qs-grp"><h3>More settings</h3><div class="st-cats">${ST_PAGES.filter(p => p[0] !== 'account').map(([k, hz, l, sub]) => stRow(`data-stpage="${k}"`, hz, l, sub, k === 'help' && unread ? `<span class="st-n">${unread}</span>` : '')).join('')}</div></div>
     <p class="qs-ver"><button type="button" class="link" data-notes>Version ${APP_VERSION} beta: what’s new</button><button type="button" class="link" data-about>About</button></p>`;
+}
+// the fourth shortcut: install the app (in the installed app: the voice for offline use, until it is downloaded)
+function stInstTile() {
+  const app = isStandalone(); if (app && (!vdlOk() || S.voiceDl === vdlFiles().length)) return '';
+  return `<button type="button" class="st-tile" data-install><span class="st-ti hzf" aria-hidden="true">${app ? '声' : '装'}</span><b>${app ? 'Offline' : 'Install'}</b><small>${app ? 'Voice' : 'Get the app'}</small></button>`;
 }
 const stRow = (attr, hz, l, sub, extra = '') => `<button type="button" class="qs-card st-cat" ${attr}><span class="st-ci hzf" aria-hidden="true">${hz}</span><span class="qs-l"><b>${l}</b><small>${sub}</small></span>${extra}<span class="qs-go" aria-hidden="true">›</span></button>`;
 // Search in Settings: every setting, with its real switch (it works right there), and the pages that hold the rest
@@ -9577,7 +9584,7 @@ function stPage(k) {
   return `<div class="qs-grp"><div class="qs-more st-rows">
       ${row('data-help', '?', 'Info', 'What is where in the app')}${row('data-tutorial', '看', 'Tutorial', 'The quick tour again')}
       ${msgList().length ? row('data-msgs', '信', 'Messages', 'News and tips from the app', n ? `<span class="st-n">${n}</span>` : '') : ''}${row('data-report', '错', 'Report a mistake', 'Found something wrong? Tell us')}
-      ${isStandalone() ? '' : row('data-install', '装', 'Install the app', 'On your phone it opens like an app')}</div></div>${qsInstallHtml()}`;
+      ${isStandalone() ? '' : row('data-install', '装', 'Install the app', 'On your phone it opens like an app')}</div></div>`;
 }
 // Voice and sound: the same switches and rows as the rest of Settings
 function stVoice() {
@@ -10041,7 +10048,7 @@ function wStatHtml(list) {
   const known = list.filter(v => wKnown(v.h)).length, seen = list.some(v => wLevel(v.h) >= 0);
   return `<div class="w-stat"><div class="w-stat-t"><b class="bn">${known}</b> <span class="box-s">of ${list.length} words known</span>
       <button type="button" class="btn sm" data-wweak="10">Practise my weakest words</button></div>${wBar(list)}
-    ${seen ? '' : '<p class="small muted">Practise a few words and they start to fill in: red is weak, yellow is getting there, dark is known.</p>'}</div>`;
+    ${seen ? '' : '<p class="small muted">Practise a few words and the bar starts to fill in.</p>'}</div>`;
 }
 // questions about one word (Daily practice and “Practise my weakest words”): weak words get the easier kinds
 function wordQ(v) {
