@@ -1787,6 +1787,27 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 .seg.wrap{flex-wrap:wrap}
 .wdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0;background:var(--line);border:1px solid var(--line-2)}
 .wdot.wb1{background:var(--red);border-color:var(--red)}.wdot.wb2{background:var(--muted);border-color:var(--muted)}.wdot.wb3{background:var(--ink);border-color:var(--ink)}
+
+/* 1.1.0 polish: short page names on phones; sheets with a handle */
+.sub-s{display:none}
+@media (max-width:720px){.subtab .st-tx b .sub-l{display:none}.subtab .st-tx b .sub-s{display:inline;font-size:inherit;color:inherit;line-height:inherit}}
+@media (max-width:760px){
+  .modal.sheet:not(.st-full) .modal-box{padding-top:24px;max-height:88vh;overscroll-behavior:contain}
+  .modal.sheet:not(.st-full) .modal-box::before{content:"";position:absolute;top:8px;left:50%;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:var(--line-2)}
+}
+
+.mk-navd>summary{padding:10px 12px;border:1.5px solid var(--line-2);border-radius:var(--r);background:var(--surface);font-weight:700;cursor:pointer;margin:0 0 10px}
+.mk-navd[open]>summary{margin-bottom:6px}
+@media (min-width:721px){.mk-navd>summary{display:none}}
+
+/* 1.1.0 polish: bigger targets for fingers (the look stays the same, the area you can tap grows) */
+@media (pointer:coarse){
+  button.link{padding-block:9px;margin-block:-9px}
+  details.more>summary,.fmore>summary{padding-block:8px;margin-block:-8px}
+  .icon-btn.sm{min-width:40px;min-height:40px}
+  .wl .fav{min-width:40px;min-height:40px}
+  .wl-hz{min-width:44px}
+}
 </style>
 </head>
 <body>
@@ -4965,7 +4986,7 @@ function renderMock(keepScroll) {
   if (!MK.test) return mkMenu();
   const T = MK.test, y = window.scrollY;
   main.innerHTML = `<div id="mk-root">${MK.done ? mkResultHtml() : ''}
-    <nav class="mk-nav" aria-label="Questions">${T.items.map(it => `<button type="button" data-mkgoto="${it.n}" class="${mkState(it)}">${it.n}</button>`).join('')}</nav>
+    <details class="mk-navd"${isNarrow() && !MK.done ? '' : ' open'}><summary>Questions 1–${T.items.length}: jump to one</summary><nav class="mk-nav" aria-label="Questions">${T.items.map(it => `<button type="button" data-mkgoto="${it.n}" class="${mkState(it)}">${it.n}</button>`).join('')}</nav></details>
     ${T.sections.map((s, si) => `${s.part ? `<div class="mk-part">${esc(s.part)}</div>` : ''}<div class="mk-instr"><p>${si < 4 ? LTAG : ''}${esc(s.instr)}</p>${s.fk ? `<div class="favrow">${favBtn(mkFav(s.fk), 'Whole exercise')}</div>` : ''}${s.note ? `<p class="note2">${esc(s.note)}</p>` : ''}${s.para && !s.items.every(x => x.skip) ? `<div class="mk-paraplay">${mkPlayBtn(`data-mkplaysec="${si}"`, 'Play the paragraph (twice)')}${MK.done ? '' : `<button type="button" class="link skip-l" data-mkskipsec="${si}">Can’t listen now</button>`}</div>` : ''}${s.para && MK.done ? `<div class="mk-scr"><span class="hzf">${esc(s.para.p)}</span><br><span class="muted">${esc(s.para.e)}</span></div>` : ''}</div>${s.conv ? `<div class="mk-conv">${s.conv.lines.map(([sp, t]) => `<div>${esc(sp)}：${esc(t)}</div>`).join('')}</div>` : ''}${s.skipAll ? '<p class="mk-skipnote">Skipped: “No listening exercises” is switched on in Settings. These questions don’t count.</p>' : s.items.length > 1 && s.items.every(x => x.skip) && s.para ? '<p class="mk-skipnote">Skipped because you couldn’t listen. These questions don’t count.</p>' : s.items.map(mkItem).join('')}`).join('')}
     <div class="mk-bar" id="mk-bar">${mkBarHtml()}</div></div>`;
   mkUpdateCount(); if (MK.timerId) mkTick();
@@ -4996,7 +5017,7 @@ document.addEventListener('click', e => {
   if (d.mktmin !== undefined) { MK.timerMin = +d.mktmin; return renderMock(); }
   if (d.mkplay) { const it = MK.test.items.find(x => x.n === +d.mkplay); if (!it) return; if (it.type === 'lmc') playSeq([{ t: it.s, gap: 1500 }, { t: it.s, gap: 1500 }, { t: it.q, gap: 0 }], t); else { const w = it.type === 'pyt' ? it.h : it.say; playSeq([{ t: w, gap: 1300 }, { t: w, gap: 0 }], t); } return; }
   if (d.mkplaysec !== undefined) { const s = MK.test.sections[+d.mkplaysec]; return playSeq([{ t: s.para.p, gap: 2500 }, { t: s.para.p, gap: 0 }], t); }
-  if (d.mkgoto) { const el = $('#mkq' + d.mkgoto); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  if (d.mkgoto) { const dd = t.closest('details'); if (dd && isNarrow()) dd.open = false; const el = $('#mkq' + d.mkgoto); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
   if (d.mkn !== undefined && t.classList.contains('mk-opt')) { if (MK.done) return; MK.ans[+d.mkn] = +d.mko; $$(`.mk-opt[data-mkn="${d.mkn}"]`).forEach(b => b.classList.toggle('sel', b === t)); return mkUpdateCount(); }
   if (d.mkself) { MK.self[+d.mkself] = +d.mkv; mkSaveAttempt(); return renderMock(true); }
   if (d.mkact) {
@@ -6867,7 +6888,7 @@ document.addEventListener('click', e => {
   if (t.dataset.zistart) { const v = t.dataset.zistart; return lStart('zi-weak', ziWeakLevel(v === 'all' ? 10 : +v, v === 'all')); }
   if (t.dataset.zinext !== undefined && LN.lv && LN.lv.virtual) { const o = LN.lv; return lStart('zi-weak', ziWeakLevel(o.ziSize, o.ziMaster, o.zi)); }
   if (t.dataset.ziagain !== undefined && LN.lv && LN.lv.virtual) return lStart('zi-weak', { ...LN.lv });
-  if (t.dataset.zipick) { const d = $('#zi-detail'); if (!d) return; d.innerHTML = ziDetail(t.dataset.zipick); d.hidden = false; $$('.zi-m').forEach(b => b.classList.toggle('sel', b === t)); d.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
+  if (t.dataset.zipick) return openZiModal(t.dataset.zipick);   // a window (from below on phones): the grid stays where it is
   if (t.classList.contains('ln-wb') || t.classList.contains('ln-li')) t.classList.add('rev');
 });
 
@@ -6894,13 +6915,14 @@ const st3 = n => `<span class="st3" aria-hidden="true">${[1, 2, 3].map(k => `<i 
 // the level's number in its unit (1, 2, 3 …) and the stars of a unit
 const lvNo = lv => LEVELS.filter(l => l.unit === lv.unit).indexOf(lv) + 1;
 const unitStars = u => LEVELS.filter(l => l.unit === u).reduce((s, l) => s + (((S.learn || {})[l.id] || {}).stars || 0), 0);
-const stampsSm = n => `<span class="stamps sm" role="img" aria-label="${n} of 3 stamps">${[1, 2, 3].map(k => `<span class="stamp hzf${k <= n ? '' : ' off'}">好</span>`).join('')}</span>`;
+const stampsSm = n => `<span class="stamps sm" role="img" aria-label="${n} of 3 stars">${[1, 2, 3].map(k => `<span class="stamp hzf${k <= n ? '' : ' off'}">好</span>`).join('')}</span>`;
 // the streak, next to the greeting (and in the top bar on phones)
 function streakHtml() {
   const st = dailyState(); if (!st.streak) return '';
   return `<button type="button" class="streak${st.doneToday ? ' done' : ''}" data-view="learn" title="Daily practice: ${st.streak} day${st.streak === 1 ? '' : 's'} in a row${st.doneToday ? '' : '. Not done yet today'}"><b data-cnt="streak">${st.streak}</b><span>day${st.streak === 1 ? '' : 's'}<em> in a row</em></span></button>`;
 }
-function lPath() {
+// into: draw the page into another element (a unit's part for a swipe), without the effects on the page
+function lPath(into) {
   LN.phase = 'path'; setLesson(false);
   const prog = S.learn || {}, us = lUnits(), u = lCurUnit(), lvs = LEVELS.filter(l => l.unit === u), rec = lRec();
   const next = lvs.find(l => !prog[l.id]) || null, h = next || rec || lvs[lvs.length - 1], hk = LEVELS.filter(l => l.unit === h.unit);
@@ -6916,9 +6938,9 @@ function lPath() {
     const row = Math.floor(k / 5), col = row % 2 ? 4 - k % 5 : k % 5;
     const pos = cute ? `grid-row:${row + 1};grid-column:${col + 1};` : '', ud = cute ? (col % 2 ? ' dn' : ' up') : '';
     const fr = LN.justDone === lv.id && st ? ' fresh' : '', nf = LN.justDone && cls === 'next' ? ' nfresh' : '';
-    return `<button type="button" class="tl ${cls}${lv.zi ? ' zi' : ''}${ud}${fr}${nf}" style="animation-delay:${k * 22}ms;${pos}" data-lopen="${lv.id}" aria-label="Level ${k + 1}: ${esc(lv.title)}${st ? `, done, ${stars} of 3 stamps` : lv === h ? ', next up' : ''}">${cute && cls === 'next' ? `<span class="tl-pd" aria-hidden="true">${pandaSvg('yay', '', '', true)}</span>` : ''}<span class="hzf" aria-hidden="true">${esc(lv.icon)}${lv.zi ? '<span class="tl-zb">字</span>' : ''}<span class="tl-nc">${k + 1}</span></span><span class="tl-st" aria-hidden="true">${st ? st3(stars) : ''}</span><b><span class="tl-no">${k + 1}</span>${esc(lv.title)}</b><small>${st ? st3(stars) + 'Done' : lv === h ? 'Next up' : lv.zi ? 'Characters' : lv.checkpoint ? 'Checkpoint' : 'New'}</small><i class="tl-s" aria-hidden="true"><span class="tl-no">${k + 1}</span>${esc(lvShort(lv))}</i></button>`;
+    return `<button type="button" class="tl ${cls}${lv.zi ? ' zi' : ''}${ud}${fr}${nf}" style="animation-delay:${k * 22}ms;${pos}" data-lopen="${lv.id}" aria-label="Level ${k + 1}: ${esc(lv.title)}${st ? `, done, ${stars} of 3 stars` : lv === h ? ', next up' : ''}">${cute && cls === 'next' ? `<span class="tl-pd" aria-hidden="true">${pandaSvg('yay', '', '', true)}</span>` : ''}<span class="hzf" aria-hidden="true">${esc(lv.icon)}${lv.zi ? '<span class="tl-zb">字</span>' : ''}<span class="tl-nc">${k + 1}</span></span><span class="tl-st" aria-hidden="true">${st ? st3(stars) : ''}</span><b><span class="tl-no">${k + 1}</span>${esc(lv.title)}</b><small>${st ? st3(stars) + 'Done' : lv === h ? 'Next up' : lv.zi ? 'Characters' : lv.checkpoint ? 'Checkpoint' : 'New'}</small><i class="tl-s" aria-hidden="true"><span class="tl-no">${k + 1}</span>${esc(lvShort(lv))}</i></button>`;
   }).join('');
-  main.innerHTML = `<div class="lp-top"><div class="lp-hi"><div class="cap">Contemporary Chinese 1</div><h1><span class="hzf">你好</span>${n ? `<span class="lp-c">, </span><span class="lp-nm">${esc(n)}</span>` : ''}</h1></div>
+  (into || main).innerHTML = `<div class="lp-top"><div class="lp-hi"><div class="cap">Contemporary Chinese 1</div><h1><span class="hzf">你好</span>${n ? `<span class="lp-c">, </span><span class="lp-nm">${esc(n)}</span>` : ''}</h1></div>
       <div class="lp-tr">${streakHtml()}${unitMenu('l', `Unit ${u}`, us.map(x => { const ls = LEVELS.filter(l => l.unit === x), dn = ls.filter(l => prog[l.id]).length; return { label: `Unit ${x}`, sub: `${esc(LUNITS[x] || '')} · ${dn}/${ls.length} · ★ ${unitStars(x)}`, on: x === u, attrs: `data-lunit="${x}"` }; }), { right: true })}${msgBtnHtml('only-m')}<button type="button" class="ico only-m" data-search aria-label="Search" title="Search">${IC.search}</button><button type="button" class="ico line only-m" data-qs aria-label="Settings" title="Settings">${IC.set}</button></div></div>
     <div class="lp-cols"><div class="lp-a">
       ${!n && !S.nameAsked ? `<div class="nm-card"><label for="nm-learn"><b>What should the panda call you?</b> <span class="muted small">It’s only saved in this browser.</span></label><div class="nm-row">${nameInput('nm-learn')}<button type="button" class="btn primary sm" data-nmsave="nm-learn">Save</button><button type="button" class="link" data-nmskip>No thanks</button></div></div>` : ''}
@@ -6928,7 +6950,7 @@ function lPath() {
         <button type="button" class="btn primary big" data-lstart="${h.id}">${prog[h.id] ? 'Play again' : beginWord()}</button></div></section>
       ${howto('learn', `<p>Each level has two parts. First you <b>learn</b>: a few cards show new sounds, characters or a rule, with audio and stroke animations. Then a short <b>quiz</b> checks what you just learned, plus a couple of questions from earlier levels so you don’t forget. Mistakes come back at the end of the quiz.</p>
       <p>Questions marked ${LTAG} need sound; you can skip them with “Can’t listen now”, or hide them all in Settings.</p>
-      <p>You get up to three 好 stamps: three if at least 90% is right the first time, two from 70%. On the map they show as ★ under each level, and every level has its number. All levels are open: ${tileWords()} are done, ${isPink() ? 'the bright pink one' : isCute() ? 'the green one' : 'the red one'} is the recommended next level, and ${isPink() ? 'bubbles' : isCute() ? 'coins' : 'tiles'} with a dashed line and a little 字 practise characters. Want more practice? The other tabs follow your textbook more closely.</p>`)}
+      <p>You get up to three stars (the 好 seals at the end of a level): three if at least 90% is right the first time, two from 70%. On the map they show as ★ under each level, and every level has its number. All levels are open: ${tileWords()} are done, ${isPink() ? 'the bright pink one' : isCute() ? 'the green one' : 'the red one'} is the recommended next level, and ${isPink() ? 'bubbles' : isCute() ? 'coins' : 'tiles'} with a dashed line and a little 字 practise characters. Want more practice? The other tabs follow your textbook more closely.</p>`)}
       <section class="lp-grid"><div class="lp-gh"><div class="cap">Unit ${u} · ${esc(LUNITS[u] || '')}</div><span class="lp-stars" title="Stars in this unit"><span aria-hidden="true">★</span> ${unitStars(u)}<span class="muted"> / ${lvs.length * 3}</span><span class="sr-only"> stars</span></span>${howBtn('learn')}</div>
         <div class="grid" id="lp-grid">${tiles}</div>
         <p class="lp-end">${(() => { const cp = lvs.find(l => l.checkpoint), dn = lvs.filter(l => prog[l.id]).length; return (cp && dn < lvs.length - 1 ? `<button type="button" class="link" data-lknow="${u}">Already know Unit ${u}? Take the checkpoint</button>` : '') + (dn === lvs.length ? `<button type="button" class="link" data-share="diploma" data-unit="${u}">Your Unit ${u} diploma</button>` : ''); })()}${nextU !== undefined ? `<button type="button" class="link" data-lunit="${nextU}">Unit ${nextU} →</button>` : '<span>More units are coming. <span class="hzf">敬请期待</span> jìng qǐng qīdài: stay tuned!</span>'}</p></section>
@@ -6936,17 +6958,39 @@ function lPath() {
       ${dailyCardHtml()}
       <section class="box zi-box2"><div class="cap">Your characters</div>
         <div><b class="bn" data-cnt="known">${known}</b> <span class="box-s">of ${all.length} known</span></div>${ziBar(all)}
-        <p class="box-s">${doneN} level${doneN === 1 ? '' : 's'} done · ${starsN} stamp${starsN === 1 ? '' : 's'}</p>
+        <p class="box-s">${doneN} level${doneN === 1 ? '' : 's'} done · ${starsN} star${starsN === 1 ? '' : 's'}</p>
         ${weakN && seenZi ? `<button type="button" class="link" data-zistart="10">Practise ${weakN === 1 ? 'your weak character' : `your ${weakN} weak characters`}</button>` : seenZi ? '<button type="button" class="link" data-zistart="10">Practise my weakest characters</button>' : ''}
         <button type="button" class="link" data-zimine>See all characters</button><button type="button" class="link" data-share="learn">Share my progress</button></section>
       <section class="box run-box"><div class="cap">Panda Run</div><p class="box-t">${top ? `Best score ${b[top.id]}` : 'Run through the right wall'}</p><p class="box-s">${top ? esc(top.label) : 'A game with your characters.'}</p><button type="button" class="btn" data-railrun>Play</button></section>
     </div></div>`;
+  if (into) return;
   if (cute) trackWatch();
   lpFitName(); lpHeroFix();
   const hb = $('#lp-hero .bigz'); if (hb && HERO_INK !== h.id + styleOf()) { HERO_INK = h.id + styleOf(); hb.classList.remove('wipe'); inkWrite(hb, { delay: 350 }); }
   LN.justDone = null; countUp();
 }
-function lJump(u) { LN.unit = +u; S.lunit = +u; save(); lPath(); }
+// another unit from the unit menu or "Unit 5 →": its levels slide in like a swipe
+function lJump(u) {
+  u = +u; const cur = $('section.lp-grid'), old = lCurUnit(), us = lUnits();
+  if (u === old) return;
+  if (!cur || matchMedia('(prefers-reduced-motion: reduce)').matches || SW.anim) return lSwap(u);
+  const dir = us.indexOf(u) > us.indexOf(old) ? 1 : -1, P = swPart(cur, u, dir);
+  SW.anim = true; swPos(P.cur, -dir * P.W, 300); swPos(P.g, 0, 300); P.setH(P.hN, 300);
+  setTimeout(() => { P.g.remove(); SW.anim = false; lSwap(u); }, 320);
+}
+// show another unit: only its part, the "Next lesson" card and the unit menu change; the rest of the page stays as it is
+function lSwap(u) {
+  const ha = $('#lp-hero'), oh = ha ? ha.offsetHeight : 0;
+  LN.unit = u; S.lunit = u; save(); LN.justDone = null;
+  const tmp = document.createElement('div'); lPath(tmp);
+  ['section.lp-grid', '.lp-tr'].forEach(s => { const a = $(s, main), b = $(s, tmp); if (a && b) a.replaceWith(b); });
+  const hb = $('#lp-hero', tmp);
+  if (ha && hb && ha.innerHTML !== hb.innerHTML) {
+    ha.innerHTML = hb.innerHTML; swSmooth(ha, oh);
+    const z = $('.bigz', ha), id = ($('[data-lstart]', ha) || {}).dataset; if (z && id && HERO_INK !== id.lstart + styleOf()) { HERO_INK = id.lstart + styleOf(); z.classList.remove('wipe'); inkWrite(z, { delay: 350 }); }
+  }
+  if (isCute()) { trackDraw(); trackWatch(); }
+}
 const beginWord = () => isCute() ? 'Let’s go!' : 'Begin';
 const tileWords = () => isPink() ? 'pink bubbles' : isCute() ? 'gold coins' : 'filled tiles';
 // short titles under the tiles on phones (1–2 words); the id stays the key
@@ -6963,13 +7007,13 @@ const lvShort = lv => lv.short || LV_SHORT[lv.id] || (lv.zi ? '字' : lv.checkpo
 let TRK_RO = null;
 function trackWatch() {
   const g = $('#lp-grid'); if (!g) return;
-  if (!TRK_RO && window.ResizeObserver) TRK_RO = new ResizeObserver(() => requestAnimationFrame(trackDraw));
+  if (!TRK_RO && window.ResizeObserver) TRK_RO = new ResizeObserver(() => requestAnimationFrame(() => trackDraw()));
   if (TRK_RO) { TRK_RO.disconnect(); TRK_RO.observe(g); }
-  requestAnimationFrame(trackDraw);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => requestAnimationFrame(trackDraw));
+  requestAnimationFrame(() => trackDraw());
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => requestAnimationFrame(() => trackDraw()));
 }
-function trackDraw() {
-  const g = $('#lp-grid'); if (!g) return;
+function trackDraw(g0) {
+  const g = g0 || $('#lp-grid'); if (!g) return;
   const old = $('.trk', g); if (old) old.remove();
   if (!isCute()) return;
   const rows = {};
@@ -7230,7 +7274,7 @@ function lDone() {
   if (lv.daily) { main.innerHTML = dailyDoneHtml(r); return; }
   main.innerHTML = `${lnTop('<div class="segs" aria-hidden="true"><i class="d"></i></div>')}
     <div class="ln-body"><section class="ln-done ${band} ln-res">${pandaSvg(band, r.pct >= 70 ? 'hop' : '')}
-      <div class="stamps" role="img" aria-label="${r.stars} of 3 stamps">${[0, 1, 2].map(k => `<span class="stamp hzf${k < r.stars ? '' : ' off'}" style="--i:${k}">好</span>`).join('')}</div>
+      <div class="stamps" role="img" aria-label="${r.stars} of 3 stars">${[0, 1, 2].map(k => `<span class="stamp hzf${k < r.stars ? '' : ' off'}" style="--i:${k}">好</span>`).join('')}</div>
       <h1>${lv.virtual ? 'Round complete' : 'Level complete'}</h1>
       <div class="qc-pct">${r.pct}%</div><p class="qc-msg">${esc(MSG[band])}</p>${r.placed > 0 ? `<p><b>You know Unit ${lv.unit}!</b> Its other ${r.placed} level${r.placed === 1 ? ' is' : 's are'} marked as done.</p>` : r.placed === -1 ? `<p><b>Not yet: you need 80%.</b> Start with the first level of Unit ${lv.unit}, or try again later.</p>` : ''}${r.diploma !== undefined ? `<div class="dip-card"><span class="hzf dip-seal" aria-hidden="true">好</span><div><b>Unit ${r.diploma} complete!</b><br><span class="small muted">Here’s your diploma to keep or share.</span></div><button type="button" class="btn primary" data-share="diploma" data-unit="${r.diploma}">Get my diploma</button></div>` : ''}
       <p class="muted">${r.right} of ${r.count} right the first time in “${esc(lv.title)}”.</p>
@@ -7338,7 +7382,7 @@ function openWord(h) {
   const v = VOCAB.find(x => x.h === h) || ([...h].length === 1 && CHARINFO[h] ? { h, p: CHARINFO[h].p, e: CHARINFO[h].m } : null); if (!v) return;
   const chars = [...h].filter(c => STROKES[c]);
   const m = $('#modal');
-  m.innerHTML = `<div class="modal-box" role="dialog" aria-modal="true" aria-label="${esc(h)}">
+  m.innerHTML = `<div class="modal-box wm-modal" role="dialog" aria-modal="true" aria-label="${esc(h)}">
     <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
     <div class="wm-head"><span class="wm-hz hzf">${esc(h)}</span>${sayBtn(h)}${favBtn(wordFav(v))}</div>
     <div class="big-py">${colorPy(v.p)}</div><div class="mean">${esc(v.e)}</div>
@@ -7400,6 +7444,8 @@ const PAGE_INFO = {
   characters: ['词', 'Flashcards and word quizzes'], mychars: ['字', 'How well you know each one'], writing: ['写', 'Stroke order, step by step'], favourites: ['藏', 'Words and tasks you saved'],
   test: ['测', 'Harder, exam-style questions'], mock: ['模', '50 questions like the midterm']
 };
+// phones: short names, so the page buttons stay on one line
+const SUB_SHORT = { challenge: 'Challenge', exercises: 'Book', mistakes: 'Mistakes' };
 const secOf = v => SECTIONS.find(s => s.pages.some(p => p[0] === v));
 /* ----- phones: swipe left or right on a page to go to the next or previous page of its section (Quick challenge ↔ Grammar …);
    on Learn, over the levels, to the next or previous unit. Never during a lesson, exercise, test or game, nor on things that scroll sideways or are drawn on. ----- */
@@ -7420,11 +7466,7 @@ function swTarget(dir) {
     if (!SW.el.closest('section.lp-grid')) return null;
     const us = lUnits(), old = lCurUnit(), n = us[us.indexOf(old) + dir]; if (n === undefined) return null;
     return { part: true,
-      build: () => {   // the other unit's part, made off-screen (the page itself stays as it is)
-        const keep = document.createDocumentFragment(); while (main.firstChild) keep.appendChild(main.firstChild);
-        LN.unit = n; lPath(); const s = $('section.lp-grid', main); main.textContent = ''; main.appendChild(keep); LN.unit = old; return s;
-      },
-      commit: () => { const oh = ($('#lp-hero') || {}).offsetHeight; LN.unit = n; S.lunit = n; save(); lPath(); swSmooth($('#lp-hero'), oh); } };
+      unit: n, commit: () => lSwap(n) };
   }
   const sec = secOf(view); if (!sec || sec.pages.length < 2) return null;
   const p = sec.pages[sec.pages.findIndex(x => x[0] === view) + dir]; if (!p) return null;
@@ -7440,6 +7482,22 @@ function swSmooth(el, oh) {
   s.transition = 'height .28s ease, opacity .28s ease'; if (nh !== oh) s.height = nh + 'px'; s.opacity = '1';
   setTimeout(() => { s.transition = ''; s.height = ''; s.overflow = ''; s.opacity = ''; }, 320);
 }
+// a unit's part for a swipe: the other unit is made off-screen and placed next to this one; while it slides, the height of
+// the place goes from this unit's to the other's, so what is below moves along with the finger instead of jumping at the end
+function swPart(cur, u, dir) {
+  const r = cur.getBoundingClientRect(), tmp = document.createElement('div'), old = LN.unit;
+  LN.unit = u; lPath(tmp); LN.unit = old;
+  const nx = $('section.lp-grid', tmp); nx.querySelectorAll('[id]').forEach(x => x.removeAttribute('id'));
+  const g = document.createElement(main.tagName); g.className = main.className + ' sw-ghost sw-part';
+  Object.assign(g.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', margin: '0', padding: '0' });
+  g.appendChild(nx); document.body.appendChild(g);
+  if (isCute()) trackDraw($('.grid', g));
+  const hC = r.height, hN = nx.getBoundingClientRect().height, clip = 'inset(-60px -40px 0 -40px)';
+  [cur, g].forEach(e => { e.style.clipPath = clip; e.style.overflow = 'visible'; });
+  const setH = (h, ms) => [cur, g].forEach(e => { e.style.height = Math.round(h) + 'px'; if (ms !== undefined) e.style.transition = `transform ${ms}ms cubic-bezier(.2,.7,.2,1), height ${ms}ms cubic-bezier(.2,.7,.2,1)`; });
+  const reset = () => { ['height', 'clipPath', 'overflow', 'transition', 'transform'].forEach(k => { cur.style[k] = ''; }); };
+  return { cur, g, hC, hN, W: r.width + 24, setH, reset };
+}
 const swPos = (el, x, ms) => { el.style.transition = ms ? `transform ${ms}ms cubic-bezier(.2,.7,.2,1)` : 'none'; el.style.transform = x ? `translateX(${x}px)` : ''; };
 function swStart(dir) {
   SW.dir = dir; SW.W = main.getBoundingClientRect().width + 24;
@@ -7448,13 +7506,9 @@ function swStart(dir) {
   if (!tg) { SW.st = 3; SW.cur = view === 'learn' ? SW.el.closest('section.lp-grid') || main : main; return; }   // nothing on that side: it only gives a little
   if (tg.part) {
     main.classList.add('sw-noanim');
-    const cur = SW.el.closest('section.lp-grid'), r = cur.getBoundingClientRect(), nx = tg.build();
-    nx.querySelectorAll('[id]').forEach(x => x.removeAttribute('id'));
-    const g = document.createElement(main.tagName); g.className = main.className + ' sw-ghost sw-part';
-    Object.assign(g.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', margin: '0', padding: '0' });
-    g.appendChild(nx); document.body.appendChild(g);
-    Object.assign(SW, { ghost: g, cur, W: r.width + 24, tg, st: 4 });
-    swPos(cur, SW.dx); swPos(g, SW.dir * SW.W + SW.dx);
+    const P = swPart(SW.el.closest('section.lp-grid'), tg.unit, SW.dir);
+    Object.assign(SW, { ghost: P.g, cur: P.cur, W: P.W, tg, st: 4, P });
+    swPos(P.cur, SW.dx); swPos(P.g, SW.dir * SW.W + SW.dx);
     return;
   }
   SW.cur = main;
@@ -7476,8 +7530,8 @@ function swEnd(cancelled) {
   if (st === 4) {
     const c = SW.cur, ok = !cancelled && (Math.abs(SW.dx) > SW.W * 0.18 || (Math.abs(SW.vx) > 0.35 && Math.abs(SW.dx) > 24 && Math.sign(SW.vx) === -SW.dir)) && Math.sign(SW.dx) === -SW.dir;
     SW.anim = true;
-    swPos(c, ok ? -SW.dir * SW.W : 0, 230); swPos(g, ok ? 0 : SW.dir * SW.W, 230);
-    setTimeout(() => { if (ok) { SW.tg.commit(); buzz(8); } else { swPos(c, 0); c.style.transition = ''; } g.remove(); SW.ghost = null; done(); }, 250);
+    swPos(c, ok ? -SW.dir * SW.W : 0, 230); swPos(g, ok ? 0 : SW.dir * SW.W, 230); SW.P.setH(ok ? SW.P.hN : SW.P.hC, 230);
+    setTimeout(() => { if (ok) { SW.tg.commit(); buzz(8); } else { swPos(c, 0); SW.P.reset(); } g.remove(); SW.ghost = null; done(); }, 250);
     return;
   }
   const go = !cancelled && (Math.abs(SW.dx) > SW.W * 0.18 || (Math.abs(SW.vx) > 0.35 && Math.abs(SW.dx) > 24 && Math.sign(SW.vx) === -SW.dir)) && Math.sign(SW.dx) === -SW.dir;
@@ -7507,7 +7561,7 @@ document.addEventListener('touchmove', e => {
   // only towards the side it started; the other way it stops at the start
   SW.dx = SW.dir > 0 ? Math.min(0, dx) : Math.max(0, dx);
   if (SW.st === 3) { swPos(SW.cur, SW.dx * 0.25); return; }
-  if (SW.st === 4) { swPos(SW.cur, SW.dx); swPos(SW.ghost, SW.dir * SW.W + SW.dx); return; }
+  if (SW.st === 4) { swPos(SW.cur, SW.dx); swPos(SW.ghost, SW.dir * SW.W + SW.dx); const P = SW.P, k = Math.min(1, Math.abs(SW.dx) / SW.W); P.setH(P.hC + (P.hN - P.hC) * k); return; }
   swPos(SW.ghost, SW.dx); swPos(main, SW.dir * SW.W + SW.dx);
 }, { passive: false });
 document.addEventListener('touchend', () => swEnd(false), { passive: true });
@@ -7538,7 +7592,7 @@ function renderNav() {
   if (sub) {
     if (sec && sec.pages.length > 1) {
       sub.hidden = false; sub.style.setProperty('--sub-n', sec.pages.length);
-      sub.innerHTML = sec.pages.map(([v, l]) => { const [hz, line] = PAGE_INFO[v] || ['', '']; return `<button type="button" class="subtab" data-view="${v}" aria-current="${v === view ? 'page' : 'false'}"><span class="st-hz" aria-hidden="true">${hz}</span><span class="st-tx"><b>${esc(l)}</b><span>${esc(line)}</span></span></button>`; }).join('');
+      sub.innerHTML = sec.pages.map(([v, l]) => { const [hz, line] = PAGE_INFO[v] || ['', '']; return `<button type="button" class="subtab" data-view="${v}" aria-current="${v === view ? 'page' : 'false'}"><span class="st-hz" aria-hidden="true">${hz}</span><span class="st-tx"><b>${SUB_SHORT[v] ? `<span class="sub-l">${esc(l)}</span><span class="sub-s">${SUB_SHORT[v]}</span>` : esc(l)}</b><span>${esc(line)}</span></span></button>`; }).join('');
     }
     else { sub.hidden = true; sub.innerHTML = ''; }
   }
@@ -7987,7 +8041,7 @@ async function drawShare(D, noPanda) {
     txt(name || 'I’m', 72, 318, fit(name || 'I’m', 560, 68, 700), INK, 700);
     txt(name ? 'is learning Chinese' : 'learning Chinese', 72, 372, 36, MUTE, 500);
     txt(String(D.done), 72, 540, 150, INK, 900, 'left', HZ); const dw = g.measureText(String(D.done)).width;
-    txt(`level${D.done === 1 ? '' : 's'} done`, 72 + dw + 22, 506, 36, INK, 700); txt(`${D.stars} 好 stamp${D.stars === 1 ? '' : 's'}`, 72 + dw + 22, 548, 30, MUTE, 500);
+    txt(`level${D.done === 1 ? '' : 's'} done`, 72 + dw + 22, 506, 36, INK, 700); txt(`${D.stars} star${D.stars === 1 ? '' : 's'}`, 72 + dw + 22, 548, 30, MUTE, 500);
     if (panda) g.drawImage(panda, 680, 232, 320, 320);
     const n = D.units.length, rowH = Math.min(118, 440 / Math.max(1, n)), y0 = 640, bx = 250, bw = 600;
     D.units.forEach((u, i) => {
@@ -8021,7 +8075,7 @@ async function drawShare(D, noPanda) {
     txt(name ? 'has completed' : 'have completed', W / 2, 590, 34, MUTE, 500, 'center');
     txt(`Unit ${D.unit}: ${D.uname}`, W / 2, 672, fit(`Unit ${D.unit}: ${D.uname}`, 860, 56, 700), RED, 700, 'center');
     txt('of Contemporary Chinese 1 in Panda Chinese', W / 2, 728, 30, MUTE, 500, 'center');
-    txt(`${D.stamps} of ${D.max} 好 stamps`, W / 2, 790, 32, INK, 700, 'center');
+    txt(`${D.stamps} of ${D.max} stars`, W / 2, 790, 32, INK, 700, 'center');
     if (panda) g.drawImage(panda, 120, 820, 200, 200);
     g.save(); g.translate(W - 230, 920); g.rotate(-0.12); g.strokeStyle = RED; g.lineWidth = 8; rr(-80, -80, 160, 160, 16); g.stroke(); txt('好', 0, 44, 120, RED, 900, 'center', HZ); g.restore();
   } else {
@@ -8071,7 +8125,7 @@ async function drawShareCute(D, noPanda) {
     txt(name || 'I’m', cx, 316, fit(name || 'I’m', 820, 64, 900), INK, 900, 'center');
     txt(name ? 'is learning Chinese' : 'learning Chinese', cx, 368, 36, MUTE, 700, 'center');
     coin(cx, 520, 112, String(D.done));
-    txt(`level${D.done === 1 ? '' : 's'} done · ${D.stars} 好 stamp${D.stars === 1 ? '' : 's'}`, cx, 696, 36, INK, 800, 'center');
+    txt(`level${D.done === 1 ? '' : 's'} done · ${D.stars} star${D.stars === 1 ? '' : 's'}`, cx, 696, 36, INK, 800, 'center');
     const n = D.units.length, rowH = Math.min(52, 290 / Math.max(1, n)), y0 = 740, bx = 290, bw = 520;
     D.units.forEach((u, i) => {
       const y = y0 + i * rowH, bh = Math.min(22, rowH - 16);
@@ -8101,7 +8155,7 @@ async function drawShareCute(D, noPanda) {
     coin(cx, 640, 92, String(D.unit));
     txt(`Unit ${D.unit}: ${D.uname}`, cx, 800, fit(`Unit ${D.unit}: ${D.uname}`, 820, 46, 900), GREEN, 900, 'center');
     txt('of Contemporary Chinese 1 in Panda Chinese', cx, 852, 28, MUTE, 700, 'center');
-    txt(`${D.stamps} of ${D.max} 好 stamps`, cx, 910, 32, INK, 800, 'center');
+    txt(`${D.stamps} of ${D.max} stars`, cx, 910, 32, INK, 800, 'center');
   } else {
     const who = name ? `${name} scored` : 'I scored';
     txt(who, cx, 310, fit(who, 820, 50, 800), MUTE, 800, 'center');
@@ -8299,7 +8353,7 @@ function renderMistakes() {
 }
 function openZiModal(c) {
   const m = $('#modal'); m.classList.remove('sheet');
-  m.innerHTML = `<div class="modal-box help-box zi-modal" role="dialog" aria-modal="true" aria-label="${esc(c)}"><button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button><div class="zi-detail">${ziDetail(c)}</div><div class="card-actions"><button type="button" class="btn" data-zimine>All characters</button></div></div>`;
+  m.innerHTML = `<div class="modal-box help-box zi-modal" role="dialog" aria-modal="true" aria-label="${esc(c)}"><button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button><div class="zi-detail">${ziDetail(c)}</div>${view === 'mychars' ? '' : '<div class="card-actions"><button type="button" class="btn" data-zimine>All characters</button></div>'}</div>`;
   m.hidden = false; document.body.classList.add('modal-open');
 }
 document.addEventListener('click', e => {
@@ -10291,6 +10345,34 @@ function wlFilterHtml(L) {
   return `<div class="filters"><div class="frow wl-on"><span class="flabel">List</span><button type="button" class="chip" aria-pressed="true" data-wlopen>${esc(L.n)} · ${L.w.length}</button><button type="button" class="link" data-wloff>Show all words</button></div>
     <div class="frow"><span class="flabel">Only</span>${chip('Words I missed', C.weak, 'data-cf="weak"')}</div></div>`;
 }
+
+/* ----- phones: small windows come up from below (a sheet) and close by pulling them down; Settings stays full screen ----- */
+const SHEET_BOX = ['lo-box', 'zi-modal', 'wm-modal', 'sh-box', 'rp-box', 'pr-box', 'wl-box', 'gm-sh'];
+new MutationObserver(() => {
+  const m = $('#modal'); if (m.hidden || !isNarrow()) return;
+  const b = $('.modal-box', m); if (b && SHEET_BOX.some(c => b.classList.contains(c))) m.classList.add('sheet');
+}).observe($('#modal'), { childList: true, attributes: true, attributeFilter: ['hidden'] });
+const SD = { y: 0, dy: 0, t: 0, box: null, on: false };
+document.addEventListener('touchstart', e => {
+  const m = $('#modal'), box = e.target.closest && e.target.closest('.modal.sheet:not(.st-full) .modal-box');
+  SD.box = null; if (!box || m.hidden || e.touches.length !== 1) return;
+  if (e.target.closest('input,textarea,select,canvas,svg.hw-svg,.hw,.w-box,#wl-pick')) return;
+  if (box.scrollTop > 0) return;
+  Object.assign(SD, { box, y: e.touches[0].clientY, dy: 0, t: Date.now(), on: false });
+}, { passive: true });
+document.addEventListener('touchmove', e => {
+  if (!SD.box) return; const dy = e.touches[0].clientY - SD.y;
+  if (!SD.on) { if (dy < 8) { if (dy < -4) SD.box = null; return; } SD.on = true; SD.box.style.transition = 'none'; }
+  SD.dy = Math.max(0, dy); SD.box.style.transform = `translateY(${SD.dy}px)`; e.preventDefault();
+}, { passive: false });
+document.addEventListener('touchend', () => {
+  const b = SD.box; SD.box = null; if (!b || !SD.on) return;
+  const fast = SD.dy / Math.max(1, Date.now() - SD.t) > 0.5;
+  if (SD.dy > Math.min(140, b.offsetHeight * 0.3) || (fast && SD.dy > 40)) {
+    b.style.transition = 'transform .2s ease-in'; b.style.transform = `translateY(${b.offsetHeight}px)`;
+    setTimeout(() => { b.style.transform = ''; b.style.transition = ''; closeModal(); }, 190);
+  } else { b.style.transition = 'transform .2s cubic-bezier(.2,.8,.2,1)'; b.style.transform = ''; setTimeout(() => { b.style.transition = ''; }, 220); }
+}, { passive: true });
 
 renderVoice();
 let rT; window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { if (view === 'writing') { const b = $('#w-box'); if (b && Math.abs(b.clientWidth - W.size) > 8 && W.mode !== 'free') mountWriter(); } }, 200); });
