@@ -8,10 +8,9 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="robots" content="noindex, nofollow">
-<meta name="apple-mobile-web-app-title" content="Panda TEST">
+<meta name="apple-mobile-web-app-title" content="Panda 中文">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>TEST · Panda Chinese: learn Chinese step by step</title>
+<title>Panda Chinese: learn Chinese step by step</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&family=Noto+Serif+SC:wght@500;700;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
@@ -1826,7 +1825,7 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 
 .lp-carw{position:relative}
 .lp-arr{display:none}
-@media (min-width:721px){
+@media (min-width:761px){
   .lp-arr{display:grid;place-items:center;position:absolute;top:calc(50% + 6px);z-index:2;width:38px;height:38px;margin-top:-19px;border-radius:50%;border:1.5px solid var(--line-2);background:var(--surface);color:var(--ink);font:700 24px/1 var(--ui);padding:0 0 3px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.12);transition:opacity .2s,transform .15s}
   .lp-arr.prev{left:-30px}.lp-arr.next{right:-30px}
   .lp-arr:hover{border-color:var(--ink);transform:scale(1.06)}
@@ -1846,6 +1845,31 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 .st-msgs .msg-item h3{font-size:16px;margin:0 0 4px}
 .st-msgs .msg-item.new h3::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:8px;vertical-align:2px}
 .st-ret>.st-back{display:inline-block;margin-bottom:4px}
+
+/* 1.1.0: sign-in badge next to the greeting */
+.lp-sy{display:inline-flex;align-items:center;gap:5px;vertical-align:middle;margin-left:12px;padding:3px 10px 3px 7px;border-radius:999px;border:1.5px solid var(--line-2);background:var(--surface);color:var(--muted);font:600 13px/1.2 var(--ui);letter-spacing:0;cursor:pointer;white-space:nowrap;position:relative;top:-3px}
+.lp-sy svg{width:17px;height:17px;flex:none}
+.lp-sy:hover{border-color:var(--ink);color:var(--ink)}
+.lp-sy.on{color:var(--ok);border-color:currentColor}
+.lp-sy.warn{color:var(--warn);border-color:currentColor}
+.lp-sy.busy svg{animation:sybl 1.2s ease-in-out infinite}
+@keyframes sybl{50%{opacity:.35}}
+/* phones: no room for words next to the name (Unit box + icons share the row), so a small cloud next to 你好, the name stays underneath */
+@media (max-width:760px){
+  .lp-top h1{display:flex;flex-wrap:wrap;align-items:center;column-gap:8px}
+  .lp-top h1 .lp-nm{order:2;flex:0 0 100%;min-width:0}
+  .lp-sy{order:1;margin:0;top:0;padding:0;width:30px;height:24px;justify-content:center}
+  .lp-sy svg{width:18px;height:18px}
+  .lp-sy .sb-l{display:none}
+  .lp-sy::after{content:'';position:absolute;inset:-10px -6px}
+}
+@media (max-width:374px){
+  .lp-top h1{font-size:22px;column-gap:3px}
+  .lp-sy{width:22px;height:20px;border-width:1.2px}
+  .lp-sy svg{width:15px;height:15px}
+}
+@media (max-width:340px){.lp-sy{display:none}}
+@media (prefers-reduced-motion:reduce){.lp-sy.busy svg{animation:none}}
 </style>
 </head>
 <body>
@@ -7062,7 +7086,7 @@ function lPath(into) {
   const n = userName();
   const b = gmRec().best || {}, top = RUN_DIFFS.filter(d => b[d.id]).sort((x, y) => b[y.id] - b[x.id])[0];
   const cute = isCute();
-  (into || main).innerHTML = `<div class="lp-top"><div class="lp-hi"><div class="cap">Contemporary Chinese 1</div><h1><span class="hzf">你好</span>${n ? `<span class="lp-c">, </span><span class="lp-nm">${esc(n)}</span>` : ''}</h1></div>
+  (into || main).innerHTML = `<div class="lp-top"><div class="lp-hi"><div class="cap">Contemporary Chinese 1</div><h1><span class="hzf">你好</span>${n ? '<span class="lp-c">, </span>' : ''}${n ? `<span class="lp-nm">${esc(n)}</span>` : ''}${syBadge()}</h1></div>
       <div class="lp-tr">${lTopRight(u)}</div></div>
     <div class="lp-cols"><div class="lp-a">
       ${!n && !S.nameAsked ? `<div class="nm-card"><label for="nm-learn"><b>What should the panda call you?</b> <span class="muted small">It’s only saved in this browser.</span></label><div class="nm-row">${nameInput('nm-learn')}<button type="button" class="btn primary sm" data-nmsave="nm-learn">Save</button><button type="button" class="link" data-nmskip>No thanks</button></div></div>` : ''}
@@ -7515,6 +7539,7 @@ function closeModal() {
   if (sp) { S.styleAsked = 2; save(); const a = SP.after; SP.after = null; if (a) { setTimeout(a, 120); return; } }
   if (TUT_PENDING && !TUT.on) { TUT_PENDING = false; setTimeout(tutStart, 300); }
   else if (PWA.pending && !TUT.on) pwaMaybe();
+  else if (SYP.pending && !TUT.on) syAskMaybe();
 }
 document.addEventListener('click', e => {
   if (e.target.id === 'modal') return closeModal();
@@ -7667,7 +7692,7 @@ function renderNav() {
 }
 /* ----- patch notes and welcome ----- */
 const NOTES = [
-  { v: '1.1.0', date: '22 November 2026', items: ['Sync your progress across devices: sign in with Google in Settings.', 'New Settings with search and My account.', 'Level numbers and stars on the Learn map.', 'Your own word lists, dictation on paper, and Favourites in Words.', 'See how well you know each word; your weakest words come back.', 'Small fixes.'] },
+  { v: '1.1.0', date: '22 November 2026', items: ['Sync your progress across devices: sign in with Google next to your name on Learn, or in Settings.', 'New Settings with search and My account.', 'Level numbers and stars on the Learn map.', 'Your own word lists, dictation on paper, and Favourites in Words.', 'See how well you know each word; your weakest words come back.', 'Small fixes.'] },
   { v: '1.0.0', date: '17 November 2026', items: ['New look: three styles (Classic, Bamboo green, Sweet pink), light or dark.', 'A new Learn page and tabs.', 'New units: family, maps and books, shopping.', 'My mistakes, search, diplomas and practice sheets.', 'Install the app on your phone. It works without internet.', 'Small fixes.'] },
   { v: '0.8.0', date: '16 November 2026', items: ['New game: Panda Run in the Games tab. Challenge your friends!', 'Daily practice with a streak on the Learn page.', 'Dark mode and sound effects.', 'New Words tab and quick settings.', 'Small fixes.'] },
   { v: '0.7.9', date: '14 November 2026', items: ['New 字 levels in Learn for reading characters: what they mean, how they sound, and how to tell look-alike characters apart.', 'Every unit now has a character review that brings back the characters you know least.', 'New on the Learn page: “My characters” shows every character and how well you know it, and lets you practise your weakest ones: 10 or 20 at a time, or until you get them all right.', 'Pinyin is hidden for characters you already know well. Tap a word to show it.'] },
@@ -7760,11 +7785,12 @@ function checkNotes() {
   if (!S.tutSeen) TUT_PENDING = true;
   // "install the app" comes once, after the welcome and the tour, or after What’s new
   PWA.pending = !S.instAsked && !isStandalone();
+  SYP.pending = !S.syncAsked && !syOn();   // "keep your progress on all devices": once, after the install window
   // a friend who opens a challenge link first: no tour now (it would leave the challenge), it comes on the next visit
-  if (GM.ch && GM.screen === 'challenge') { TUT_PENDING = false; PWA.pending = false; }
+  if (GM.ch && GM.screen === 'challenge') { TUT_PENDING = false; PWA.pending = false; SYP.pending = false; }
   // the style first (a friend with a challenge link gets it on the next visit, like the tour)
   if (S.styleAsked !== 2 && !(GM.ch && GM.screen === 'challenge')) { openStylePick(() => checkNotes()); return; }
-  if (seen === APP_VERSION) { if (TUT_PENDING) { TUT_PENDING = false; setTimeout(tutStart, 400); } else if (PWA.pending) pwaMaybe(600); return; }
+  if (seen === APP_VERSION) { if (TUT_PENDING) { TUT_PENDING = false; setTimeout(tutStart, 400); } else if (PWA.pending) pwaMaybe(600); else if (SYP.pending) syAskMaybe(600); return; }
   const used = ['sets', 'cards', 'chars', 'learn', 'favs'].some(k => S[k] && Object.keys(S[k]).length);
   S.seenVersion = APP_VERSION; save();
   if (!seen && !used) openWelcome(); else openNotes(seen);
@@ -7827,7 +7853,7 @@ function tutEnd() {
   TUT.on = false; cancelAnimationFrame(TUT.raf);
   if (TUT.ui) TUT.ui.remove(); TUT.ui = null; TUT.el = null;
   document.body.classList.remove('tut-on');
-  if (PWA.pending) pwaMaybe(500);
+  if (PWA.pending) pwaMaybe(500); else if (SYP.pending) syAskMaybe(500);
 }
 function tutSkip() { tutEnd(); closeModal(); }
 function tutShow() {
@@ -10130,6 +10156,7 @@ function syStatus(s) { if (!SY) return; SY.status = s; syRenderStatus(); }
 function syRenderStatus() {
   const a = $('#sy-st'); if (a) a.textContent = syLine();
   const b = $('#sy-short'); if (b) b.textContent = syShort();
+  const g = $('#lp-sy'); if (g) g.outerHTML = syBadge();
   const f = $('#sy-foot'); if (f) f.textContent = SY.st.on ? 'Progress is saved in this browser and synced to your account.' : 'Progress is saved in this browser only.';
 }
 function syRender() { const p = $('#sy-page'); if (p) p.outerHTML = syPageHtml(); syRenderStatus(); }
@@ -10157,6 +10184,42 @@ setTimeout(() => {
   if (SY.msg) toast(SY.msg);
   if (SY.st.on) syFb().catch(() => syStatus('offline'));
 }, 600);
+
+/* ----- next to "你好, name" on Learn: are you signed in? (a tap signs in, or opens My account) ----- */
+const SY_CLOUD = '<path d="M7 18h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.3 9.2 4.4 4.4 0 0 0 7 18Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>';
+function syBadge() {
+  const on = !!(SY && SY.st.on), s = SY ? SY.status : '', em = on && SY.st.email ? SY.st.email.replace(/^(.{3}).*(@.*)$/, '$1…$2') : '';
+  let cls = 'off', lg = 'Not synced · Sign in with Google', mark = '<path d="M5 4l14 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>';
+  if (s === 'signing' || (on && s === 'syncing')) { cls = 'busy'; lg = s === 'signing' ? 'Signing in…' : 'Syncing…'; mark = ''; }
+  else if (on && s === 'offline') { cls = 'warn'; lg = 'Offline · syncs later'; mark = ''; }
+  else if (on && (s === 'paused' || s === 'denied' || s === 'big')) { cls = 'warn'; lg = 'Sync paused'; mark = ''; }
+  else if (on) { cls = 'on'; lg = 'Synced' + (em ? ' · ' + esc(em) : ''); mark = '<path d="M9.2 13.6l2 2 3.8-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'; }
+  return `<button type="button" class="lp-sy ${cls}" id="lp-sy" data-lpsy="${on ? 'acct' : 'in'}" title="${on ? 'Sync: My account' : 'Sign in to sync your progress'}" aria-label="${lg}"><svg viewBox="0 0 24 24" aria-hidden="true">${SY_CLOUD}${mark}</svg><span class="sb-l" aria-hidden="true">${lg}</span></button>`;
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest && e.target.closest('[data-lpsy],[data-syask]'); if (!t) return;
+  if (t.dataset.lpsy === 'acct') return openSettings('account');
+  if (t.dataset.syask !== undefined) closeModal();
+  sySignIn().then(() => { syRender(); if (SY.msg && !$('#sy-st')) toast(SY.msg); });   // on Learn there is no account card to show the error
+});
+// once: "your progress on all your devices" (after the install window, or in its place; never in a lesson, the tour or over a window)
+const SYP = { pending: false };
+function syAskMaybe(ms = 400) {
+  setTimeout(() => {
+    if (!SYP.pending || syOn() || TUT.on || TUT_PENDING || PWA.pending || !$('#modal').hidden || document.body.classList.contains('lesson')) return;
+    SYP.pending = false; S.syncAsked = true; save(); openSyncAsk();
+  }, ms);
+}
+function openSyncAsk() {
+  const m = $('#modal'); m.classList.remove('sheet');
+  m.innerHTML = `<div class="modal-box help-box nt-box sy-ask" role="dialog" aria-modal="true" aria-labelledby="sya-h">
+    <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
+    <div class="nt-hero">${pandaSvg('yay', 'nt-panda')}<div><div class="cap red">New</div><h1 class="view-title" id="sya-h">Your progress on all your devices</h1></div></div>
+    <p>Sign in with Google and your levels, stars, words and settings sync between your phone and your computer. If you change phones, nothing is lost.</p>
+    <p class="small muted">Only your progress is saved, nothing else. You can sign in later too, in Settings › My account.</p>
+    <div class="card-actions"><button type="button" class="btn primary" data-syask>Sign in with Google</button><button type="button" class="btn" data-modalclose>Not now</button></div></div>`;
+  m.hidden = false; document.body.classList.add('modal-open');
+}
 
 /* ================= Words (1.1.0): how well you know each word, your own word lists, dictation on paper ================= */
 // Every word has a strength 0–5 like a character (S.cards[word].s, .at): right +1, wrong −2.
