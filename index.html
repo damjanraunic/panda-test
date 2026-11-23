@@ -8,9 +8,10 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Panda 中文">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-title" content="Panda TEST">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Panda Chinese: learn Chinese step by step</title>
+<title>TEST · Panda Chinese: learn Chinese step by step</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&family=Noto+Serif+SC:wght@500;700;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
@@ -1856,7 +1857,7 @@ main.enter.from-l{animation:slideL .26s cubic-bezier(.2,.7,.2,1)}
 @keyframes sybl{50%{opacity:.35}}
 /* phones: no room for words next to the name (Unit box + icons share the row), so a small cloud next to 你好, the name stays underneath */
 @media (max-width:760px){
-  .lp-top h1{display:flex;flex-wrap:wrap;align-items:center;column-gap:8px}
+  .lp-top h1{display:flex;flex-wrap:wrap;align-items:center;column-gap:8px;padding:10px 8px 0 0;margin:-10px -8px 0 0}   /* room for the bigger tap area of the cloud */
   .lp-top h1 .lp-nm{order:2;flex:0 0 100%;min-width:0}
   .lp-sy{order:1;margin:0;top:0;padding:0;width:30px;height:24px;justify-content:center}
   .lp-sy svg{width:18px;height:18px}
@@ -10199,6 +10200,7 @@ function syBadge() {
 document.addEventListener('click', e => {
   const t = e.target.closest && e.target.closest('[data-lpsy],[data-syask]'); if (!t) return;
   if (t.dataset.lpsy === 'acct') return openSettings('account');
+  if (SY && SY.status === 'signing') return;   // already on its way
   if (t.dataset.syask !== undefined) closeModal();
   sySignIn().then(() => { syRender(); if (SY.msg && !$('#sy-st')) toast(SY.msg); });   // on Learn there is no account card to show the error
 });
@@ -10216,7 +10218,7 @@ function openSyncAsk() {
     <button type="button" class="icon-btn modal-x" data-modalclose aria-label="Close">✕</button>
     <div class="nt-hero">${pandaSvg('yay', 'nt-panda')}<div><div class="cap red">New</div><h1 class="view-title" id="sya-h">Your progress on all your devices</h1></div></div>
     <p>Sign in with Google and your levels, stars, words and settings sync between your phone and your computer. If you change phones, nothing is lost.</p>
-    <p class="small muted">Only your progress is saved, nothing else. You can sign in later too, in Settings › My account.</p>
+    <p class="small muted">Only for syncing: your progress in this app and your Google name and email are saved with Google Firebase in the EU. You can also sign in later, in Settings › My account.</p>
     <div class="card-actions"><button type="button" class="btn primary" data-syask>Sign in with Google</button><button type="button" class="btn" data-modalclose>Not now</button></div></div>`;
   m.hidden = false; document.body.classList.add('modal-open');
 }
